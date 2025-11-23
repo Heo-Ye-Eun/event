@@ -94,7 +94,7 @@
                     formData.append('gift_type', attacks[i].gift_type);
                     formData.append('message', attacks[i].message);
                     
-                    await fetch('https://52.78.58.98/profile.php', {
+                    await fetch('http://52.78.58.98/profile.php', {
                         method: 'POST',
                         body: formData,
                         credentials: 'include', // 중요: 쿠키 포함
