@@ -1,13 +1,97 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎁 특별 이벤트 - 무료 포인트 지급!</title>
-    <!-- 기존 스타일 유지 -->
     <style>
-        /* 기존 CSS 그대로 */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .container {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        max-width: 500px;
+        width: 90%;
+    }
+    
+    .title {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .subtitle {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+    
+    .loading {
+        font-size: 1.5em;
+        margin: 20px 0;
+    }
+    
+    .countdown {
+        font-size: 3em;
+        color: #FFD700;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        margin: 20px 0;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 20px 0;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00ff88, #00cc6a);
+        width: 0%;
+        transition: width 0.5s ease;
+        border-radius: 10px;
+    }
+    
+    .success {
+        color: #00FF88;
+        font-size: 1.8em;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .pulse {
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .hidden-info {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+    }
     </style>
 </head>
 <body>
