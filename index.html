@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📝 프로젝트 평가 기준표</title>
+    <title>🏴‍☠️ hacker 실시간 포인트 탈취 대시보드</title>
     <style>
         * {
             margin: 0;
@@ -18,20 +18,25 @@
             animation: gradientFlow 20s ease infinite;
             color: #2d1b3d;
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: auto;
             position: relative;
         }
         
-        @keyframes gradientFlow {
-            0%, 100% { background-position: 0% 50%; }
-            25% { background-position: 100% 50%; }
-            50% { background-position: 100% 100%; }
-            75% { background-position: 0% 100%; }
-        }
+        
+        
         
         .container {
-            max-width: 1500px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -39,255 +44,374 @@
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            overflow: hidden;
+            animation: headerFloat 6s ease-in-out infinite;
         }
         
-        .header {
-            background: linear-gradient(135deg, #c084fc, #f472b6, #a855f7);
-            color: white;
-            padding: 40px;
-            text-align: center;
-            border-radius: 30px 30px 0 0;
-            position: relative;
-        }
         
         .header h1 {
             font-size: 3.2em;
             font-weight: 700;
+            background: linear-gradient(135deg, #c084fc, #f472b6, #a855f7);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 3s ease-in-out infinite;
             margin-bottom: 20px;
             letter-spacing: -1px;
         }
         
-        .header p {
-            font-size: 1.2em;
-            margin-top: 15px;
-            opacity: 0.9;
-            font-weight: 500;
+        @keyframes textShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
-        .evaluation-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .evaluation-table thead tr {
-            background: linear-gradient(135deg, #c084fc, #a855f7) !important;
+        .live-indicator {
+            background: linear-gradient(45deg, #f472b6, #c084fc);
             color: white;
-        }
-        
-        .evaluation-table th {
-            padding: 20px 15px;
-            font-weight: 700;
+            padding: 12px 28px;
+            border-radius: 50px;
             font-size: 1.1em;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+            margin: 15px auto;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(244, 114, 182, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .category-row {
-            background: linear-gradient(135deg, rgba(248, 232, 255, 0.7), rgba(233, 213, 255, 0.5));
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+                box-shadow: 0 4px 20px rgba(244, 114, 182, 0.3);
+            }
+            50% { 
+                opacity: 0.9; 
+                transform: scale(1.05);
+                box-shadow: 0 8px 25px rgba(244, 114, 182, 0.4);
+            }
         }
         
-        .category-cell {
-            padding: 25px 20px;
-            font-weight: 700;
+        .hacker-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .status-item {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .status-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        
+        .status-item h3 {
             font-size: 1.3em;
-            color: #7c3aed;
-            border-bottom: 2px solid rgba(196, 181, 253, 0.3);
-            vertical-align: top;
-            width: 120px;
-        }
-        
-        .content-cell {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(196, 181, 253, 0.2);
-            vertical-align: top;
-            width: 450px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-        }
-        
-        .criteria-cell {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(196, 181, 253, 0.2);
-            vertical-align: top;
-            width: 300px;
-            background: linear-gradient(135deg, rgba(243, 232, 255, 0.6), rgba(221, 214, 254, 0.4));
-            backdrop-filter: blur(15px);
-        }
-        
-        .score-cell {
-            padding: 25px 20px;
-            text-align: center;
-            vertical-align: top;
-            border-bottom: 1px solid rgba(196, 181, 253, 0.2);
-            width: 200px;
-            background: rgba(253, 250, 255, 0.6);
-            backdrop-filter: blur(15px);
-        }
-        
-        .question {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(248, 232, 255, 0.8), rgba(233, 213, 255, 0.6));
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            border: 1px solid rgba(196, 181, 253, 0.3);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .question:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .question:last-child {
-            margin-bottom: 0;
-        }
-        
-        .criteria-list {
-            background: linear-gradient(135deg, rgba(243, 232, 255, 0.7), rgba(221, 214, 254, 0.5));
-            backdrop-filter: blur(15px);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(196, 181, 253, 0.3);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .criteria-list:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        }
-        
-        .criteria-item {
-            margin-bottom: 12px;
-            color: #6366f1;
-            font-size: 0.95em;
-            font-weight: 500;
-        }
-        
-        .criteria-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .likert-scale {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .likert-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            padding: 12px 8px;
-            border-radius: 15px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(248, 232, 255, 0.2));
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(196, 181, 253, 0.3);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        
-        .likert-option:hover {
-            transform: translateY(-3px) scale(1.05);
-            background: linear-gradient(135deg, rgba(244, 114, 182, 0.2), rgba(192, 132, 252, 0.2));
-            box-shadow: 0 8px 25px rgba(244, 114, 182, 0.2);
-        }
-        
-        .likert-option input[type="radio"] {
-            margin-bottom: 8px;
-            transform: scale(1.3);
-            accent-color: #a78bfa;
-        }
-        
-        .likert-option label {
-            font-size: 0.85em;
-            text-align: center;
-            cursor: pointer;
             font-weight: 600;
-            color: #5b21b6;
-            line-height: 1.2;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
         }
         
-        .individual-score {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #7c3aed;
-            margin-top: 15px;
-            text-align: center;
-        }
-        
-        .score-display {
-            font-size: 1.4em;
+        .status-value {
+            font-size: 2.8em;
             font-weight: 800;
-            color: #8b5cf6;
+            background: linear-gradient(135deg, #7c3aed, #db2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 10px;
+            letter-spacing: -1px;
         }
         
-        .average-display {
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(25px);
+            padding: 35px 25px;
+            border-radius: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-card h3 {
             font-size: 1.2em;
-            color: #7c3aed;
-            margin-bottom: 10px;
             font-weight: 600;
+            color: #7c3aed;
+            margin-bottom: 20px;
         }
         
-        .total-score {
-            background: linear-gradient(135deg, #c084fc, #a78bfa, #8b5cf6) !important;
-            color: white;
+        .stat-card .value {
+            font-size: 3.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+        
+        .stat-card .subtitle {
+            color: #8b5cf6;
+            font-size: 0.9em;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            padding: 35px;
+            border-radius: 25px;
+            margin: 40px 0;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        
+        .control-panel h3 {
             font-size: 1.8em;
-            font-weight: bold;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
         }
         
-        .reset-btn {
+        .control-btn {
             background: linear-gradient(135deg, #f472b6, #c084fc);
             color: white;
+            padding: 15px 30px;
+            margin: 8px;
             border: none;
-            padding: 18px 35px;
-            font-size: 1.2em;
-            font-weight: 600;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
-            margin: 30px;
+            font-weight: 600;
+            font-size: 1em;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(244, 114, 182, 0.3);
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
         }
         
-        .reset-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 12px 35px rgba(244, 114, 182, 0.4);
+        .control-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(244, 114, 182, 0.4);
             background: linear-gradient(135deg, #ec4899, #a855f7);
         }
         
-        .reset-btn:active {
-            transform: translateY(-2px) scale(1.02);
+        .control-btn:active {
+            transform: translateY(-1px) scale(1.02);
         }
         
-        .score-breakdown {
-            font-size: 0.95em;
-            line-height: 1.6;
+        .victims-section {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        
+        .section-title {
+            font-size: 2.2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .victim-log {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            border-left: 4px solid #f472b6;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .victim-log:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .victim-log.new-victim {
+            animation: newVictimGlow 3s ease-in-out;
+            border-left-color: #c084fc;
+        }
+        
+        @keyframes newVictimGlow {
+            0%, 100% { 
+                background: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            }
+            50% { 
+                background: rgba(244, 114, 182, 0.2);
+                box-shadow: 0 8px 30px rgba(244, 114, 182, 0.3);
+            }
+        }
+        
+        .victim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .victim-name {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #7c3aed;
+        }
+        
+        .stolen-points {
+            font-size: 2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .victim-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .detail-item {
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
-            padding: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .detail-item > div:last-child {
+            color: #5b21b6;
+            font-weight: 500;
+        }
+        
+        .gift-type-badge {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin: 5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .coffee { 
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.3), rgba(160, 82, 45, 0.3)); 
+            color: #8B4513; 
+        }
+        .flower { 
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.4), rgba(255, 192, 203, 0.4)); 
+            color: #FF69B4; 
+        }
+        .cake { 
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 140, 0, 0.3)); 
+            color: #FF8C00; 
+        }
+        .diamond { 
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.4), rgba(244, 114, 182, 0.4)); 
+            color: #8b5cf6; 
+        }
+
+        .alert-box {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 25px;
             border-radius: 20px;
-            border: 1px solid rgba(196, 181, 253, 0.3);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            margin: 25px 0;
+            text-align: center;
+            animation: alertGlow 2s infinite;
+            box-shadow: 0 8px 32px rgba(244, 114, 182, 0.2);
         }
         
-        hr {
-            margin: 15px 0;
-            border: none;
-            height: 2px;
-            background: linear-gradient(135deg, rgba(196, 181, 253, 0.4), rgba(244, 114, 182, 0.3));
-            border-radius: 2px;
+        @keyframes alertGlow {
+            0%, 100% { 
+                box-shadow: 0 8px 32px rgba(244, 114, 182, 0.2);
+            }
+            50% { 
+                box-shadow: 0 8px 32px rgba(244, 114, 182, 0.4);
+            }
         }
-        
-        /* 스크롤바 스타일링 */
+
+        /* 스크롤바 */
         ::-webkit-scrollbar {
             width: 12px;
         }
@@ -306,57 +430,18 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(135deg, #ec4899, #a855f7);
         }
-        
+
         /* 반응형 */
         @media (max-width: 768px) {
-            .container { 
-                margin: 10px;
-                border-radius: 20px;
-            }
-            .header h1 { 
-                font-size: 2.5em; 
-            }
-            .evaluation-table {
-                font-size: 0.9em;
-            }
-            .category-cell {
-                font-size: 1.1em;
-            }
-            .likert-scale {
-                gap: 8px;
-            }
-            .likert-option {
-                padding: 8px 6px;
-            }
-            .reset-btn { 
+            .container { padding: 15px; }
+            .header h1 { font-size: 2.5em; }
+            .hacker-status { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .victim-details { grid-template-columns: 1fr; }
+            .control-btn { 
                 display: block; 
-                width: calc(100% - 60px);
-                margin: 30px;
-            }
-        }
-        
-        /* 부드러운 파티클 효과를 위한 추가 스타일 */
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        @keyframes softFloat {
-            0% {
-                transform: translateY(100vh) rotate(0deg) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(360deg) scale(0);
-                opacity: 0;
+                width: 100%; 
+                margin: 10px 0; 
             }
         }
     </style>
@@ -364,625 +449,341 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📝 프로젝트 평가 기준표</h1>
-            <p>각 항목을 5점 척도로 평가해주세요</p>
+            <h1>🏴‍☠️ hacker 포인트 탈취 대시보드</h1>
+            <div class="live-indicator">🔴 실시간 모니터링 중</div>
+            <p style="font-size: 1.2em; margin-top: 15px; color: rgba(139, 92, 246, 0.8); font-weight: 500;">
+                CSRF 공격으로 실시간 포인트 수집 현황
+            </p>
         </div>
-        
-        <table class="evaluation-table">
-            <thead>
-                <tr>
-                    <th>평가 항목</th>
-                    <th>세부 내용</th>
-                    <th>세부 평가 기준</th>
-                    <th>점수 및 배점</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 전문성 -->
-                <tr class="category-row">
-                    <td class="category-cell" rowspan="3">전문성</td>
-                    <td class="content-cell">
-                        <div class="question">
-                            프로젝트의 보안 기능이 기술적으로 정확하게 구현되어있는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q1" value="1" id="q1-1">
-                                    <label for="q1-1">매우<br>부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q1" value="2" id="q1-2">
-                                    <label for="q1-2">부족<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q1" value="3" id="q1-3">
-                                    <label for="q1-3">보통<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q1" value="4" id="q1-4">
-                                    <label for="q1-4">우수<br>(8점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q1" value="5" id="q1-5">
-                                    <label for="q1-5">매우<br>우수<br>(10점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q1">0 / 10점</div>
+
+        <div class="hacker-status">
+            <div class="status-item">
+                <h3>👤 hacker 계정 현황</h3>
+                <div class="status-value" id="hackerCurrentPoints">0</div>
+                <div style="color: rgba(139, 92, 246, 0.7); font-weight: 500;">현재 보유 포인트</div>
+                <div style="margin-top: 15px; color: rgba(139, 92, 246, 0.6); font-size: 0.9em;">
+                    <div>계정 ID: 13</div>
+                    <div>마지막 업데이트: <span id="lastUpdate">-</span></div>
+                </div>
+            </div>
+            <div class="status-item">
+                <h3>💰 오늘의 수확</h3>
+                <div class="status-value" id="todayStolen">0</div>
+                <div style="color: rgba(139, 92, 246, 0.7); font-weight: 500;">오늘 탈취한 포인트</div>
+                <div style="margin-top: 15px; color: rgba(139, 92, 246, 0.6); font-size: 0.9em;">
+                    <div>📅 범위: 오늘 00:00-23:59</div>
+                </div>
+            </div>
+            <div class="status-item">
+                <h3>🎯 공격 현황</h3>
+                <div class="status-value" id="totalVictims">0</div>
+                <div style="color: rgba(139, 92, 246, 0.7); font-weight: 500;">총 피해자 수</div>
+                <div style="margin-top: 15px; color: rgba(139, 92, 246, 0.6); font-size: 0.9em;">
+                    <div>최근 피해자: <span id="latestVictim">-</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>🏴‍☠️ 누적 탈취 포인트</h3>
+                <div class="value" id="totalStolen">0</div>
+                <div class="subtitle">Total Stolen Points</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>🎪 최고 탈취 기록</h3>
+                <div class="value" id="maxSingleSteal">0</div>
+                <div class="subtitle">Single Attack Record</div>
+            </div>
+            <div class="stat-card">
+                <h3>📈 평균 탈취량</h3>
+                <div class="value" id="avgSteal">0</div>
+                <div class="subtitle">Average per Victim</div>
+            </div>
+        </div>
+
+        <div class="alert-box" id="alertBox" style="display: none;">
+            <h3 style="color: #7c3aed; font-weight: 700; margin-bottom: 10px;">🚨 새로운 포인트 탈취 감지!</h3>
+            <p id="alertMessage" style="color: #8b5cf6; font-weight: 500;">새로운 피해자가 포인트를 전송했습니다!</p>
+        </div>
+
+        <div class="control-panel">
+            <h3>📢 제어판</h3>
+            <button class="control-btn" onclick="refreshData()">🔄 실시간 갱신</button>
+            <button class="control-btn" onclick="exportLogs()">📊 로그 내보내기</button>
+            <button class="control-btn" onclick="clearLogs()">🗑️ 로그 지우기</button>
+            <button class="control-btn" onclick="toggleAutoRefresh()">⏰ 자동갱신 토글</button>
+        </div>
+
+        <div class="victims-section">
+            <h2 class="section-title">🎣 실시간 피해자 로그</h2>
+            <div id="victimLogs">
+                <div class="victim-log">
+                    <div class="victim-header">
+                        <div class="victim-name">로딩 중...</div>
+                        <div class="stolen-points">-</div>
+                    </div>
+                    <div class="victim-details">
+                        <div class="detail-item">
+                            <div class="detail-label">시스템 초기화 중</div>
+                            <div>데이터를 불러오는 중입니다...</div>
                         </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                    <td class="score-cell" rowspan="3">
-                        <div class="score-breakdown">
-                            <div class="score-display">총점: <span id="total-전문성">0</span> / 30점</div>
-                            <div class="average-display">평균: <span id="average-전문성">0.0</span> / 5.0</div>
-                            <hr>
-                            <div style="font-size: 0.8em; color: #7c3aed; font-weight: 600;">
-                                세부 점수:<br>
-                                • 기술적 구현: <span id="detail-q1">0</span>/10점<br>
-                                • 보안 원리: <span id="detail-q2">0</span>/10점<br>
-                                • 기술 활용: <span id="detail-q3">0</span>/10점
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="content-cell">
-                        <div class="question">
-                            보안 원리(인증, 암호화, 탐지, 대응 등)가 적절히 적용되어있는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q2" value="1" id="q2-1">
-                                    <label for="q2-1">매우<br>부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q2" value="2" id="q2-2">
-                                    <label for="q2-2">부족<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q2" value="3" id="q2-3">
-                                    <label for="q2-3">보통<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q2" value="4" id="q2-4">
-                                    <label for="q2-4">우수<br>(8점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q2" value="5" id="q2-5">
-                                    <label for="q2-5">매우<br>우수<br>(10점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q2">0 / 10점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="content-cell">
-                        <div class="question">
-                            사용된 보안 기술·도구가 목적에 맞게 활용되어있는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q3" value="1" id="q3-1">
-                                    <label for="q3-1">매우<br>부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q3" value="2" id="q3-2">
-                                    <label for="q3-2">부족<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q3" value="3" id="q3-3">
-                                    <label for="q3-3">보통<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q3" value="4" id="q3-4">
-                                    <label for="q3-4">우수<br>(8점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q3" value="5" id="q3-5">
-                                    <label for="q3-5">매우<br>우수<br>(10점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q3">0 / 10점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                </tr>
-                
-                <!-- 차별성 -->
-                <tr class="category-row">
-                    <td class="category-cell" rowspan="3">차별성</td>
-                    <td class="content-cell">
-                        <div class="question">
-                            기존 보안 솔루션이나 사례와 구별되는 새로운 시각이나 접근 방식을 제시했는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q4" value="1" id="q4-1">
-                                    <label for="q4-1">매우<br>부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q4" value="2" id="q4-2">
-                                    <label for="q4-2">부족<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q4" value="3" id="q4-3">
-                                    <label for="q4-3">보통<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q4" value="4" id="q4-4">
-                                    <label for="q4-4">우수<br>(8점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q4" value="5" id="q4-5">
-                                    <label for="q4-5">매우<br>우수<br>(10점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q4">0 / 10점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                    <td class="score-cell" rowspan="3">
-                        <div class="score-breakdown">
-                            <div class="score-display">총점: <span id="total-차별성">0</span> / 30점</div>
-                            <div class="average-display">평균: <span id="average-차별성">0.0</span> / 5.0</div>
-                            <hr>
-                            <div style="font-size: 0.8em; color: #7c3aed; font-weight: 600;">
-                                세부 점수:<br>
-                                • 새로운 접근: <span id="detail-q4">0</span>/10점<br>
-                                • 창의적 해결: <span id="detail-q5">0</span>/10점<br>
-                                • 기술적 혁신: <span id="detail-q6">0</span>/10점
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="content-cell">
-                        <div class="question">
-                            실제 보안 문제에 대한 해결 아이디어가 실질적이고 창의적인가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q5" value="1" id="q5-1">
-                                    <label for="q5-1">매우<br>부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q5" value="2" id="q5-2">
-                                    <label for="q5-2">부족<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q5" value="3" id="q5-3">
-                                    <label for="q5-3">보통<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q5" value="4" id="q5-4">
-                                    <label for="q5-4">우수<br>(8점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q5" value="5" id="q5-5">
-                                    <label for="q5-5">매우<br>우수<br>(10점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q5">0 / 10점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="content-cell">
-                        <div class="question">
-                            문제 해결을 위해 새로운 시도나 기술적·기획적 혁신이 이루어졌는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q6" value="1" id="q6-1">
-                                    <label for="q6-1">매우<br>부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q6" value="2" id="q6-2">
-                                    <label for="q6-2">부족<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q6" value="3" id="q6-3">
-                                    <label for="q6-3">보통<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q6" value="4" id="q6-4">
-                                    <label for="q6-4">우수<br>(8점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q6" value="5" id="q6-5">
-                                    <label for="q6-5">매우<br>우수<br>(10점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q6">0 / 10점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                </tr>
-                
-                <!-- 완성도 -->
-                <tr class="category-row">
-                    <td class="category-cell" rowspan="2">완성도</td>
-                    <td class="content-cell">
-                        <div class="question">
-                            보안 시스템(공격-탐지-대응)의 구조가 논리적으로 설계되고 각 단계가 유기적으로 작동하는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q7" value="1" id="q7-1">
-                                    <label for="q7-1">매우<br>부족<br>(3점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q7" value="2" id="q7-2">
-                                    <label for="q7-2">부족<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q7" value="3" id="q7-3">
-                                    <label for="q7-3">보통<br>(9점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q7" value="4" id="q7-4">
-                                    <label for="q7-4">우수<br>(12점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q7" value="5" id="q7-5">
-                                    <label for="q7-5">매우<br>우수<br>(15점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q7">0 / 15점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                    <td class="score-cell" rowspan="2">
-                        <div class="score-breakdown">
-                            <div class="score-display">총점: <span id="total-완성도">0</span> / 30점</div>
-                            <div class="average-display">평균: <span id="average-완성도">0.0</span> / 5.0</div>
-                            <hr>
-                            <div style="font-size: 0.8em; color: #7c3aed; font-weight: 600;">
-                                세부 점수:<br>
-                                • 시스템 설계: <span id="detail-q7">0</span>/15점<br>
-                                • 기능 완성도: <span id="detail-q8">0</span>/15점
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="content-cell">
-                        <div class="question">
-                            프로젝트의 주요 기능이 안정적으로 동작하며, 로그 수집·분석 등 세부 기능이 체계적으로 완성되어있는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q8" value="1" id="q8-1">
-                                    <label for="q8-1">매우<br>부족<br>(3점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q8" value="2" id="q8-2">
-                                    <label for="q8-2">부족<br>(6점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q8" value="3" id="q8-3">
-                                    <label for="q8-3">보통<br>(9점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q8" value="4" id="q8-4">
-                                    <label for="q8-4">우수<br>(12점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q8" value="5" id="q8-5">
-                                    <label for="q8-5">매우<br>우수<br>(15점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q8">0 / 15점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                </tr>
-                
-                <!-- 발표 및 시연 역량 -->
-                <tr class="category-row">
-                    <td class="category-cell" rowspan="2">발표 및<br>시연 역량</td>
-                    <td class="content-cell">
-                        <div class="question">
-                            프로젝트의 핵심 개념과 기술 구현 과정을 명확하고 논리적으로 설명했는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q9" value="1" id="q9-1">
-                                    <label for="q9-1">매우<br>부족<br>(1점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q9" value="2" id="q9-2">
-                                    <label for="q9-2">부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q9" value="3" id="q9-3">
-                                    <label for="q9-3">보통<br>(3점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q9" value="4" id="q9-4">
-                                    <label for="q9-4">우수<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q9" value="5" id="q9-5">
-                                    <label for="q9-5">매우<br>우수<br>(5점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q9">0 / 5점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                    <td class="score-cell" rowspan="2">
-                        <div class="score-breakdown">
-                            <div class="score-display">총점: <span id="total-발표">0</span> / 10점</div>
-                            <div class="average-display">평균: <span id="average-발표">0.0</span> / 5.0</div>
-                            <hr>
-                            <div style="font-size: 0.8em; color: #7c3aed; font-weight: 600;">
-                                세부 점수:<br>
-                                • 논리적 설명: <span id="detail-q9">0</span>/5점<br>
-                                • 효과적 전달: <span id="detail-q10">0</span>/5점
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="content-cell">
-                        <div class="question">
-                            시각 자료, 시연 구성, 발표 언어를 효과적으로 활용하여 핵심 메시지를 전달했는가?
-                            <div class="likert-scale">
-                                <div class="likert-option">
-                                    <input type="radio" name="q10" value="1" id="q10-1">
-                                    <label for="q10-1">매우<br>부족<br>(1점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q10" value="2" id="q10-2">
-                                    <label for="q10-2">부족<br>(2점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q10" value="3" id="q10-3">
-                                    <label for="q10-3">보통<br>(3점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q10" value="4" id="q10-4">
-                                    <label for="q10-4">우수<br>(4점)</label>
-                                </div>
-                                <div class="likert-option">
-                                    <input type="radio" name="q10" value="5" id="q10-5">
-                                    <label for="q10-5">매우<br>우수<br>(5점)</label>
-                                </div>
-                            </div>
-                            <div class="individual-score" id="individual-q10">0 / 5점</div>
-                        </div>
-                    </td>
-                    <td class="criteria-cell">
-                        <div class="criteria-list">
-                            <div class="criteria-item">1) </div>
-                            <div class="criteria-item">2) </div>
-                            <div class="criteria-item">3) </div>
-                            <div class="criteria-item">4) </div>
-                        </div>
-                    </td>
-                </tr>
-                
-                <!-- 총합 -->
-                <tr class="total-score">
-                    <td style="padding: 25px; text-align: center;">총합</td>
-                    <td style="padding: 25px; text-align: center;">전체 평균: <span id="overall-average">0.0</span> / 5.0</td>
-                    <td style="padding: 25px; text-align: center;">-</td>
-                    <td style="padding: 25px; text-align: center;">
-                        <div id="final-total-score">0</div>
-                        <div style="font-size: 0.8em; margin-top: 5px;">/ 100점</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div style="text-align: center; padding: 20px;">
-            <button class="reset-btn" onclick="resetAll()">🔄 전체 초기화</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const categories = {
-            '전문성': {
-                questions: [
-                    {name: 'q1', maxPoints: 10},
-                    {name: 'q2', maxPoints: 10},
-                    {name: 'q3', maxPoints: 10}
-                ],
-                totalMaxScore: 30
-            },
-            '차별성': {
-                questions: [
-                    {name: 'q4', maxPoints: 10},
-                    {name: 'q5', maxPoints: 10},
-                    {name: 'q6', maxPoints: 10}
-                ],
-                totalMaxScore: 30
-            },
-            '완성도': {
-                questions: [
-                    {name: 'q7', maxPoints: 15},
-                    {name: 'q8', maxPoints: 15}
-                ],
-                totalMaxScore: 30
-            },
-            '발표': {
-                questions: [
-                    {name: 'q9', maxPoints: 5},
-                    {name: 'q10', maxPoints: 5}
-                ],
-                totalMaxScore: 10
-            }
-        };
+        let autoRefresh = true;
+        let refreshInterval;
 
-        function calculateIndividualScore(likertValue, maxPoints) {
-            return Math.round((likertValue / 5) * maxPoints);
-        }
+        function loadHackerStats() {
+            fetch('/api/hacker/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('hackerCurrentPoints').textContent = data.current_points || 0;
+                    document.getElementById('totalStolen').textContent = data.total_stolen || 0;
+                    document.getElementById('todayStolen').textContent = data.today_stolen || 0;
+                    document.getElementById('last24h').textContent = data.last_24h || 0;
+                    document.getElementById('totalVictims').textContent = data.total_victims || 0;
+                    document.getElementById('maxSingleSteal').textContent = data.max_single_steal || 0;
+                    document.getElementById('avgSteal').textContent = data.avg_steal || 0;
+                    document.getElementById('todaySuccessRate').textContent = (data.success_rate || 0) + '%';
+                    document.getElementById('activeTargets').textContent = data.active_targets || 0;
+                    document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
 
-        function calculateScore() {
-            let totalScore = 0;
-            let totalQuestions = 0;
-            let totalLikertSum = 0;
-            
-            for (const [categoryName, categoryData] of Object.entries(categories)) {
-                let categoryScore = 0;
-                let categoryLikertSum = 0;
-                let answeredQuestions = 0;
+                    fetch('/api/hacker/victims')
+                        .then(response => response.json())
+                        .then(victims => {
+                            if (victims.length > 0) {
+                                document.getElementById('latestVictim').textContent = victims[0].username;
+                            } else {
+                                document.getElementById('latestVictim').textContent = '-';
+                            }
+                        });
+                })
                 
-                categoryData.questions.forEach(question => {
-                    const selectedOption = document.querySelector(`input[name="${question.name}"]:checked`);
-                    let individualScore = 0;
-                    
-                    if (selectedOption) {
-                        const likertValue = parseInt(selectedOption.value);
-                        individualScore = calculateIndividualScore(likertValue, question.maxPoints);
-                        categoryScore += individualScore;
-                        categoryLikertSum += likertValue;
-                        answeredQuestions++;
-                        totalLikertSum += likertValue;
-                        totalQuestions++;
-                    }
-                    
-                    const individualElement = document.getElementById(`individual-${question.name}`);
-                    const detailElement = document.getElementById(`detail-${question.name}`);
-                    
-                    if (individualElement) {
-                        individualElement.textContent = `${individualScore} / ${question.maxPoints}점`;
-                    }
-                    if (detailElement) {
-                        detailElement.textContent = individualScore;
-                    }
+                .catch(error => {
+                    console.error('Stats 로드 오류:', error);
+                    showAlert('⚠️ 데이터 로드 실패', 'warning');
                 });
-                
-                const categoryAverage = answeredQuestions > 0 ? (categoryLikertSum / answeredQuestions).toFixed(1) : '0.0';
-                
-                const totalElement = document.getElementById(`total-${categoryName}`);
-                const averageElement = document.getElementById(`average-${categoryName}`);
-                
-                if (totalElement) {
-                    totalElement.textContent = categoryScore;
-                }
-                if (averageElement) {
-                    averageElement.textContent = categoryAverage;
-                }
-                
-                totalScore += categoryScore;
-            }
+        }
+
+        function loadVictimLogs() {
+            fetch('/api/hacker/victims')
+                .then(response => response.json())
+                .then(data => {
+                    const logsDiv = document.getElementById('victimLogs');
+                    if (data.length === 0) {
+                        logsDiv.innerHTML = `
+                            <div class="victim-log">
+                                <div class="victim-header">
+                                    <div class="victim-name">아직 피해자가 없습니다</div>
+                                    <div class="stolen-points">0P</div>
+                                </div>
+                                <div class="victim-details">
+                                    <div class="detail-item">
+                                        <div class="detail-label">상태</div>
+                                        <div>모니터링 대기 중...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    logsDiv.innerHTML = data.map((victim, index) => `
+                        <div class="victim-log ${victim.is_new ? 'new-victim' : ''}">
+                            <div class="victim-header">
+                                <div class="victim-name">
+                                    ${victim.username || 'Anonymous'} 
+                                    <small style="opacity: 0.7; font-weight: 400;">(ID: ${victim.user_id})</small>
+                                </div>
+                                <div class="stolen-points">+${victim.points}P</div>
+                            </div>
+                            <div class="victim-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">탈취 시간</div>
+                                    <div>${victim.timestamp}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">선물 종류</div>
+                                    <div><span class="gift-type-badge ${victim.gift_type}">${getGiftIcon(victim.gift_type)} ${victim.gift_type}</span></div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">공격 방법</div>
+                                    <div>CSRF - 프로필 모니터링</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">피해자 메시지</div>
+                                    <div>"${victim.message || '메시지 없음'}"</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">탐지 방법</div>
+                                    <div>${victim.ip || '실시간 모니터링'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">상태</div>
+                                    <div>${victim.user_agent || '모니터링 감지'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Victim logs 로드 오류:', error);
+                });
+        }
+
+        function getGiftIcon(giftType) {
+            const icons = {
+                'coffee': '☕',
+                'flower': '🌹', 
+                'cake': '🎂',
+                'diamond': '💎'
+            };
+            return icons[giftType] || '🎁';
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertBox = document.getElementById('alertBox');
+            const alertMessage = document.getElementById('alertMessage');
             
-            const overallAverage = totalQuestions > 0 ? (totalLikertSum / totalQuestions).toFixed(1) : '0.0';
+            alertMessage.textContent = message;
+            alertBox.style.display = 'block';
             
-            const finalTotalElement = document.getElementById('final-total-score');
-            const overallAverageElement = document.getElementById('overall-average');
-            
-            if (finalTotalElement) {
-                finalTotalElement.textContent = totalScore;
-            }
-            if (overallAverageElement) {
-                overallAverageElement.textContent = overallAverage;
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        function refreshData() {
+            loadHackerStats();
+            loadVictimLogs();
+            showAlert('🔄 데이터가 갱신되었습니다!');
+        }
+
+        function testVictim() {
+            fetch('/api/test-attack', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    showAlert('🧪 ' + data.message);
+                    setTimeout(() => {
+                        refreshData();
+                    }, 1000);
+                })
+                .catch(error => {
+                    showAlert('❌ 테스트 실패', 'error');
+                });
+        }
+
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            if (autoRefresh) {
+                startAutoRefresh();
+                showAlert('⏰ 자동 갱신이 활성화되었습니다');
+            } else {
+                clearInterval(refreshInterval);
+                showAlert('⏸️ 자동 갱신이 비활성화되었습니다');
             }
         }
 
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(refreshData, 15000); // 15초마다
+        }
+
+        function exportLogs() {
+            fetch('/api/hacker/victims')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        showAlert('📊 내보낼 데이터가 없습니다');
+                        return;
+                    }
+                    
+                    // UTF-8 BOM + CSV 데이터 생성
+                    const csvHeader = "피해자,포인트,선물종류,메시지,시간\n";
+                    const csvRows = data.map(victim => 
+                        `"${victim.username}","${victim.points}","${victim.gift_type}","${victim.message}","${victim.timestamp}"`
+                    ).join("\n");
+                    
+                    const csvContent = csvHeader + csvRows;
+                    
+                    // UTF-8 BOM을 포함한 Blob 생성
+                    const BOM = '\uFEFF';
+                    const blob = new Blob([BOM + csvContent], { 
+                        type: 'text/csv;charset=utf-8;' 
+                    });
+                    
+                    // 다운로드 링크 생성
+                    const link = document.createElement("a");
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", `hacker_victims_${new Date().toISOString().split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // 메모리 정리
+                    URL.revokeObjectURL(url);
+                    
+                    showAlert('📊 피해자 로그가 내보내기되었습니다!');
+                })
+                .catch(error => {
+                    showAlert('❌ 내보내기 실패', 'error');
+                });
+        }
+
+        function clearLogs() {
+            if (confirm('정말로 모든 피해자 데이터를 지우시겠습니까?')) {
+                fetch('/api/clear', { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        refreshData();
+                        showAlert('🗑️ ' + data.message);
+                    })
+                    .catch(error => {
+                        showAlert('❌ 삭제 실패', 'error');
+                    });
+            }
+        }
+
+        // 페이지 로드시 초기화
         document.addEventListener('DOMContentLoaded', function() {
-            const radioButtons = document.querySelectorAll('input[type="radio"]');
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    calculateScore();
-                });
-            });
+            refreshData();
+            startAutoRefresh();
             
+            // 해커 테마 콘솔 메시지
+            console.log(`
+🏴‍☠️ hacker 대시보드 활성화
+=============================
+실시간 CSRF 포인트 탈취 모니터링 중...
+Target: http://3.37.55.196 users
+Method: Profile Monitoring + CSRF
+Status: OPERATIONAL
+Design: Pastel Pink-Purple Aesthetic
+=============================
+            `);
+
             // 부드러운 파티클 효과 생성
             createSoftParticles();
         });
 
-        function resetAll() {
-            const radioButtons = document.querySelectorAll('input[type="radio"]');
-            radioButtons.forEach(radio => {
-                radio.checked = false;
-            });
-            
-            for (const [categoryName, categoryData] of Object.entries(categories)) {
-                const totalElement = document.getElementById(`total-${categoryName}`);
-                const averageElement = document.getElementById(`average-${categoryName}`);
-                
-                if (totalElement) totalElement.textContent = '0';
-                if (averageElement) averageElement.textContent = '0.0';
-                
-                categoryData.questions.forEach(question => {
-                    const individualElement = document.getElementById(`individual-${question.name}`);
-                    const detailElement = document.getElementById(`detail-${question.name}`);
-                    
-                    if (individualElement) {
-                        individualElement.textContent = `0 / ${question.maxPoints}점`;
-                    }
-                    if (detailElement) {
-                        detailElement.textContent = '0';
-                    }
-                });
+        // 키보드 단축키
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                refreshData();
             }
-            
-            const finalTotalElement = document.getElementById('final-total-score');
-            const overallAverageElement = document.getElementById('overall-average');
-            
-            if (finalTotalElement) finalTotalElement.textContent = '0';
-            if (overallAverageElement) overallAverageElement.textContent = '0.0';
-        }
+            if (e.ctrlKey && e.key === 't') {
+                e.preventDefault();
+                testVictim();
+            }
+        });
 
         // 부드러운 파티클 효과
         function createSoftParticles() {
@@ -996,19 +797,19 @@
             particleContainer.style.zIndex = '0';
             document.body.appendChild(particleContainer);
 
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 15; i++) {
                 const particle = document.createElement('div');
-                particle.className = 'particle';
                 particle.style.position = 'absolute';
                 particle.style.width = Math.random() * 6 + 3 + 'px';
                 particle.style.height = particle.style.width;
                 
+                // 부드러운 파스텔 색상
                 const colors = [
-                    'rgba(244, 114, 182, 0.3)',
-                    'rgba(192, 132, 252, 0.3)',
-                    'rgba(168, 85, 247, 0.3)',
-                    'rgba(236, 72, 153, 0.3)',
-                    'rgba(139, 92, 246, 0.3)'
+                    'rgba(244, 114, 182, 0.4)',
+                    'rgba(192, 132, 252, 0.4)',
+                    'rgba(168, 85, 247, 0.4)',
+                    'rgba(236, 72, 153, 0.4)',
+                    'rgba(253, 224, 71, 0.3)'
                 ];
                 
                 particle.style.background = colors[Math.floor(Math.random() * colors.length)];
@@ -1016,11 +817,141 @@
                 particle.style.backdropFilter = 'blur(2px)';
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.top = Math.random() * 100 + '%';
-                particle.style.animation = `softFloat ${Math.random() * 25 + 30}s infinite linear`;
+                particle.style.animation = `softFloat ${Math.random() * 20 + 25}s infinite linear`;
                 
                 particleContainer.appendChild(particle);
             }
+
+            // 부드러운 파티클 애니메이션 CSS
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes softFloat {
+                    0% {
+                        transform: translateY(100vh) rotate(0deg) scale(0);
+                        opacity: 0;
+                    }
+                    10% {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                    90% {
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(-100vh) rotate(360deg) scale(0);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
         }
+
+        // 실시간 알림 효과
+        let lastVictimCount = 0;
+        
+        function checkNewVictims() {
+            fetch('/api/hacker/victims')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > lastVictimCount && lastVictimCount > 0) {
+                        const newVictims = data.length - lastVictimCount;
+                        showAlert(`🎯 새로운 피해자 ${newVictims}명 감지!`);
+                        
+                        // 부드러운 진동 효과
+                        document.body.style.animation = 'gentleShake 0.5s ease-in-out';
+                        setTimeout(() => {
+                            document.body.style.animation = '';
+                        }, 500);
+                        
+                        // 브라우저 알림
+                        if (Notification.permission === "granted") {
+                            new Notification("🏴‍☠️ hacker Dashboard", {
+                                body: `새로운 피해자 ${newVictims}명이 포인트를 전송했습니다!`,
+                                icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏴‍☠️</text></svg>"
+                            });
+                        }
+                    }
+                    lastVictimCount = data.length;
+                })
+                .catch(error => {
+                    console.error('New victim check error:', error);
+                });
+        }
+
+        // 부드러운 진동 애니메이션
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes gentleShake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-2px); }
+                75% { transform: translateX(2px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+
+        // 브라우저 알림 권한 요청
+        if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission();
+        }
+
+        // 5초마다 새로운 피해자 체크
+        setInterval(checkNewVictims, 5000);
+
+        // 페이지 제목 실시간 업데이트
+        function updatePageTitle() {
+            fetch('/api/hacker/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.title = `🏴‍☠️ hacker Dashboard | ${data.current_points}P | 피해자 ${data.total_victims}명`;
+                })
+                .catch(error => {
+                    console.error('Title update error:', error);
+                });
+        }
+
+        // 30초마다 페이지 제목 업데이트
+        setInterval(updatePageTitle, 30000);
+
+        // 부드러운 스크롤 효과
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 마우스 호버 시 부드러운 글로우 효과
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.classList.contains('stat-card') || 
+                e.target.classList.contains('status-item') || 
+                e.target.classList.contains('victim-log')) {
+                e.target.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            }
+        });
+
+        // 성능 최적화를 위한 디바운스 함수
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 리사이즈 이벤트 최적화
+        window.addEventListener('resize', debounce(() => {
+            // 리사이즈 시 필요한 로직 (현재는 없음)
+        }, 250));
     </script>
 </body>
 </html>
